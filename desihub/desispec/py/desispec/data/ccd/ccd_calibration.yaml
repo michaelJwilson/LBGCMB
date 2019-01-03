@@ -1,0 +1,391 @@
+# CCD calibration file
+# for each spectrograph arm bx,rx,zx with x from 0 to 9
+#  several versions of the hardware + firmware (not the version of this file or preproc. software)
+#  identified by DATE-OBS-BEGIN,DATE-OBS-END with a compatibility check of CCDNAME,DOSVER,FEEVER
+#
+# For each amplifier X
+# GAINX is in e/ADU
+# SATURLEVX is in ADU : the saturation level above which pixels are masked (applied before multiplication by gain)
+# CROSSTALKXY is the fraction of X in Y (in ADU/ADU, ie applied before multiplication by gain)
+#
+# orientation of amps (as seen with ds9)
+# C D
+# A B
+#
+#
+
+b1:
+  V0:
+# gain and cross-talk  measurement described in EM1 spectrograph report
+    AMPLIFIERS: ABCD
+    DETECTOR: itl_4kx4k_02
+    DATE-OBS-BEGIN: '20161221'
+    DATE-OBS-END: None
+    DOSVER: trunk
+    FEEVER: v20160312
+    EXPTIMEKEY: EXPREQ
+    GAINA: 0.579
+    GAINB: 0.651
+    GAINC: 0.648
+    GAIND: 0.621
+    SATURLEVA: 200000.0
+    SATURLEVB: 200000.0
+    SATURLEVC: 200000.0
+    SATURLEVD: 200000.0
+    CROSSTALKAB: -0.000732564
+    CROSSTALKAC: 6.15218e-05
+    CROSSTALKAD: -0.00141573
+    CROSSTALKBA: -0.014105
+    CROSSTALKBC: -0.000543639
+    CROSSTALKBD: -0.00142127
+    CROSSTALKCA: -0.000307981
+    CROSSTALKCB: -0.00056577
+    CROSSTALKCD: -9.28376e-05
+    CROSSTALKDA: 0.0012078
+    CROSSTALKDB: 0.00173514
+    CROSSTALKDC: -0.00330541
+    BIAS: 20170131/bias-b1.fits
+    DARK: 20170131/dark-b1.fits
+
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM 
+r1:
+  V0:
+# gain and cross-talk  measurement described in EM1 spectrograph report
+# gain A not measured
+    AMPLIFIERS: ABCD
+    DETECTOR: lbnl_4kx4k_1102_reverse
+    DATE-OBS-BEGIN: '20161221'
+    DATE-OBS-END: None
+    DOSVER: trunk
+    FEEVER: v20160312
+    EXPTIMEKEY: EXPREQ
+    GAINA: 1.6
+    GAINB: 1.720
+    GAINC: 1.694
+    GAIND: 1.610
+    SATURLEVA: 20000.0
+    SATURLEVB: 20000.0
+    SATURLEVC: 20000.0
+    SATURLEVD: 20000.0
+    CROSSTALKAB: -0.000430151
+    CROSSTALKAC: -0.00502139
+    CROSSTALKAD: -4.73756e-05
+    CROSSTALKBA: -2.61568e-05
+    CROSSTALKBC: -9.97165e-05
+    CROSSTALKBD: -0.0125125
+    CROSSTALKCA: -0.00884689
+    CROSSTALKCB: 1.17727e-05
+    CROSSTALKCD: -0.000671046
+    CROSSTALKDA: 0.00339101
+    CROSSTALKDB: -0.00872115
+    CROSSTALKDC: -0.000607719
+    BIAS: 20170131/bias-r1.fits
+    DARK: 20170131/dark-r1.fits
+
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM 
+
+z1:
+  V0:
+# gain and cross-talk  measurement described in EM1 spectrograph report
+# gains A and C not measured
+    AMPLIFIERS: ABCD
+    DETECTOR: lbnl_4kx4k_1002_reverse
+    DATE-OBS-BEGIN: '20161221'
+    DATE-OBS-END: None
+    DOSVER: trunk
+    FEEVER: v20160312
+    EXPTIMEKEY: EXPREQ
+    GAINA: 1.
+    GAINB: 1.13
+    GAINC: 1.
+    GAIND: 0.721
+    SATURLEVA: 200000.0
+    SATURLEVB: 200000.0
+    SATURLEVC: 200000.0
+    SATURLEVD: 200000.0
+    CROSSTALKAB: -0.00042193
+    CROSSTALKAC: -0.00103744
+    CROSSTALKAD: -0.000363374
+    CROSSTALKBA: -0.00142787
+    CROSSTALKBC: 0.00172129
+    CROSSTALKBD: -0.00600321
+    CROSSTALKCA: -0.0075234
+    CROSSTALKCB: -0.00132744
+    CROSSTALKCD: -0.000182816
+    CROSSTALKDA: -0.00167509
+    CROSSTALKDB: -0.00665087
+    CROSSTALKDC: -0.00069539
+    BIAS: 20170131/bias-z1.fits
+    DARK: 20170131/dark-z1.fits
+    MASK: 20161221/mask-z1.fits
+  V-1:
+# old ICS headers
+    AMPLIFIERS: '1234'
+    DETECTOR: lbnl_4kx4k_1002_reverse
+    DATE-OBS-BEGIN: '20161214'
+    DATE-OBS-END: '20161214'
+    DOSVER: trunk
+    FEEVER: v20160312
+    EXPTIMEKEY: EXPREQ
+    GAIN1: 0.970
+    GAIN2: 0.978
+    GAIN3: 0.9
+    GAIN4: 0.626
+    SATURLEV1: 200000.0
+    SATURLEV2: 200000.0
+    SATURLEV3: 200000.0
+    SATURLEV4: 200000.0
+    CROSSTALK21: -0.001291
+    CROSSTALK23: 0.006252
+    CROSSTALK24: -0.012034
+    CROSSTALK31: -0.006483
+    CROSSTALK32: -0.001206
+    CROSSTALK34: -0.000421
+    CROSSTALK41: 0.
+    CROSSTALK42: -0.002936
+    BIAS: 20161214/bias-z1.fits
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM 
+
+
+
+
+#####################################
+## DUMMY VALUES FOR SIMULATION TESTS
+#####################################
+
+b0:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r0:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z0:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM    
+b2:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r2:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z2:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+b3:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r3:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z3:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+b4:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r4:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z4:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+b5:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r5:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z5:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+b6:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r6:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z6:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+b7:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r7:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z7:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+b8:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r8:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z8:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+b9:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+r9:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM       
+z9:
+  SIM:
+      AMPLIFIERS: '1234'      
+      DATE-OBS-BEGIN: '19000101'
+      DATE-OBS-END: None  
+      DOSVER: SIM
+      FEEVER: SIM
+      DETECTOR: SIM
+
+

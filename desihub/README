@@ -1,0 +1,4 @@
+Redrock spec-z fitting tutorial: https://github.com/desihub/tutorials/blob/master/redrock/RedrockOutputs.ipynb. 
+
+Similar to BOSS spec1d (https://arxiv.org/pdf/1207.7326.pdf), but the data is not downsampled (which would introduce 
+additional covariance between wavelengths – in addition to e.g. flux miscalibration).

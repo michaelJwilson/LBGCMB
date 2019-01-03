@@ -1,0 +1,2 @@
+c  Maxmal number of filters 
+	PARAMETER (nbf=20)

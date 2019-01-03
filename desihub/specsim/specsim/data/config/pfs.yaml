@@ -1,0 +1,274 @@
+name: PFS quickSim
+
+base_path: '{DESIMODEL}/data'  # The base path is pre-pended to all non-absolute path values below; {...} will be expanded using environment variables.
+
+verbose: no
+
+wavelength_grid:
+    unit: Angstrom
+    min:  3796.0
+    max: 12600.0
+    step:    0.1
+
+atmosphere: # The atmosphere configuration is interpreted and validated by the specsim.atmosphere module.
+    sky:    # Sky emission surface brightness.
+        table:
+            format: ascii  # The .dat extension is not automatically recognized as ascii.
+            columns:
+                wavelength: { index: 0, unit: Angstrom }
+                surface_brightness:
+                    index: 1
+                    unit:  1e-17 erg / (Angstrom arcsec2 cm2 s)  # Note the factor of 1e-17 in the units!
+            paths:
+                dark:  spectra/extended_coverage_skybrightness_Dark+SullivanSimcoe.dat   # Each path defines a possible condition.
+                                                                                         # grey:   spectra/spec-sky-grey.dat
+                                                                                         # bright: spectra/spec-sky-bright.dat
+
+        condition: dark                                                                  # Specify the current condition.
+
+    seeing:  # Atmospheric seeing (only used when instrument.fiberloss.method = galsim)
+             # The seeing is assumed to scale with wavelength as:  fwhm(wlen) = fwhm_ref * (wlen / wlen_ref) ** -0.2
+        fwhm_ref: 0.8 arcsec  ## 0.8 arcsec seeing (the fraction of incoming flux to fiber aperture is ∼62% at the field center and ∼54% at the edge is perfectly alignment of star @ http://pfs.ipmu.jp/research/performance.html).
+        wlen_ref: 6355 Angstrom
+        moffat_beta: 3.5  # The seeing PSF is modeled as a Moffat profile.
+  
+    moon:    # Surface brightness of scattered moonlight.
+             # Un-normalized spectrum of scattered moonlight;  We use the Wehrli 1985 extraterrestial solar spectrum here @ http://rredc.nrel.gov/solar/spectra/am0/ for details.
+        table:
+            columns:
+                wavelength: { index: 0, unit: Angstrom }
+                flux:
+                    index: 1
+                    # The actual units are W / (m2 micron) but we lie here (by a factor of 10) since the input normalization does not matter and old versions of speclite.filters do not interpret the actual units correctly.
+                    unit: erg / (cm2 s Angstrom)
+            path:   sky/wehrli85.txt
+            format: ascii.basic
+        
+        constants:
+            moon_phase: 0.5           # Phase of the moon from 0 (full) to 1 (new).
+            moon_zenith: 100 deg      # Zenith angles of the moon. An angle > 90 (below the horizon) will zero the scattered moon contribution.
+            separation_angle: 60 deg  # Separation angle between the observation and moon.
+    
+    extinction:                       # Zenith extinction coefficients.
+        table:
+            format: ascii
+            columns:
+                wavelength: { index: 0, unit: Angstrom }
+                extinction_coefficient: { index: 1 }
+            path: spectra/extended_coverage_extinction_KPNO+MaunaKea.dat
+    
+    extinct_emission: yes             # If extinction is to be applied to the sky emission.
+
+    # Airmass to use when the pointing is not calculated from the source and observation parameters. The focal_x and focal_y parameters of
+    # source.location.constants must be set in order for the airmass specified here to be used.
+    airmass: 1.0
+
+# The instrument configuration is interpreted and validated by the specsim.instrument module.
+instrument:
+    name: PFS
+    constants:
+        primary_mirror_diameter: 8.200 m # Effective light-affecting area. 
+        obscuration_diameter: 0.0 m
+        support_width: 0.025 m
+        fiber_diameter: 189.0 um  # Diameter (Core/Cladding/Buffer)  127 / 165 / 189 um @ Table 1 of https://pdfs.semanticscholar.org/507c/1b23c8e790a00de7cb65eade8101b58eb8c9.pdf
+        field_radius: 224.0 mm    # DESI:  414.0 mm; twice of distance from field centre to farthest positioner is 448 mm for PFS. 
+
+    plate_scale:
+        table:
+            path: focalplane/pfs_platescale.txt  ## desimodel/data/focalplane/
+            format: ascii
+            columns:
+                radius: { index: 0, unit: mm }
+                radial_scale: { index: 6, unit: um/arcsec }
+                azimuthal_scale: { index: 7, unit: um/arcsec }
+    fiberloss:
+        method: table  # Method for calculating fiberloss fractions; either galsim or table.
+        num_wlen: 11   # If Method is GalSim: number of wavelengths where fiberloss should be calculated and interpolated
+        num_pixels: 16 # If Method is GalSim:  Number of pixels used to subdivide the fiber diameter for numerical convolution and integration calculations
+
+        table:         # Table of pre-tabulated fiberloss fractions vs wavelength for different source types.  Ignored unless method is table.
+            format: ascii
+            paths:
+                # Each path corresponds to a different source type.
+                qso:     throughput/pfs_fiberloss-qso.dat
+                elg:     throughput/pfs_fiberloss-elg.dat
+                lrg:     throughput/pfs_fiberloss-lrg.dat
+                star:    throughput/pfs_fiberloss-star.dat
+                sky:     throughput/pfs_fiberloss-sky.dat
+                perfect: throughput/pfs_fiberloss-perfect.dat
+            columns:
+                wavelength: { index: 0, unit: Angstrom }
+                fiber_acceptance: { index: 1 }
+    blur:
+        # Read RMS blur values tabulated as a function of field angle and wavelength; derived from ray tracing simulations.  For details,
+        # see $DESIMODEL/doc/nb/DESI-0347_Throughput.ipynb.
+        path: throughput/DESI-0347_blur.ecsv
+        format: ascii.ecsv  # The ECSV format is not auto-detected so we specify it explicitly.
+
+    offset:
+        # Read radial centroid offsets tabulated as a function of field angle and wavelength, and derived from ray tracing simulations.
+        # For details, see $DESIMODEL/doc/nb/DESI-0347_Throughput.ipynb.
+        path: throughput/DESI-0347_offset.ecsv
+        format: ascii.ecsv
+        # Read random achromatic centroid offsets from a FITS file.
+        # Uncomment any one of these lines to select a different random set.
+        # No random offsets are applied if all lines are commented out.
+        random: throughput/DESI-0347_random_offset_1.fits
+    
+    cameras:
+        b:
+            constants:  # These values are copied from Table 1 of https://arxiv.org/pdf/1206.0737.pdf
+                read_noise: 3.0 electron/pixel**2
+                dark_current: 1.4004 electron/(hour pixel**2)  # We treat "pixel" as a linear unit, so we need pixel**2 here.
+                gain: 1.0 electron/adu
+                num_sigmas_clip: 5  # Clip the resolution matrix at this number of sigmas.
+
+                # Output pixels are used to report simulation results but are not the physical pixels.  The output pixel size must be a multiple of wavelength_grid.step.
+                output_pixel_size: 0.71 Angstrom
+
+            ccd:
+                table:
+                    path: specpsf/PFS/psf-quicksim.fits
+                    hdu: QUICKSIM-B
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: { name: wavelength }
+                        row_size:
+                            name: angstroms_per_row  # The file uses Angstrom / row but "row" is not recognized by astropy.units so we replace it with the linear "pixel" unit.
+                            unit: Angstrom / pixel
+                            override_unit: yes
+                        fwhm_resolution: { name: fwhm_wave }
+                        neff_spatial: { name: neff_spatial }
+
+            throughput:
+                table:
+                    format: ascii   
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: {index: 0, unit: Angstrom }
+                        throughput: {index: 1 }
+                    path: throughput/pfs_thru-b.dat
+        r:
+            constants:
+                read_noise: 3.0 electron/pixel**2  # These values are copied from Table 1 of https://arxiv.org/pdf/1206.0737.pdf
+                dark_current: 1.4004 electron/(hour pixel**2)  
+                gain: 1.0 electron/adu
+                num_sigmas_clip: 5
+                output_pixel_size: 0.85 Angstrom
+            ccd:
+                table:
+                    path: specpsf/PFS/psf-quicksim.fits
+                    hdu: QUICKSIM-R
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: { name: wavelength }
+                        row_size:
+                            name: angstroms_per_row
+                            unit: Angstrom / pixel
+                            override_unit: yes
+                        fwhm_resolution: { name: fwhm_wave }
+                        neff_spatial: { name: neff_spatial }
+      
+            throughput:
+                table:
+                    format: ascii
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: {index: 0, unit: Angstrom }
+                        throughput: {index: 1 }
+                    path: throughput/pfs_thru-r.dat
+
+        z:
+            constants:
+                read_noise: 4.0 electron/pixel**2
+                dark_current: 36.0 electron/(hour pixel**2)
+                gain: 1.0 electron/adu
+                num_sigmas_clip: 5
+                output_pixel_size: 0.81 Angstrom
+            ccd:
+                table:
+                    path: specpsf/PFS/psf-quicksim.fits
+                    hdu: QUICKSIM-Z
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: { name: wavelength }
+                        row_size:
+                            name: angstroms_per_row  # The file uses Angstrom / row but "row" is not recognized by astropy.units
+                            unit: Angstrom / pixel
+                            override_unit: yes
+                        fwhm_resolution: { name: fwhm_wave }
+                        neff_spatial: { name: neff_spatial }
+        
+            throughput:
+                table:
+                    format: ascii
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: {index: 0, unit: Angstrom }
+                        throughput: {index: 1 }
+                    path: throughput/pfs_thru-nir.dat
+
+# The source configuration is interpreted and validated by the specsim.source module.
+source:
+    name: 22nd AB magnitude reference
+    type: qso  # The type is only used when instrument.fiberloss.method is 'Table'.
+
+    table:
+        format: ascii
+        path: spectra/extended-coverage-spec-ABmag22.0.dat
+        columns:
+            wavelength: { index: 0, unit: Angstrom }
+            flux:
+                index: 1
+                unit: 1e-17 erg / (Angstrom cm2 s)  # Note the factor of 1e-17 in the units!
+
+    profile:  # Transverse profile of the source on the sky, used to calculate the fiberloss fraction when instrument.fiberloss.method = galsim (but ignored otherwise).
+        # The sum of disk + bulge fractions must be <= 1. If it is < 1, the remainder is point-like, i.e., star or QSO.
+        disk_fraction: 0.0
+        bulge_fraction: 0.0
+        disk_shape:
+            half_light_radius: 0.8 arcsec
+            position_angle: 45 deg
+            minor_major_axis_ratio: 0.5
+        bulge_shape:
+            half_light_radius: 1.2 arcsec
+            position_angle: 60 deg
+            minor_major_axis_ratio: 0.8
+
+    location:  # Location of the source on the sky. A source will not be visible if it lies out of the observation field of view.
+        # If focal-plane (x,y) coordinates are not specified, they will be calculated from the sky coordinates and observing conditions and the corresponding airmass will be used for the atmosphere model.
+        constants:
+            # Comment out these lines to have (x,y) and the airmass calculated automatically for this source and observation.
+            focal_x: -70.7 mm
+            focal_y: +70.7 mm
+        # Sky coordinates are optional (and ignored) when focal-plane (x,y) are specified.
+        sky: { coordinates: 0h 0d, frame: icrs }
+    # Set these parameters to apply a redshift transformation.
+    z_in:
+    z_out:
+    # Set these parameters to normalize in a specified filter.
+    filter_name:
+    ab_magnitude_out:
+
+observation:  # The observation configuration is interpreted and validated by the specsim.observation module.
+    observatory: KPNO ## NAOJ
+    constants:
+        exposure_time: 1000.0 s
+        # Atmospheric pressure at the telescope (not at sea level) used to calculate atmospheric refraction.  Leave commented out to use a
+        # nominal value calculated for the observatory elevation.
+        # pressure: 79 kPa
+        # Air temperature at the telescope used to calculate atmospheric refraction (but only has a small effect).
+        temperature: 15 deg_C
+        # Relative humidity (0-1) at the telescope used to calculate atmospheric refraction (but only has a small effect).
+        relative_humidity: 0.0
+    
+    exposure_start:
+        timestamp:
+            when: 55000.5
+            format: mjd
+        # This optional parameter adjusts the timestamp by +/-12h to achieve the specified hour angle for the boresight (ra, dec). adjust_to_hour_angle: -0.5h
+    
+    pointing:
+        sky:
+            coordinates: 0h 0d
+            frame: icrs

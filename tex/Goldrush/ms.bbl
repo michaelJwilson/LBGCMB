@@ -1,0 +1,920 @@
+\begin{thebibliography}{}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{{Abazajian} {et~al.}(2004){Abazajian}, {Adelman-McCarthy},
+  {Ag{\"u}eros}, {Allam}, {Anderson}, {Anderson}, {Annis}, {Bahcall}, {Baldry},
+  {Bastian}, {Berlind}, {Bernardi}, {Blanton}, {Bochanski}, {Boroski},
+  {Briggs}, {Brinkmann}, {Brunner}, {Budav{\'a}ri}, {Carey}, {Carliles},
+  {Castander}, {Connolly}, {Csabai}, {Doi}, {Dong}, {Eisenstein}, {Evans},
+  {Fan}, {Finkbeiner}, {Friedman}, {Frieman}, {Fukugita}, {Gal}, {Gillespie},
+  {Glazebrook}, {Gray}, {Grebel}, {Gunn}, {Gurbani}, {Hall}, {Hamabe},
+  {Harris}, {Harris}, {Harvanek}, {Heckman}, {Hendry}, {Hennessy}, {Hindsley},
+  {Hogan}, {Hogg}, {Holmgren}, {Ichikawa}, {Ichikawa}, {Ivezi{\'c}}, {Jester},
+  {Johnston}, {Jorgensen}, {Kent}, {Kleinman}, {Knapp}, {Kniazev}, {Kron},
+  {Krzesinski}, {Kunszt}, {Kuropatkin}, {Lamb}, {Lampeitl}, {Lee}, {Leger},
+  {Li}, {Lin}, {Loh}, {Long}, {Loveday}, {Lupton}, {Malik}, {Margon},
+  {Matsubara}, {McGehee}, {McKay}, {Meiksin}, {Munn}, {Nakajima}, {Nash},
+  {Neilsen}, {Newberg}, {Newman}, {Nichol}, {Nicinski}, {Nieto-Santisteban},
+  {Nitta}, {Okamura}, {O'Mullane}, {Ostriker}, {Owen}, {Padmanabhan},
+  {Peoples}, {Pier}, {Pope}, {Quinn}, {Richards}, {Richmond}, {Rix}, {Rockosi},
+  {Schlegel}, {Schneider}, {Scranton}, {Sekiguchi}, {Seljak}, {Sergey},
+  {Sesar}, {Sheldon}, {Shimasaku}, {Siegmund}, {Silvestri}, {Smith}, {Smol{\v
+  c}i{\'c}}, {Snedden}, {Stebbins}, {Stoughton}, {Strauss}, {SubbaRao},
+  {Szalay}, {Szapudi}, {Szkody}, {Szokoly}, {Tegmark}, {Teodoro}, {Thakar},
+  {Tremonti}, {Tucker}, {Uomoto}, {Vanden Berk}, {Vandenberg}, {Vogeley},
+  {Voges}, {Vogt}, {Walkowicz}, {Wang}, {Weinberg}, {West}, {White}, {Wilhite},
+  {Xu}, {Yanny}, {Yasuda}, {Yip}, {Yocum}, {York}, {Zehavi}, {Zibetti}, \&
+  {Zucker}}]{2004AJ....128..502A}
+{Abazajian}, K., {Adelman-McCarthy}, J.~K., {Ag{\"u}eros}, M.~A., {et~al.}
+  2004, \aj, 128, 502
+
+\bibitem[{{Adelberger} \& {Steidel}(2000)}]{2000ApJ...544..218A}
+{Adelberger}, K.~L., \& {Steidel}, C.~C. 2000, \apj, 544, 218
+
+\bibitem[{{Aihara} {et~al.}(2017{\natexlab{a}}){Aihara}, {Armstrong},
+  {Bickerton}, {Bosch}, {Coupon}, {Furusawa}, {Hayashi}, {Ikeda}, {Kamata},
+  {Karoji}, {Kawanomoto}, {Koike}, {Komiyama}, {Lupton}, {Mineo}, {Miyatake},
+  {Miyazaki}, {Morokuma}, {Obuchi}, {Oishi}, {Okura}, {Price}, {Takata},
+  {Tanaka}, {Tanaka}, {Tanaka}, {Uchida}, {Uraguchi}, {Utsumi}, {Wang},
+  {Yamada}, {Yamanoi}, {Yasuda}, {Arimoto}, {Chiba}, {Finet}, {Fujimori},
+  {Fujimoto}, {Furusawa}, {Goto}, {Goulding}, {Gunn}, {Harikane}, {Hattori},
+  {Hayashi}, {Helminiak}, {Higuchi}, {Hikage}, {Ho}, {Hsieh}, {Huang}, {Huang},
+  {Imanishi}, {Iwata}, {Jaelani}, {Jian}, {Kashikawa}, {Katayama}, {Kojima},
+  {Konno}, {Koshida}, {Leauthaud}, {Lee}, {Lin}, {Lin}, {Mandelbaum},
+  {Matsuoka}, {Medezinski}, {Miyama}, {Momose}, {More}, {More}, {Mukae},
+  {Murata}, {Murayama}, {Nagao}, {Nakata}, {Niikura}, {Nishizawa}, {Oguri},
+  {Okabe}, {Ono}, {Onodera}, {Onoue}, {Ouchi}, {Pyo}, {Shibuya}, {Shimasaku},
+  {Simet}, {Speagle}, {Spergel}, {Strauss}, {Sugahara}, {Sugiyama}, {Suto},
+  {Suzuki}, {Tait}, {Takada}, {Terai}, {Toba}, {Turner}, {Uchiyama}, {Umetsu},
+  {Urata}, {Usuda}, {Yeh}, \& {Yuma}}]{2017arXiv170208449A}
+{Aihara}, H., {Armstrong}, R., {Bickerton}, S., {et~al.} 2017{\natexlab{a}},
+  ArXiv e-prints, arXiv:1702.08449
+
+\bibitem[{{Aihara} {et~al.}(2017{\natexlab{b}}){Aihara}, {Arimoto},
+  {Armstrong}, {Arnouts}, {Bahcall}, {Bickerton}, {Bosch}, {Bundy}, {Capak},
+  {Chan}, {Chiba}, {Coupon}, {Egami}, {Enoki}, {Finet}, {Fujimori}, {Fujimoto},
+  {Furusawa}, {Furusawa}, {Goto}, {Goulding}, {Greco}, {Greene}, {Gunn},
+  {Hamana}, {Harikane}, {Hashimoto}, {Hattori}, {Hayashi}, {Hayashi},
+  {He{\l}miniak}, {Higuchi}, {Hikage}, {Ho}, {Hsieh}, {Huang}, {Huang},
+  {Ikeda}, {Imanishi}, {Inoue}, {Iwasawa}, {Iwata}, {Jaelani}, {Jian},
+  {Kamata}, {Karoji}, {Kashikawa}, {Katayama}, {Kawanomoto}, {Kayo}, {Koda},
+  {Koike}, {Kojima}, {Komiyama}, {Konno}, {Koshida}, {Koyama}, {Kusakabe},
+  {Leauthaud}, {Lee}, {Lin}, {Lin}, {Lupton}, {Mandelbaum}, {Matsuoka},
+  {Medezinski}, {Mineo}, {Miyama}, {Miyatake}, {Miyazaki}, {Momose}, {More},
+  {More}, {Moritani}, {Moriya}, {Morokuma}, {Mukae}, {Murata}, {Murayama},
+  {Nagao}, {Nakata}, {Niida}, {Niikura}, {Nishizawa}, {Obuchi}, {Oguri},
+  {Oishi}, {Okabe}, {Okura}, {Ono}, {Onodera}, {Onoue}, {Osato}, {Ouchi},
+  {Price}, {Pyo}, {Sako}, {Okamoto}, {Sawicki}, {Shibuya}, {Shimasaku},
+  {Shimono}, {Shirasaki}, {Silverman}, {Simet}, {Speagle}, {Spergel},
+  {Strauss}, {Sugahara}, {Sugiyama}, {Suto}, {Suyu}, {Suzuki}, {Tait},
+  {Takata}, {Takada}, {Tamura}, {Tanaka}, {Tanaka}, {Tanaka}, {Tanaka},
+  {Terai}, {Terashima}, {Toba}, {Toshikawa}, {Turner}, {Uchida}, {Uchiyama},
+  {Umetsu}, {Uraguchi}, {Urata}, {Usuda}, {Utsumi}, {Wang}, {Wang}, {Wong},
+  {Yabe}, {Yamada}, {Yamanoi}, {Yasuda}, {Yeh}, {Yonehara}, \&
+  {Yuma}}]{2017arXiv170405858A}
+{Aihara}, H., {Arimoto}, N., {Armstrong}, R., {et~al.} 2017{\natexlab{b}},
+  ArXiv e-prints, arXiv:1704.05858
+
+\bibitem[{{Akiyama} {et~al.}(2017){Akiyama}, {He}, {Ikeda}, {Niida}, {Nagao},
+  {Bosch}, {Coupon}, {Enoki}, {Imanishi}, {Kashikawa}, {Kawaguchi}, {Komiyama},
+  {Lee}, {Matsuoka}, {Miyazaki}, {Nishizawa}, {Oguri}, {Ono}, {Onoue}, {Ouchi},
+  {Schulze}, {Silverman}, {Tanaka}, {Tanaka}, {Terashima}, {Toba}, \&
+  {Ueda}}]{2017arXiv170405996A}
+{Akiyama}, M., {He}, W., {Ikeda}, H., {et~al.} 2017, ArXiv e-prints,
+  arXiv:1704.05996
+
+\bibitem[{{Atek} {et~al.}(2015){Atek}, {Richard}, {Jauzac}, {Kneib},
+  {Natarajan}, {Limousin}, {Schaerer}, {Jullo}, {Ebeling}, {Egami}, \&
+  {Clement}}]{2015ApJ...814...69A}
+{Atek}, H., {Richard}, J., {Jauzac}, M., {et~al.} 2015, \apj, 814, 69
+
+\bibitem[{{Axelrod} {et~al.}(2010){Axelrod}, {Kantor}, {Lupton}, \&
+  {Pierfederici}}]{2010SPIE.7740E..15A}
+{Axelrod}, T., {Kantor}, J., {Lupton}, R.~H., \& {Pierfederici}, F. 2010, in
+  \procspie, Vol. 7740, Software and Cyberinfrastructure for Astronomy, 774015
+
+\bibitem[{{Ba{\~n}ados} {et~al.}(2016){Ba{\~n}ados}, {Venemans}, {Decarli},
+  {Farina}, {Mazzucchelli}, {Walter}, {Fan}, {Stern}, {Schlafly}, {Chambers},
+  {Rix}, {Jiang}, {McGreer}, {Simcoe}, {Wang}, {Yang}, {Morganson}, {De Rosa},
+  {Greiner}, {Balokovi{\'c}}, {Burgett}, {Cooper}, {Draper}, {Flewelling},
+  {Hodapp}, {Jun}, {Kaiser}, {Kudritzki}, {Magnier}, {Metcalfe}, {Miller},
+  {Schindler}, {Tonry}, {Wainscoat}, {Waters}, \& {Yang}}]{2016ApJS..227...11B}
+{Ba{\~n}ados}, E., {Venemans}, B.~P., {Decarli}, R., {et~al.} 2016, \apjs, 227,
+  11
+
+\bibitem[{{Barone-Nugent} {et~al.}(2015){Barone-Nugent}, {Wyithe}, {Trenti},
+  {Treu}, {Oesch}, {Bouwens}, {Illingworth}, \&
+  {Schmidt}}]{2015MNRAS.450.1224B}
+{Barone-Nugent}, R.~L., {Wyithe}, J.~S.~B., {Trenti}, M., {et~al.} 2015,
+  \mnras, 450, 1224
+
+\bibitem[{{Benson} {et~al.}(2003){Benson}, {Bower}, {Frenk}, {Lacey}, {Baugh},
+  \& {Cole}}]{2003ApJ...599...38B}
+{Benson}, A.~J., {Bower}, R.~G., {Frenk}, C.~S., {et~al.} 2003, \apj, 599, 38
+
+\bibitem[{{Bian} {et~al.}(2013){Bian}, {Fan}, {Jiang}, {McGreer}, {Dey},
+  {Green}, {Maiolino}, {Walter}, {Lee}, \& {Dav{\'e}}}]{2013ApJ...774...28B}
+{Bian}, F., {Fan}, X., {Jiang}, L., {et~al.} 2013, \apj, 774, 28
+
+\bibitem[{{Binney}(1977)}]{1977ApJ...215..483B}
+{Binney}, J. 1977, \apj, 215, 483
+
+\bibitem[{{Binney}(2004)}]{2004MNRAS.347.1093B}
+---. 2004, \mnras, 347, 1093
+
+\bibitem[{{Bosch} {et~al.}(2017){Bosch}, {Armstrong}, {Bickerton}, {Furusawa},
+  {Ikeda}, {Koike}, {Lupton}, {Mineo}, {Price}, {Takata}, {Tanaka}, {Yasuda},
+  {AlSayyad}, {Becker}, {Coulton}, {Coupon}, {Garmilla}, {Huang}, {Krughoff},
+  {Lang}, {Leauthaud}, {Lim}, {Lust}, {MacArthur}, {Mandelbaum}, {Miyatake},
+  {Miyazaki}, {Murata}, {More}, {Okura}, {Owen}, {Swinbank}, {Strauss},
+  {Yamada}, \& {Yamanoi}}]{2017arXiv170506766B}
+{Bosch}, J., {Armstrong}, R., {Bickerton}, S., {et~al.} 2017, ArXiv e-prints,
+  arXiv:1705.06766
+
+\bibitem[{{Bouwens} {et~al.}(2008){Bouwens}, {Illingworth}, {Franx}, \&
+  {Ford}}]{2008ApJ...686..230B}
+{Bouwens}, R.~J., {Illingworth}, G.~D., {Franx}, M., \& {Ford}, H. 2008, \apj,
+  686, 230
+
+\bibitem[{{Bouwens} {et~al.}(2017{\natexlab{a}}){Bouwens}, {Illingworth},
+  {Oesch}, {Atek}, {Lam}, \& {Stefanon}}]{2017ApJ...843...41B}
+{Bouwens}, R.~J., {Illingworth}, G.~D., {Oesch}, P.~A., {et~al.}
+  2017{\natexlab{a}}, \apj, 843, 41
+
+\bibitem[{{Bouwens} {et~al.}(2017{\natexlab{b}}){Bouwens}, {Oesch},
+  {Illingworth}, {Ellis}, \& {Stefanon}}]{2017ApJ...843..129B}
+{Bouwens}, R.~J., {Oesch}, P.~A., {Illingworth}, G.~D., {Ellis}, R.~S., \&
+  {Stefanon}, M. 2017{\natexlab{b}}, \apj, 843, 129
+
+\bibitem[{{Bouwens} {et~al.}(2014){Bouwens}, {Illingworth}, {Oesch},
+  {Labb{\'e}}, {van Dokkum}, {Trenti}, {Franx}, {Smit}, {Gonzalez}, \&
+  {Magee}}]{2014ApJ...793..115B}
+{Bouwens}, R.~J., {Illingworth}, G.~D., {Oesch}, P.~A., {et~al.} 2014, \apj,
+  793, 115
+
+\bibitem[{{Bouwens} {et~al.}(2015){Bouwens}, {Illingworth}, {Oesch}, {Trenti},
+  {Labb{\'e}}, {Bradley}, {Carollo}, {van Dokkum}, {Gonzalez}, {Holwerda},
+  {Franx}, {Spitler}, {Smit}, \& {Magee}}]{2015ApJ...803...34B}
+---. 2015, \apj, 803, 34
+
+\bibitem[{{Bower} {et~al.}(2006){Bower}, {Benson}, {Malbon}, {Helly}, {Frenk},
+  {Baugh}, {Cole}, \& {Lacey}}]{2006MNRAS.370..645B}
+{Bower}, R.~G., {Benson}, A.~J., {Malbon}, R., {et~al.} 2006, \mnras, 370, 645
+
+\bibitem[{{Bowler} {et~al.}(2017){Bowler}, {Dunlop}, {McLure}, \&
+  {McLeod}}]{2017MNRAS.466.3612B}
+{Bowler}, R.~A.~A., {Dunlop}, J.~S., {McLure}, R.~J., \& {McLeod}, D.~J. 2017,
+  \mnras, 466, 3612
+
+\bibitem[{{Bowler} {et~al.}(2012){Bowler}, {Dunlop}, {McLure}, {McCracken},
+  {Milvang-Jensen}, {Furusawa}, {Fynbo}, {Le F{\`e}vre}, {Holt}, {Ideue},
+  {Ihara}, {Rogers}, \& {Taniguchi}}]{2012MNRAS.426.2772B}
+{Bowler}, R.~A.~A., {Dunlop}, J.~S., {McLure}, R.~J., {et~al.} 2012, \mnras,
+  426, 2772
+
+\bibitem[{{Bowler} {et~al.}(2015){Bowler}, {Dunlop}, {McLure}, {McCracken},
+  {Milvang-Jensen}, {Furusawa}, {Taniguchi}, {Le F{\`e}vre}, {Fynbo}, {Jarvis},
+  \& {H{\"a}u{\ss}ler}}]{2015MNRAS.452.1817B}
+---. 2015, \mnras, 452, 1817
+
+\bibitem[{{Bruzual} \& {Charlot}(2003)}]{2003MNRAS.344.1000B}
+{Bruzual}, G., \& {Charlot}, S. 2003, \mnras, 344, 1000
+
+\bibitem[{{Calzetti} {et~al.}(2000){Calzetti}, {Armus}, {Bohlin}, {Kinney},
+  {Koornneef}, \& {Storchi-Bergmann}}]{2000ApJ...533..682C}
+{Calzetti}, D., {Armus}, L., {Bohlin}, R.~C., {et~al.} 2000, \apj, 533, 682
+
+\bibitem[{{Capak} {et~al.}(2007){Capak}, {Aussel}, {Ajiki}, {McCracken},
+  {Mobasher}, {Scoville}, {Shopbell}, {Taniguchi}, {Thompson}, {Tribiano},
+  {Sasaki}, {Blain}, {Brusa}, {Carilli}, {Comastri}, {Carollo}, {Cassata},
+  {Colbert}, {Ellis}, {Elvis}, {Giavalisco}, {Green}, {Guzzo}, {Hasinger},
+  {Ilbert}, {Impey}, {Jahnke}, {Kartaltepe}, {Kneib}, {Koda}, {Koekemoer},
+  {Komiyama}, {Leauthaud}, {Le Fevre}, {Lilly}, {Liu}, {Massey}, {Miyazaki},
+  {Murayama}, {Nagao}, {Peacock}, {Pickles}, {Porciani}, {Renzini}, {Rhodes},
+  {Rich}, {Salvato}, {Sanders}, {Scarlata}, {Schiminovich}, {Schinnerer},
+  {Scodeggio}, {Sheth}, {Shioya}, {Tasca}, {Taylor}, {Yan}, \&
+  {Zamorani}}]{2007ApJS..172...99C}
+{Capak}, P., {Aussel}, H., {Ajiki}, M., {et~al.} 2007, \apjs, 172, 99
+
+\bibitem[{{Castellano} {et~al.}(2010){Castellano}, {Fontana}, {Boutsia},
+  {Grazian}, {Pentericci}, {Bouwens}, {Dickinson}, {Giavalisco}, {Santini},
+  {Cristiani}, {Fiore}, {Gallozzi}, {Giallongo}, {Maiolino}, {Mannucci},
+  {Menci}, {Moorwood}, {Nonino}, {Paris}, {Renzini}, {Rosati}, {Salimbeni},
+  {Testa}, \& {Vanzella}}]{2010A&A...511A..20C}
+{Castellano}, M., {Fontana}, A., {Boutsia}, K., {et~al.} 2010, \aap, 511, A20
+
+\bibitem[{{Castellano} {et~al.}(2016){Castellano}, {Yue}, {Ferrara}, {Merlin},
+  {Fontana}, {Amor{\'{\i}}n}, {Grazian}, {M{\'a}rmol-Queralto},
+  {Micha{\l}owski}, {Mortlock}, {Paris}, {Parsa}, {Pilo}, \&
+  {Santini}}]{2016ApJ...823L..40C}
+{Castellano}, M., {Yue}, B., {Ferrara}, A., {et~al.} 2016, \apjl, 823, L40
+
+\bibitem[{{Coleman} {et~al.}(1980){Coleman}, {Wu}, \&
+  {Weedman}}]{1980ApJS...43..393C}
+{Coleman}, G.~D., {Wu}, C.-C., \& {Weedman}, D.~W. 1980, \apjs, 43, 393
+
+\bibitem[{{Coupon} {et~al.}(2017){Coupon}, {Czakon}, {Bosch}, {Komiyama},
+  {Medezinski}, {Miyazaki}, \& {Oguri}}]{2017arXiv170500622C}
+{Coupon}, J., {Czakon}, N., {Bosch}, J., {et~al.} 2017, ArXiv e-prints,
+  arXiv:1705.00622
+
+\bibitem[{{Croton} {et~al.}(2006){Croton}, {Springel}, {White}, {De Lucia},
+  {Frenk}, {Gao}, {Jenkins}, {Kauffmann}, {Navarro}, \&
+  {Yoshida}}]{2006MNRAS.365...11C}
+{Croton}, D.~J., {Springel}, V., {White}, S.~D.~M., {et~al.} 2006, \mnras, 365,
+  11
+
+\bibitem[{{Curtis-Lake} {et~al.}(2012){Curtis-Lake}, {McLure}, {Pearce},
+  {Dunlop}, {Cirasuolo}, {Stark}, {Almaini}, {Bradshaw}, {Chuter}, {Foucaud},
+  \& {Hartley}}]{2012MNRAS.422.1425C}
+{Curtis-Lake}, E., {McLure}, R.~J., {Pearce}, H.~J., {et~al.} 2012, \mnras,
+  422, 1425
+
+\bibitem[{{Curtis-Lake} {et~al.}(2016){Curtis-Lake}, {McLure}, {Dunlop},
+  {Rogers}, {Targett}, {Dekel}, {Ellis}, {Faber}, {Ferguson}, {Grogin},
+  {Kocevski}, {Koekemoer}, {Lai}, {M{\'a}rmol-Queralt{\'o}}, \&
+  {Robertson}}]{2016MNRAS.457..440C}
+{Curtis-Lake}, E., {McLure}, R.~J., {Dunlop}, J.~S., {et~al.} 2016, \mnras,
+  457, 440
+
+\bibitem[{{Dressler} {et~al.}(2011){Dressler}, {Bigelow}, {Hare}, {Sutin},
+  {Thompson}, {Burley}, {Epps}, {Oemler}, {Bagish}, {Birk}, {Clardy},
+  {Gunnels}, {Kelson}, {Shectman}, \& {Osip}}]{2011PASP..123..288D}
+{Dressler}, A., {Bigelow}, B., {Hare}, T., {et~al.} 2011, \pasp, 123, 288
+
+\bibitem[{{Eddington}(1913)}]{1913MNRAS..73..359E}
+{Eddington}, A.~S. 1913, \mnras, 73, 359
+
+\bibitem[{{Ellis} {et~al.}(2013){Ellis}, {McLure}, {Dunlop}, {Robertson},
+  {Ono}, {Schenker}, {Koekemoer}, {Bowler}, {Ouchi}, {Rogers}, {Curtis-Lake},
+  {Schneider}, {Charlot}, {Stark}, {Furlanetto}, \&
+  {Cirasuolo}}]{2013ApJ...763L...7E}
+{Ellis}, R.~S., {McLure}, R.~J., {Dunlop}, J.~S., {et~al.} 2013, \apjl, 763, L7
+
+\bibitem[{{Faber} \& {Jackson}(1976)}]{1976ApJ...204..668F}
+{Faber}, S.~M., \& {Jackson}, R.~E. 1976, \apj, 204, 668
+
+\bibitem[{{Finkelstein} {et~al.}(2015){Finkelstein}, {Ryan}, {Papovich},
+  {Dickinson}, {Song}, {Somerville}, {Ferguson}, {Salmon}, {Giavalisco},
+  {Koekemoer}, {Ashby}, {Behroozi}, {Castellano}, {Dunlop}, {Faber}, {Fazio},
+  {Fontana}, {Grogin}, {Hathi}, {Jaacks}, {Kocevski}, {Livermore}, {McLure},
+  {Merlin}, {Mobasher}, {Newman}, {Rafelski}, {Tilvi}, \&
+  {Willner}}]{2015ApJ...810...71F}
+{Finkelstein}, S.~L., {Ryan}, Jr., R.~E., {Papovich}, C., {et~al.} 2015, \apj,
+  810, 71
+
+\bibitem[{{Finlator} {et~al.}(2017){Finlator}, {Prescott}, {Oppenheimer},
+  {Dav{\'e}}, {Zackrisson}, {Livermore}, {Finkelstein}, {Thompson}, \&
+  {Huang}}]{2017MNRAS.464.1633F}
+{Finlator}, K., {Prescott}, M.~K.~M., {Oppenheimer}, B.~D., {et~al.} 2017,
+  \mnras, 464, 1633
+
+\bibitem[{{Furusawa} {et~al.}(2008){Furusawa}, {Kosugi}, {Akiyama}, {Takata},
+  {Sekiguchi}, {Tanaka}, {Iwata}, {Kajisawa}, {Yasuda}, {Doi}, {Ouchi},
+  {Simpson}, {Shimasaku}, {Yamada}, {Furusawa}, {Morokuma}, {Ishida}, {Aoki},
+  {Fuse}, {Imanishi}, {Iye}, {Karoji}, {Kobayashi}, {Kodama}, {Komiyama},
+  {Maeda}, {Miyazaki}, {Mizumoto}, {Nakata}, {Noumaru}, {Ogasawara}, {Okamura},
+  {Saito}, {Sasaki}, {Ueda}, \& {Yoshida}}]{2008ApJS..176....1F}
+{Furusawa}, H., {Kosugi}, G., {Akiyama}, M., {et~al.} 2008, \apjs, 176, 1
+
+\bibitem[{{Furusawa} {et~al.}(2017)}]{furusawa2017} 
+{Furusawa}, H., et al. 2017, submitted to PASJ
+
+\bibitem[{{Gehrels}(1986)}]{1986ApJ...303..336G}
+{Gehrels}, N. 1986, \apj, 303, 336
+
+\bibitem[{{Giallongo} {et~al.}(2015){Giallongo}, {Grazian}, {Fiore}, {Fontana},
+  {Pentericci}, {Vanzella}, {Dickinson}, {Kocevski}, {Castellano}, {Cristiani},
+  {Ferguson}, {Finkelstein}, {Grogin}, {Hathi}, {Koekemoer}, {Newman}, \&
+  {Salvato}}]{2015A&A...578A..83G}
+{Giallongo}, E., {Grazian}, A., {Fiore}, F., {et~al.} 2015, \aap, 578, A83
+
+\bibitem[{{Giavalisco}(2002)}]{2002ARA&A..40..579G}
+{Giavalisco}, M. 2002, \araa, 40, 579
+
+\bibitem[{{Glikman} {et~al.}(2011){Glikman}, {Djorgovski}, {Stern}, {Dey},
+  {Jannuzi}, \& {Lee}}]{2011ApJ...728L..26G}
+{Glikman}, E., {Djorgovski}, S.~G., {Stern}, D., {et~al.} 2011, \apjl, 728, L26
+
+\bibitem[{{Gnedin}(2016)}]{2016ApJ...825L..17G}
+{Gnedin}, N.~Y. 2016, \apjl, 825, L17
+
+\bibitem[{{Granato} {et~al.}(2004){Granato}, {De Zotti}, {Silva}, {Bressan}, \&
+  {Danese}}]{2004ApJ...600..580G}
+{Granato}, G.~L., {De Zotti}, G., {Silva}, L., {Bressan}, A., \& {Danese}, L.
+  2004, \apj, 600, 580
+
+\bibitem[{{Gunn} \& {Stryker}(1983)}]{1983ApJS...52..121G}
+{Gunn}, J.~E., \& {Stryker}, L.~L. 1983, \apjs, 52, 121
+
+\bibitem[{{Harikane} {et~al.}(2017){Harikane}, {Ouchi}, {Ono}, {Saito},
+  {Behroozi}, {More}, {Shimasaku}, {Toshikawa}, {Lin}, {Akiyama}, {Coupon},
+  {Komiyama}, {Konno}, {Lin}, {Miyazaki}, {Nishizawa}, {Shibuya}, \&
+  {Silverman}}]{2017arXiv170406535H}
+{Harikane}, Y., {Ouchi}, M., {Ono}, Y., {et~al.} 2017, ArXiv e-prints,
+  arXiv:1704.06535
+
+\bibitem[{{Hildebrandt} {et~al.}(2009){Hildebrandt}, {Pielorz}, {Erben}, {van
+  Waerbeke}, {Simon}, \& {Capak}}]{2009A&A...498..725H}
+{Hildebrandt}, H., {Pielorz}, J., {Erben}, T., {et~al.} 2009, \aap, 498, 725
+
+\bibitem[{{Hogg}(1999)}]{1999astro.ph..5116H}
+{Hogg}, D.~W. 1999, ArXiv Astrophysics e-prints, astro-ph/9905116
+
+\bibitem[{{Hook} {et~al.}(2004){Hook}, {J{\o}rgensen}, {Allington-Smith},
+  {Davies}, {Metcalfe}, {Murowinski}, \& {Crampton}}]{2004PASP..116..425H}
+{Hook}, I.~M., {J{\o}rgensen}, I., {Allington-Smith}, J.~R., {et~al.} 2004,
+  \pasp, 116, 425
+
+\bibitem[{{Huang} {et~al.}(2017){Huang}, {Leauthaud}, {Murata}, {Bosch},
+  {Price}, {Lupton}, {Mandelbaum}, {Lackner}, {Bickerton}, {Miyazaki},
+  {Coupon}, \& {Tanaka}}]{2017arXiv170501599H}
+{Huang}, S., {Leauthaud}, A., {Murata}, R., {et~al.} 2017, ArXiv e-prints,
+  arXiv:1705.01599
+
+\bibitem[{{Ikeda} {et~al.}(2012){Ikeda}, {Nagao}, {Matsuoka}, {Taniguchi},
+  {Shioya}, {Kajisawa}, {Enoki}, {Capak}, {Civano}, {Koekemoer}, {Masters},
+  {Morokuma}, {Salvato}, {Schinnerer}, \& {Scoville}}]{2012ApJ...756..160I}
+{Ikeda}, H., {Nagao}, T., {Matsuoka}, K., {et~al.} 2012, \apj, 756, 160
+
+\bibitem[{{Ishigaki} {et~al.}(2017){Ishigaki}, {Kawamata}, {Ouchi}, {Oguri}, \&
+  {Shimasaku}}]{2017arXiv170204867I}
+{Ishigaki}, M., {Kawamata}, R., {Ouchi}, M., {Oguri}, M., \& {Shimasaku}, K.
+  2017, ArXiv e-prints, arXiv:1702.04867
+
+\bibitem[{{Ishigaki} {et~al.}(2015){Ishigaki}, {Kawamata}, {Ouchi}, {Oguri},
+  {Shimasaku}, \& {Ono}}]{2015ApJ...799...12I}
+{Ishigaki}, M., {Kawamata}, R., {Ouchi}, M., {et~al.} 2015, \apj, 799, 12
+
+\bibitem[{{Ivezic} {et~al.}(2008){Ivezic}, {Tyson}, {Abel}, {Acosta},
+  {Allsman}, {AlSayyad}, {Anderson}, {Andrew}, {Angel}, {Angeli}, {Ansari},
+  {Antilogus}, {Arndt}, {Astier}, {Aubourg}, {Axelrod}, {Bard}, {Barr},
+  {Barrau}, {Bartlett}, {Bauman}, {Beaumont}, {Becker}, {Becla}, {Beldica},
+  {Bellavia}, {Blanc}, {Blandford}, {Bloom}, {Bogart}, {Borne}, {Bosch},
+  {Boutigny}, {Brandt}, {Brown}, {Bullock}, {Burchat}, {Burke}, {Cagnoli},
+  {Calabrese}, {Chandrasekharan}, {Chesley}, {Cheu}, {Chiang}, {Claver},
+  {Connolly}, {Cook}, {Cooray}, {Covey}, {Cribbs}, {Cui}, {Cutri}, {Daubard},
+  {Daues}, {Delgado}, {Digel}, {Doherty}, {Dubois}, {Dubois-Felsmann},
+  {Durech}, {Eracleous}, {Ferguson}, {Frank}, {Freemon}, {Gangler}, {Gawiser},
+  {Geary}, {Gee}, {Geha}, {Gibson}, {Gilmore}, {Glanzman}, {Goodenow},
+  {Gressler}, {Gris}, {Guyonnet}, {Hascall}, {Haupt}, {Hernandez}, {Hogan},
+  {Huang}, {Huffer}, {Innes}, {Jacoby}, {Jain}, {Jee}, {Jernigan},
+  {Jevremovic}, {Johns}, {Jones}, {Juramy-Gilles}, {Juric}, {Kahn}, {Kalirai},
+  {Kallivayalil}, {Kalmbach}, {Kantor}, {Kasliwal}, {Kessler}, {Kirkby},
+  {Knox}, {Kotov}, {Krabbendam}, {Krughoff}, {Kubanek}, {Kuczewski},
+  {Kulkarni}, {Lambert}, {Le Guillou}, {Levine}, {Liang}, {Lim}, {Lintott},
+  {Lupton}, {Mahabal}, {Marshall}, {Marshall}, {May}, {McKercher}, {Migliore},
+  {Miller}, {Mills}, {Monet}, {Moniez}, {Neill}, {Nief}, {Nomerotski},
+  {Nordby}, {O'Connor}, {Oliver}, {Olivier}, {Olsen}, {Ortiz}, {Owen}, {Pain},
+  {Peterson}, {Petry}, {Pierfederici}, {Pietrowicz}, {Pike}, {Pinto}, {Plante},
+  {Plate}, {Price}, {Prouza}, {Radeka}, {Rajagopal}, {Rasmussen}, {Regnault},
+  {Ridgway}, {Ritz}, {Rosing}, {Roucelle}, {Rumore}, {Russo}, {Saha},
+  {Sassolas}, {Schalk}, {Schindler}, {Schneider}, {Schumacher}, {Sebag},
+  {Sembroski}, {Seppala}, {Shipsey}, {Silvestri}, {Smith}, {Smith}, {Strauss},
+  {Stubbs}, {Sweeney}, {Szalay}, {Takacs}, {Thaler}, {Van Berg}, {Vanden Berk},
+  {Vetter}, {Virieux}, {Xin}, {Walkowicz}, {Walter}, {Wang}, {Warner},
+  {Willman}, {Wittman}, {Wolff}, {Wood-Vasey}, {Yoachim}, {Zhan}, \& {for the
+  LSST Collaboration}}]{2008arXiv0805.2366I}
+{Ivezic}, Z., {Tyson}, J.~A., {Abel}, B., {et~al.} 2008, ArXiv e-prints,
+  arXiv:0805.2366
+
+\bibitem[{{Iwata} {et~al.}(2007){Iwata}, {Ohta}, {Tamura}, {Akiyama}, {Aoki},
+  {Ando}, {Kiuchi}, \& {Sawicki}}]{2007MNRAS.376.1557I}
+{Iwata}, I., {Ohta}, K., {Tamura}, N., {et~al.} 2007, \mnras, 376, 1557
+
+\bibitem[{{Jaacks} {et~al.}(2013){Jaacks}, {Thompson}, \&
+  {Nagamine}}]{2013ApJ...766...94J}
+{Jaacks}, J., {Thompson}, R., \& {Nagamine}, K. 2013, \apj, 766, 94
+
+\bibitem[{{Jiang} {et~al.}(2016){Jiang}, {McGreer}, {Fan}, {Strauss},
+  {Ba{\~n}ados}, {Becker}, {Bian}, {Farnsworth}, {Shen}, {Wang}, {Wang},
+  {Wang}, {White}, {Wu}, {Wu}, {Yang}, \& {Yang}}]{2016ApJ...833..222J}
+{Jiang}, L., {McGreer}, I.~D., {Fan}, X., {et~al.} 2016, \apj, 833, 222
+
+\bibitem[{{Juri{\'c}} {et~al.}(2015){Juri{\'c}}, {Kantor}, {Lim}, {Lupton},
+  {Dubois-Felsmann}, {Jenness}, {Axelrod}, {Aleksi{\'c}}, {Allsman},
+  {AlSayyad}, {Alt}, {Armstrong}, {Basney}, {Becker}, {Becla}, {Bickerton},
+  {Biswas}, {Bosch}, {Boutigny}, {Carrasco Kind}, {Ciardi}, {Connolly},
+  {Daniel}, {Daues}, {Economou}, {Chiang}, {Fausti}, {Fisher-Levine},
+  {Freemon}, {Gee}, {Gris}, {Hernandez}, {Hoblitt}, {Ivezi{\'c}}, {Jammes},
+  {Jevremovi{\'c}}, {Jones}, {Bryce Kalmbach}, {Kasliwal}, {Krughoff}, {Lang},
+  {Lurie}, {Lust}, {Mullally}, {MacArthur}, {Melchior}, {Moeyens}, {Nidever},
+  {Owen}, {Parejko}, {Peterson}, {Petravick}, {Pietrowicz}, {Price}, {Reiss},
+  {Shaw}, {Sick}, {Slater}, {Strauss}, {Sullivan}, {Swinbank}, {Van Dyk},
+  {Vuj{\v c}i{\'c}}, {Withers}, {Yoachim}, \& {LSST
+  Project}}]{2015arXiv151207914J}
+{Juri{\'c}}, M., {Kantor}, J., {Lim}, K., {et~al.} 2015, ArXiv e-prints,
+  arXiv:1512.07914
+
+\bibitem[{{Kashikawa} {et~al.}(2002){Kashikawa}, {Aoki}, {Asai}, {Ebizuka},
+  {Inata}, {Iye}, {Kawabata}, {Kosugi}, {Ohyama}, {Okita}, {Ozawa}, {Saito},
+  {Sasaki}, {Sekiguchi}, {Shimizu}, {Taguchi}, {Takata}, {Yadoumaru}, \&
+  {Yoshida}}]{2002PASJ...54..819K}
+{Kashikawa}, N., {Aoki}, K., {Asai}, R., {et~al.} 2002, \pasj, 54, 819
+
+\bibitem[{{Kashikawa} {et~al.}(2006){Kashikawa}, {Shimasaku}, {Malkan}, {Doi},
+  {Matsuda}, {Ouchi}, {Taniguchi}, {Ly}, {Nagao}, {Iye}, {Motohara},
+  {Murayama}, {Murozono}, {Nariai}, {Ohta}, {Okamura}, {Sasaki}, {Shioya}, \&
+  {Umemura}}]{2006ApJ...648....7K}
+{Kashikawa}, N., {Shimasaku}, K., {Malkan}, M.~A., {et~al.} 2006, \apj, 648, 7
+
+\bibitem[{{Kashikawa} {et~al.}(2015){Kashikawa}, {Ishizaki}, {Willott},
+  {Onoue}, {Im}, {Furusawa}, {Toshikawa}, {Ishikawa}, {Niino}, {Shimasaku},
+  {Ouchi}, \& {Hibon}}]{2015ApJ...798...28K}
+{Kashikawa}, N., {Ishizaki}, Y., {Willott}, C.~J., {et~al.} 2015, \apj, 798, 28
+
+\bibitem[{{Kawamata} {et~al.}(2015){Kawamata}, {Ishigaki}, {Shimasaku},
+  {Oguri}, \& {Ouchi}}]{2015ApJ...804..103K}
+{Kawamata}, R., {Ishigaki}, M., {Shimasaku}, K., {Oguri}, M., \& {Ouchi}, M.
+  2015, \apj, 804, 103
+
+\bibitem[{{Kawamata} {et~al.}(2016){Kawamata}, {Oguri}, {Ishigaki},
+  {Shimasaku}, \& {Ouchi}}]{2016ApJ...819..114K}
+{Kawamata}, R., {Oguri}, M., {Ishigaki}, M., {Shimasaku}, K., \& {Ouchi}, M.
+  2016, \apj, 819, 114
+
+\bibitem[{{Kawanomoto} {et~al.}(2017)}]{kawanomoto2017} 
+{Kawanomoto}, S., et al. 2017, to be submitted to PASJ
+
+\bibitem[{{Kelvin} {et~al.}(2014){Kelvin}, {Driver}, {Robotham}, {Graham},
+  {Phillipps}, {Agius}, {Alpaslan}, {Baldry}, {Bamford}, {Bland-Hawthorn},
+  {Brough}, {Brown}, {Colless}, {Conselice}, {Hopkins}, {Liske}, {Loveday},
+  {Norberg}, {Pimbblet}, {Popescu}, {Prescott}, {Taylor}, \&
+  {Tuffs}}]{2014MNRAS.439.1245K}
+{Kelvin}, L.~S., {Driver}, S.~P., {Robotham}, A.~S.~G., {et~al.} 2014, \mnras,
+  439, 1245
+
+\bibitem[{{Knapp} {et~al.}(2004){Knapp}, {Leggett}, {Fan}, {Marley}, {Geballe},
+  {Golimowski}, {Finkbeiner}, {Gunn}, {Hennawi}, {Ivezi{\'c}}, {Lupton},
+  {Schlegel}, {Strauss}, {Tsvetanov}, {Chiu}, {Hoversten}, {Glazebrook},
+  {Zheng}, {Hendrickson}, {Williams}, {Uomoto}, {Vrba}, {Henden}, {Luginbuhl},
+  {Guetter}, {Munn}, {Canzian}, {Schneider}, \&
+  {Brinkmann}}]{2004AJ....127.3553K}
+{Knapp}, G.~R., {Leggett}, S.~K., {Fan}, X., {et~al.} 2004, \aj, 127, 3553
+
+\bibitem[{{Komiyama} {et~al.}(2017)}]{komiyama2017} 
+{Komiyama}, Y., et al. 2017, submitted to PASJ
+
+\bibitem[{{Konno} {et~al.}(2017){Konno}, {Ouchi}, {Shibuya}, {Ono},
+  {Shimasaku}, {Taniguchi}, {Nagao}, {Kobayashi}, {Kajisawa}, {Kashikawa},
+  {Inoue}, {Oguri}, {Furusawa}, {Goto}, {Harikane}, {Higuchi}, {Komiyama},
+  {Kusakabe}, {Miyazaki}, {Nakajima}, \& {Wang}}]{2017arXiv170501222K}
+{Konno}, A., {Ouchi}, M., {Shibuya}, T., {et~al.} 2017, ArXiv e-prints,
+  arXiv:1705.01222
+
+\bibitem[{{Kriek} {et~al.}(2015){Kriek}, {Shapley}, {Reddy}, {Siana}, {Coil},
+  {Mobasher}, {Freeman}, {de Groot}, {Price}, {Sanders}, {Shivaei}, {Brammer},
+  {Momcheva}, {Skelton}, {van Dokkum}, {Whitaker}, {Aird}, {Azadi}, {Kassis},
+  {Bullock}, {Conroy}, {Dav{\'e}}, {Kere{\v s}}, \&
+  {Krumholz}}]{2015ApJS..218...15K}
+{Kriek}, M., {Shapley}, A.~E., {Reddy}, N.~A., {et~al.} 2015, \apjs, 218, 15
+
+\bibitem[{{Krumholz} \& {Dekel}(2012)}]{2012ApJ...753...16K}
+{Krumholz}, M.~R., \& {Dekel}, A. 2012, \apj, 753, 16
+
+\bibitem[{{Kuhlen} {et~al.}(2013){Kuhlen}, {Madau}, \&
+  {Krumholz}}]{2013ApJ...776...34K}
+{Kuhlen}, M., {Madau}, P., \& {Krumholz}, M.~R. 2013, \apj, 776, 34
+
+\bibitem[{{Le F{\`e}vre} {et~al.}(2013){Le F{\`e}vre}, {Cassata}, {Cucciati},
+  {Garilli}, {Ilbert}, {Le Brun}, {Maccagni}, {Moreau}, {Scodeggio}, {Tresse},
+  {Zamorani}, {Adami}, {Arnouts}, {Bardelli}, {Bolzonella}, {Bondi},
+  {Bongiorno}, {Bottini}, {Cappi}, {Charlot}, {Ciliegi}, {Contini}, {de la
+  Torre}, {Foucaud}, {Franzetti}, {Gavignaud}, {Guzzo}, {Iovino}, {Lemaux},
+  {L{\'o}pez-Sanjuan}, {McCracken}, {Marano}, {Marinoni}, {Mazure}, {Mellier},
+  {Merighi}, {Merluzzi}, {Paltani}, {Pell{\`o}}, {Pollo}, {Pozzetti},
+  {Scaramella}, {Tasca}, {Vergani}, {Vettolani}, {Zanichelli}, \&
+  {Zucca}}]{2013A&A...559A..14L}
+{Le F{\`e}vre}, O., {Cassata}, P., {Cucciati}, O., {et~al.} 2013, \aap, 559,
+  A14
+
+\bibitem[{{Lilly} {et~al.}(2009){Lilly}, {Le Brun}, {Maier}, {Mainieri},
+  {Mignoli}, {Scodeggio}, {Zamorani}, {Carollo}, {Contini}, {Kneib}, {Le
+  F{\`e}vre}, {Renzini}, {Bardelli}, {Bolzonella}, {Bongiorno}, {Caputi},
+  {Coppa}, {Cucciati}, {de la Torre}, {de Ravel}, {Franzetti}, {Garilli},
+  {Iovino}, {Kampczyk}, {Kovac}, {Knobel}, {Lamareille}, {Le Borgne}, {Pello},
+  {Peng}, {P{\'e}rez-Montero}, {Ricciardelli}, {Silverman}, {Tanaka}, {Tasca},
+  {Tresse}, {Vergani}, {Zucca}, {Ilbert}, {Salvato}, {Oesch}, {Abbas},
+  {Bottini}, {Capak}, {Cappi}, {Cassata}, {Cimatti}, {Elvis}, {Fumana},
+  {Guzzo}, {Hasinger}, {Koekemoer}, {Leauthaud}, {Maccagni}, {Marinoni},
+  {McCracken}, {Memeo}, {Meneux}, {Porciani}, {Pozzetti}, {Sanders},
+  {Scaramella}, {Scarlata}, {Scoville}, {Shopbell}, \&
+  {Taniguchi}}]{2009ApJS..184..218L}
+{Lilly}, S.~J., {Le Brun}, V., {Maier}, C., {et~al.} 2009, \apjs, 184, 218
+
+\bibitem[{{Liu} {et~al.}(2016){Liu}, {Mutch}, {Angel}, {Duffy}, {Geil},
+  {Poole}, {Mesinger}, \& {Wyithe}}]{2016MNRAS.462..235L}
+{Liu}, C., {Mutch}, S.~J., {Angel}, P.~W., {et~al.} 2016, \mnras, 462, 235
+
+\bibitem[{{Livermore} {et~al.}(2017){Livermore}, {Finkelstein}, \&
+  {Lotz}}]{2017ApJ...835..113L}
+{Livermore}, R.~C., {Finkelstein}, S.~L., \& {Lotz}, J.~M. 2017, \apj, 835, 113
+
+\bibitem[{{Loveday} {et~al.}(2012){Loveday}, {Norberg}, {Baldry}, {Driver},
+  {Hopkins}, {Peacock}, {Bamford}, {Liske}, {Bland-Hawthorn}, {Brough},
+  {Brown}, {Cameron}, {Conselice}, {Croom}, {Frenk}, {Gunawardhana}, {Hill},
+  {Jones}, {Kelvin}, {Kuijken}, {Nichol}, {Parkinson}, {Phillipps}, {Pimbblet},
+  {Popescu}, {Prescott}, {Robotham}, {Sharp}, {Sutherland}, {Taylor}, {Thomas},
+  {Tuffs}, {van Kampen}, \& {Wijesinghe}}]{2012MNRAS.420.1239L}
+{Loveday}, J., {Norberg}, P., {Baldry}, I.~K., {et~al.} 2012, \mnras, 420, 1239
+
+\bibitem[{{Madau}(1995)}]{1995ApJ...441...18M}
+{Madau}, P. 1995, \apj, 441, 18
+
+\bibitem[{{Magnier} {et~al.}(2013){Magnier}, {Schlafly}, {Finkbeiner}, {Juric},
+  {Tonry}, {Burgett}, {Chambers}, {Flewelling}, {Kaiser}, {Kudritzki},
+  {Morgan}, {Price}, {Sweeney}, \& {Stubbs}}]{2013ApJS..205...20M}
+{Magnier}, E.~A., {Schlafly}, E., {Finkbeiner}, D., {et~al.} 2013, \apjs, 205,
+  20
+
+\bibitem[{{Mallery} {et~al.}(2012){Mallery}, {Mobasher}, {Capak}, {Kakazu},
+  {Masters}, {Ilbert}, {Hemmati}, {Scarlata}, {Salvato}, {McCracken},
+  {LeFevre}, \& {Scoville}}]{2012ApJ...760..128M}
+{Mallery}, R.~P., {Mobasher}, B., {Capak}, P., {et~al.} 2012, \apj, 760, 128
+
+\bibitem[{{Martin} {et~al.}(2005){Martin}, {Seibert}, {Buat},
+  {Iglesias-P{\'a}ramo}, {Barlow}, {Bianchi}, {Byun}, {Donas}, {Forster},
+  {Friedman}, {Heckman}, {Jelinsky}, {Lee}, {Madore}, {Malina}, {Milliard},
+  {Morrissey}, {Neff}, {Rich}, {Schiminovich}, {Siegmund}, {Small}, {Szalay},
+  {Welsh}, \& {Wyder}}]{2005ApJ...619L..59M}
+{Martin}, D.~C., {Seibert}, M., {Buat}, V., {et~al.} 2005, \apjl, 619, L59
+
+\bibitem[{{Mason} {et~al.}(2015){Mason}, {Treu}, {Schmidt}, {Collett},
+  {Trenti}, {Marshall}, {Barone-Nugent}, {Bradley}, {Stiavelli}, \&
+  {Wyithe}}]{2015ApJ...805...79M}
+{Mason}, C.~A., {Treu}, T., {Schmidt}, K.~B., {et~al.} 2015, \apj, 805, 79
+
+\bibitem[{{Masters} {et~al.}(2012){Masters}, {Capak}, {Salvato}, {Civano},
+  {Mobasher}, {Siana}, {Hasinger}, {Impey}, {Nagao}, {Trump}, {Ikeda}, {Elvis},
+  \& {Scoville}}]{2012ApJ...755..169M}
+{Masters}, D., {Capak}, P., {Salvato}, M., {et~al.} 2012, \apj, 755, 169
+
+\bibitem[{{Masters} {et~al.}(2017){Masters}, {Stern}, {Cohen}, {Capak},
+  {Rhodes}, {Castander}, \& {Paltani}}]{2017ApJ...841..111M}
+{Masters}, D.~C., {Stern}, D.~K., {Cohen}, J.~G., {et~al.} 2017, \apj, 841, 111
+
+\bibitem[{{Matsuoka} {et~al.}(2016){Matsuoka}, {Onoue}, {Kashikawa}, {Iwasawa},
+  {Strauss}, {Nagao}, {Imanishi}, {Niida}, {Toba}, {Akiyama}, {Asami}, {Bosch},
+  {Foucaud}, {Furusawa}, {Goto}, {Gunn}, {Harikane}, {Ikeda}, {Kawaguchi},
+  {Kikuta}, {Komiyama}, {Lupton}, {Minezaki}, {Miyazaki}, {Morokuma},
+  {Murayama}, {Nishizawa}, {Ono}, {Ouchi}, {Price}, {Sameshima}, {Silverman},
+  {Sugiyama}, {Tait}, {Takada}, {Takata}, {Tanaka}, {Tang}, \&
+  {Utsumi}}]{2016ApJ...828...26M}
+{Matsuoka}, Y., {Onoue}, M., {Kashikawa}, N., {et~al.} 2016, \apj, 828, 26
+
+\bibitem[{{Matsuoka} {et~al.}(2017){Matsuoka}, {Onoue}, {Kashikawa}, {Iwasawa},
+  {Strauss}, {Nagao}, {Imanishi}, {Lee}, {Akiyama}, {Asami}, {Bosch},
+  {Foucaud}, {Furusawa}, {Goto}, {Gunn}, {Harikane}, {Ikeda}, {Izumi},
+  {Kawaguchi}, {Kikuta}, {Kohno}, {Komiyama}, {Lupton}, {Minezaki}, {Miyazaki},
+  {Morokuma}, {Murayama}, {Niida}, {Nishizawa}, {Oguri}, {Ono}, {Ouchi},
+  {Price}, {Sameshima}, {Schulze}, {Shirakata}, {Silverman}, {Sugiyama},
+  {Tait}, {Takada}, {Takata}, {Tanaka}, {Tang}, {Toba}, {Utsumi}, \&
+  {Wang}}]{2017arXiv170405854M}
+---. 2017, ArXiv e-prints, arXiv:1704.05854
+
+\bibitem[{{McGreer} {et~al.}(2013){McGreer}, {Jiang}, {Fan}, {Richards},
+  {Strauss}, {Ross}, {White}, {Shen}, {Schneider}, {Myers}, {Brandt}, {DeGraf},
+  {Glikman}, {Ge}, \& {Streblyanska}}]{2013ApJ...768..105M}
+{McGreer}, I.~D., {Jiang}, L., {Fan}, X., {et~al.} 2013, \apj, 768, 105
+
+\bibitem[{{McLeod} {et~al.}(2016){McLeod}, {McLure}, \&
+  {Dunlop}}]{2016MNRAS.459.3812M}
+{McLeod}, D.~J., {McLure}, R.~J., \& {Dunlop}, J.~S. 2016, \mnras, 459, 3812
+
+\bibitem[{{McLure} {et~al.}(2009){McLure}, {Cirasuolo}, {Dunlop}, {Foucaud}, \&
+  {Almaini}}]{2009MNRAS.395.2196M}
+{McLure}, R.~J., {Cirasuolo}, M., {Dunlop}, J.~S., {Foucaud}, S., \& {Almaini},
+  O. 2009, \mnras, 395, 2196
+
+\bibitem[{{McLure} {et~al.}(2013){McLure}, {Dunlop}, {Bowler}, {Curtis-Lake},
+  {Schenker}, {Ellis}, {Robertson}, {Koekemoer}, {Rogers}, {Ono}, {Ouchi},
+  {Charlot}, {Wild}, {Stark}, {Furlanetto}, {Cirasuolo}, \&
+  {Targett}}]{2013MNRAS.432.2696M}
+{McLure}, R.~J., {Dunlop}, J.~S., {Bowler}, R.~A.~A., {et~al.} 2013, \mnras,
+  432, 2696
+
+\bibitem[{{Miyazaki} {et~al.}(2012){Miyazaki}, {Komiyama}, {Nakaya}, {Kamata},
+  {Doi}, {Hamana}, {Karoji}, {Furusawa}, {Kawanomoto}, {Morokuma}, {Ishizuka},
+  {Nariai}, {Tanaka}, {Uraguchi}, {Utsumi}, {Obuchi}, {Okura}, {Oguri},
+  {Takata}, {Tomono}, {Kurakami}, {Namikawa}, {Usuda}, {Yamanoi}, {Terai},
+  {Uekiyo}, {Yamada}, {Koike}, {Aihara}, {Fujimori}, {Mineo}, {Miyatake},
+  {Yasuda}, {Nishizawa}, {Saito}, {Tanaka}, {Uchida}, {Katayama}, {Wang},
+  {Chen}, {Lupton}, {Loomis}, {Bickerton}, {Price}, {Gunn}, {Suzuki},
+  {Miyazaki}, {Muramatsu}, {Yamamoto}, {Endo}, {Ezaki}, {Itoh}, {Miwa},
+  {Yokota}, {Matsuda}, {Ebinuma}, \& {Takeshi}}]{2012SPIE.8446E..0ZM}
+{Miyazaki}, S., {Komiyama}, Y., {Nakaya}, H., {et~al.} 2012, in \procspie, Vol.
+  8446, Ground-based and Airborne Instrumentation for Astronomy IV, 84460Z
+
+\bibitem[{{Miyazaki} {et~al.}(2017)}]{miyazaki2017} 
+{Miyazaki}, S., et al. 2017, PASJ in press
+
+\bibitem[{{Momcheva} {et~al.}(2016){Momcheva}, {Brammer}, {van Dokkum},
+  {Skelton}, {Whitaker}, {Nelson}, {Fumagalli}, {Maseda}, {Leja}, {Franx},
+  {Rix}, {Bezanson}, {Da Cunha}, {Dickey}, {F{\"o}rster Schreiber},
+  {Illingworth}, {Kriek}, {Labb{\'e}}, {Ulf Lange}, {Lundgren}, {Magee},
+  {Marchesini}, {Oesch}, {Pacifici}, {Patel}, {Price}, {Tal}, {Wake}, {van der
+  Wel}, \& {Wuyts}}]{2016ApJS..225...27M}
+{Momcheva}, I.~G., {Brammer}, G.~B., {van Dokkum}, P.~G., {et~al.} 2016, \apjs,
+  225, 27
+
+\bibitem[{{Mosleh} {et~al.}(2012){Mosleh}, {Williams}, {Franx}, {Gonzalez},
+  {Bouwens}, {Oesch}, {Labbe}, {Illingworth}, \&
+  {Trenti}}]{2012ApJ...756L..12M}
+{Mosleh}, M., {Williams}, R.~J., {Franx}, M., {et~al.} 2012, \apjl, 756, L12
+
+\bibitem[{{Mu{\~n}oz} \& {Loeb}(2011)}]{2011ApJ...729...99M}
+{Mu{\~n}oz}, J.~A., \& {Loeb}, A. 2011, \apj, 729, 99
+
+\bibitem[{{Murata} {et~al.}(2017)}]{murata2017} 
+{Murata}, R., et al. 2017, to be submitted to PASJ
+
+\bibitem[{{Murayama} {et~al.}(2007){Murayama}, {Taniguchi}, {Scoville},
+  {Ajiki}, {Sanders}, {Mobasher}, {Aussel}, {Capak}, {Koekemoer}, {Shioya},
+  {Nagao}, {Carilli}, {Ellis}, {Garilli}, {Giavalisco}, {Kitzbichler}, {Le
+  F{\`e}vre}, {Maccagni}, {Schinnerer}, {Smol{\v c}i{\'c}}, {Tribiano},
+  {Cimatti}, {Komiyama}, {Miyazaki}, {Sasaki}, {Koda}, \&
+  {Karoji}}]{2007ApJS..172..523M}
+{Murayama}, T., {Taniguchi}, Y., {Scoville}, N.~Z., {et~al.} 2007, \apjs, 172,
+  523
+
+\bibitem[{{Niida} {et~al.}(2016){Niida}, {Nagao}, {Ikeda}, {Matsuoka},
+  {Kobayashi}, {Toba}, \& {Taniguchi}}]{2016ApJ...832..208N}
+{Niida}, M., {Nagao}, T., {Ikeda}, H., {et~al.} 2016, \apj, 832, 208
+
+\bibitem[{{Ocvirk} {et~al.}(2016){Ocvirk}, {Gillet}, {Shapiro}, {Aubert},
+  {Iliev}, {Teyssier}, {Yepes}, {Choi}, {Sullivan}, {Knebe}, {Gottl{\"o}ber},
+  {D'Aloisio}, {Park}, {Hoffman}, \& {Stranex}}]{2016MNRAS.463.1462O}
+{Ocvirk}, P., {Gillet}, N., {Shapiro}, P.~R., {et~al.} 2016, \mnras, 463, 1462
+
+\bibitem[{{Oesch} {et~al.}(2010){Oesch}, {Bouwens}, {Carollo}, {Illingworth},
+  {Trenti}, {Stiavelli}, {Magee}, {Labb{\'e}}, \&
+  {Franx}}]{2010ApJ...709L..21O}
+{Oesch}, P.~A., {Bouwens}, R.~J., {Carollo}, C.~M., {et~al.} 2010, \apjl, 709,
+  L21
+
+\bibitem[{{Oke} \& {Gunn}(1983)}]{1983ApJ...266..713O}
+{Oke}, J.~B., \& {Gunn}, J.~E. 1983, \apj, 266, 713
+
+\bibitem[{{Ono} {et~al.}(2013){Ono}, {Ouchi}, {Curtis-Lake}, {Schenker},
+  {Ellis}, {McLure}, {Dunlop}, {Robertson}, {Koekemoer}, {Bowler}, {Rogers},
+  {Schneider}, {Charlot}, {Stark}, {Shimasaku}, {Furlanetto}, \&
+  {Cirasuolo}}]{2013ApJ...777..155O}
+{Ono}, Y., {Ouchi}, M., {Curtis-Lake}, E., {et~al.} 2013, \apj, 777, 155
+
+\bibitem[{{O'Shea} {et~al.}(2015){O'Shea}, {Wise}, {Xu}, \&
+  {Norman}}]{2015ApJ...807L..12O}
+{O'Shea}, B.~W., {Wise}, J.~H., {Xu}, H., \& {Norman}, M.~L. 2015, \apjl, 807,
+  L12
+
+\bibitem[{{Ouchi} {et~al.}(2004){Ouchi}, {Shimasaku}, {Okamura}, {Furusawa},
+  {Kashikawa}, {Ota}, {Doi}, {Hamabe}, {Kimura}, {Komiyama}, {Miyazaki},
+  {Miyazaki}, {Nakata}, {Sekiguchi}, {Yagi}, \& {Yasuda}}]{2004ApJ...611..660O}
+{Ouchi}, M., {Shimasaku}, K., {Okamura}, S., {et~al.} 2004, \apj, 611, 660
+
+\bibitem[{{Ouchi} {et~al.}(2008){Ouchi}, {Shimasaku}, {Akiyama}, {Simpson},
+  {Saito}, {Ueda}, {Furusawa}, {Sekiguchi}, {Yamada}, {Kodama}, {Kashikawa},
+  {Okamura}, {Iye}, {Takata}, {Yoshida}, \& {Yoshida}}]{2008ApJS..176..301O}
+{Ouchi}, M., {Shimasaku}, K., {Akiyama}, M., {et~al.} 2008, \apjs, 176, 301
+
+\bibitem[{{Ouchi} {et~al.}(2009){Ouchi}, {Mobasher}, {Shimasaku}, {Ferguson},
+  {Fall}, {Ono}, {Kashikawa}, {Morokuma}, {Nakajima}, {Okamura}, {Dickinson},
+  {Giavalisco}, \& {Ohta}}]{2009ApJ...706.1136O}
+{Ouchi}, M., {Mobasher}, B., {Shimasaku}, K., {et~al.} 2009, \apj, 706, 1136
+
+\bibitem[{{Ouchi} {et~al.}(2010){Ouchi}, {Shimasaku}, {Furusawa}, {Saito},
+  {Yoshida}, {Akiyama}, {Ono}, {Yamada}, {Ota}, {Kashikawa}, {Iye}, {Kodama},
+  {Okamura}, {Simpson}, \& {Yoshida}}]{2010ApJ...723..869O}
+{Ouchi}, M., {Shimasaku}, K., {Furusawa}, H., {et~al.} 2010, \apj, 723, 869
+
+\bibitem[{{Ouchi} {et~al.}(2017){Ouchi}, {Harikane}, {Shibuya}, {Shimasaku},
+  {Taniguchi}, {Konno}, {Kobayashi}, {Kajisawa}, {Nagao}, {Ono}, {Inoue},
+  {Umemura}, {Mori}, {Hasegawa}, {Higuchi}, {Komiyama}, {Matsuda}, {Nakajima},
+  {Saito}, \& {Wang}}]{2017arXiv170407455O}
+{Ouchi}, M., {Harikane}, Y., {Shibuya}, T., {et~al.} 2017, ArXiv e-prints,
+  arXiv:1704.07455
+
+\bibitem[{{P{\^a}ris} {et~al.}(2017){P{\^a}ris}, {Petitjean}, {Ross}, {Myers},
+  {Aubourg}, {Streblyanska}, {Bailey}, {Armengaud}, {Palanque-Delabrouille},
+  {Y{\`e}che}, {Hamann}, {Strauss}, {Albareti}, {Bovy}, {Bizyaev}, {Niel
+  Brandt}, {Brusa}, {Buchner}, {Comparat}, {Croft}, {Dwelly}, {Fan},
+  {Font-Ribera}, {Ge}, {Georgakakis}, {Hall}, {Jiang}, {Kinemuchi},
+  {Malanushenko}, {Malanushenko}, {McMahon}, {Menzel}, {Merloni}, {Nandra},
+  {Noterdaeme}, {Oravetz}, {Pan}, {Pieri}, {Prada}, {Salvato}, {Schlegel},
+  {Schneider}, {Simmons}, {Viel}, {Weinberg}, \& {Zhu}}]{2017A&A...597A..79P}
+{P{\^a}ris}, I., {Petitjean}, P., {Ross}, N.~P., {et~al.} 2017, \aap, 597, A79
+
+\bibitem[{{Parsa} {et~al.}(2017){Parsa}, {Dunlop}, \&
+  {McLure}}]{2017arXiv170407750P}
+{Parsa}, S., {Dunlop}, J.~S., \& {McLure}, R.~J. 2017, ArXiv e-prints,
+  arXiv:1704.07750
+
+\bibitem[{{Ravindranath} {et~al.}(2006){Ravindranath}, {Giavalisco},
+  {Ferguson}, {Conselice}, {Katz}, {Weinberg}, {Lotz}, {Dickinson}, {Fall},
+  {Mobasher}, \& {Papovich}}]{2006ApJ...652..963R}
+{Ravindranath}, S., {Giavalisco}, M., {Ferguson}, H.~C., {et~al.} 2006, \apj,
+  652, 963
+
+\bibitem[{{Reddy} {et~al.}(2008){Reddy}, {Steidel}, {Pettini}, {Adelberger},
+  {Shapley}, {Erb}, \& {Dickinson}}]{2008ApJS..175...48R}
+{Reddy}, N.~A., {Steidel}, C.~C., {Pettini}, M., {et~al.} 2008, \apjs, 175, 48
+
+\bibitem[{{Rees} \& {Ostriker}(1977)}]{1977MNRAS.179..541R}
+{Rees}, M.~J., \& {Ostriker}, J.~P. 1977, \mnras, 179, 541
+
+\bibitem[{{Ribeiro} {et~al.}(2016){Ribeiro}, {Le F{\`e}vre}, {Tasca}, {Lemaux},
+  {Cassata}, {Garilli}, {Maccagni}, {Zamorani}, {Zucca}, {Amor{\'{\i}}n},
+  {Bardelli}, {Fontana}, {Giavalisco}, {Hathi}, {Koekemoer}, {Pforr}, {Tresse},
+  \& {Dunlop}}]{2016A&A...593A..22R}
+{Ribeiro}, B., {Le F{\`e}vre}, O., {Tasca}, L.~A.~M., {et~al.} 2016, \aap, 593,
+  A22
+
+\bibitem[{{Rowe} {et~al.}(2015){Rowe}, {Jarvis}, {Mandelbaum}, {Bernstein},
+  {Bosch}, {Simet}, {Meyers}, {Kacprzak}, {Nakajima}, {Zuntz}, {Miyatake},
+  {Dietrich}, {Armstrong}, {Melchior}, \& {Gill}}]{2015A&C....10..121R}
+{Rowe}, B.~T.~P., {Jarvis}, M., {Mandelbaum}, R., {et~al.} 2015, Astronomy and
+  Computing, 10, 121
+
+\bibitem[{{Saito} {et~al.}(2008){Saito}, {Shimasaku}, {Okamura}, {Ouchi},
+  {Akiyama}, {Yoshida}, \& {Ueda}}]{2008ApJ...675.1076S}
+{Saito}, T., {Shimasaku}, K., {Okamura}, S., {et~al.} 2008, \apj, 675, 1076
+
+\bibitem[{{Salpeter}(1955)}]{1955ApJ...121..161S}
+{Salpeter}, E.~E. 1955, \apj, 121, 161
+
+\bibitem[{{Sawicki} \& {Thompson}(2006)}]{2006ApJ...642..653S}
+{Sawicki}, M., \& {Thompson}, D. 2006, \apj, 642, 653
+
+\bibitem[{{Scannapieco} \& {Oh}(2004)}]{2004ApJ...608...62S}
+{Scannapieco}, E., \& {Oh}, S.~P. 2004, \apj, 608, 62
+
+\bibitem[{{Schechter}(1976)}]{1976ApJ...203..297S}
+{Schechter}, P. 1976, \apj, 203, 297
+
+\bibitem[{{Schenker} {et~al.}(2013){Schenker}, {Robertson}, {Ellis}, {Ono},
+  {McLure}, {Dunlop}, {Koekemoer}, {Bowler}, {Ouchi}, {Curtis-Lake}, {Rogers},
+  {Schneider}, {Charlot}, {Stark}, {Furlanetto}, \&
+  {Cirasuolo}}]{2013ApJ...768..196S}
+{Schenker}, M.~A., {Robertson}, B.~E., {Ellis}, R.~S., {et~al.} 2013, \apj,
+  768, 196
+
+\bibitem[{{Schlafly} {et~al.}(2012){Schlafly}, {Finkbeiner}, {Juri{\'c}},
+  {Magnier}, {Burgett}, {Chambers}, {Grav}, {Hodapp}, {Kaiser}, {Kudritzki},
+  {Martin}, {Morgan}, {Price}, {Rix}, {Stubbs}, {Tonry}, \&
+  {Wainscoat}}]{2012ApJ...756..158S}
+{Schlafly}, E.~F., {Finkbeiner}, D.~P., {Juri{\'c}}, M., {et~al.} 2012, \apj,
+  756, 158
+
+\bibitem[{{Schlegel} {et~al.}(1998){Schlegel}, {Finkbeiner}, \&
+  {Davis}}]{1998ApJ...500..525S}
+{Schlegel}, D.~J., {Finkbeiner}, D.~P., \& {Davis}, M. 1998, \apj, 500, 525
+
+\bibitem[{{Shibuya} {et~al.}(2015){Shibuya}, {Ouchi}, \&
+  {Harikane}}]{2015ApJS..219...15S}
+{Shibuya}, T., {Ouchi}, M., \& {Harikane}, Y. 2015, \apjs, 219, 15
+
+\bibitem[{{Shibuya} {et~al.}(2017{\natexlab{a}}){Shibuya}, {Ouchi}, {Konno},
+  {Higuchi}, {Harikane}, {Ono}, {Shimasaku}, {Taniguchi}, {Kobayashi},
+  {Kajisawa}, {Nagao}, {Furusawa}, {Goto}, {Kashikawa}, {Komiyama}, {Kusakabe},
+  {Lee}, {Momose}, {Nakajima}, {Tanaka}, {Wang}, \&
+  {Yuma}}]{2017arXiv170408140S}
+{Shibuya}, T., {Ouchi}, M., {Konno}, A., {et~al.} 2017{\natexlab{a}}, ArXiv
+  e-prints, arXiv:1704.08140
+
+\bibitem[{{Shibuya} {et~al.}(2017{\natexlab{b}}){Shibuya}, {Ouchi}, {Harikane},
+  {Rauch}, {Ono}, {Mukae}, {Higuchi}, {Kojima}, {Yuma}, {Lee}, {Furusawa},
+  {Konno}, {Martin}, {Shimasaku}, {Taniguchi}, {Kobayashi}, {Kajisawa},
+  {Nagao}, {Goto}, {Kashikawa}, {Komiyama}, {Kusakabe}, {Momose}, {Nakajima},
+  {Tanaka}, \& {Wang}}]{2017arXiv170500733S}
+{Shibuya}, T., {Ouchi}, M., {Harikane}, Y., {et~al.} 2017{\natexlab{b}}, ArXiv
+  e-prints, arXiv:1705.00733
+
+\bibitem[{{Shimasaku} {et~al.}(2005){Shimasaku}, {Ouchi}, {Furusawa},
+  {Yoshida}, {Kashikawa}, \& {Okamura}}]{2005PASJ...57..447S}
+{Shimasaku}, K., {Ouchi}, M., {Furusawa}, H., {et~al.} 2005, \pasj, 57, 447
+
+\bibitem[{{Shimasaku} {et~al.}(2006){Shimasaku}, {Kashikawa}, {Doi}, {Ly},
+  {Malkan}, {Matsuda}, {Ouchi}, {Hayashino}, {Iye}, {Motohara}, {Murayama},
+  {Nagao}, {Ohta}, {Okamura}, {Sasaki}, {Shioya}, \&
+  {Taniguchi}}]{2006PASJ...58..313S}
+{Shimasaku}, K., {Kashikawa}, N., {Doi}, M., {et~al.} 2006, \pasj, 58, 313
+
+\bibitem[{{Shioya} {et~al.}(2009){Shioya}, {Taniguchi}, {Sasaki}, {Nagao},
+  {Murayama}, {Saito}, {Ideue}, {Nakajima}, {Matsuoka}, {Trump}, {Scoville},
+  {Sanders}, {Mobasher}, {Aussel}, {Capak}, {Kartaltepe}, {Koekemoer},
+  {Carilli}, {Ellis}, {Garilli}, {Giavalisco}, {Kitzbichler}, {Impey},
+  {LeFevre}, {Schinnerer}, \& {Smolcic}}]{2009ApJ...696..546S}
+{Shioya}, Y., {Taniguchi}, Y., {Sasaki}, S.~S., {et~al.} 2009, \apj, 696, 546
+
+\bibitem[{{Silk}(1977)}]{1977ApJ...211..638S}
+{Silk}, J. 1977, \apj, 211, 638
+
+\bibitem[{{Stark}(2016)}]{2016ARA&A..54..761S}
+{Stark}, D.~P. 2016, \araa, 54, 761
+
+\bibitem[{{Stefanon} {et~al.}(2017){Stefanon}, {Labb{\'e}}, {Bouwens},
+  {Brammer}, {Oesch}, {Franx}, {Fynbo}, {Milvang-Jensen}, {Muzzin},
+  {Illingworth}, {Le F{\`e}vre}, {Caputi}, {Holwerda}, {McCracken}, {Smit}, \&
+  {Magee}}]{2017arXiv170604613S}
+{Stefanon}, M., {Labb{\'e}}, I., {Bouwens}, R.~J., {et~al.} 2017, ArXiv
+  e-prints, arXiv:1706.04613
+
+\bibitem[{{Steidel} {et~al.}(1999){Steidel}, {Adelberger}, {Giavalisco},
+  {Dickinson}, \& {Pettini}}]{1999ApJ...519....1S}
+{Steidel}, C.~C., {Adelberger}, K.~L., {Giavalisco}, M., {Dickinson}, M., \&
+  {Pettini}, M. 1999, \apj, 519, 1
+
+\bibitem[{{Steidel} {et~al.}(1996){Steidel}, {Giavalisco}, {Pettini},
+  {Dickinson}, \& {Adelberger}}]{1996ApJ...462L..17S}
+{Steidel}, C.~C., {Giavalisco}, M., {Pettini}, M., {Dickinson}, M., \&
+  {Adelberger}, K.~L. 1996, \apjl, 462, L17
+
+\bibitem[{{Takahashi} {et~al.}(2011){Takahashi}, {Oguri}, {Sato}, \&
+  {Hamana}}]{2011ApJ...742...15T}
+{Takahashi}, R., {Oguri}, M., {Sato}, M., \& {Hamana}, T. 2011, \apj, 742, 15
+
+\bibitem[{{Takata} {et~al.}(2017)}]{takata2017} 
+{Takata}, T., et al. 2017, to be submitted to PASJ
+
+\bibitem[{{Tasca} {et~al.}(2017){Tasca}, {Le F{\`e}vre}, {Ribeiro}, {Thomas},
+  {Moreau}, {Cassata}, {Garilli}, {Le Brun}, {Lemaux}, {Maccagni},
+  {Pentericci}, {Schaerer}, {Vanzella}, {Zamorani}, {Zucca}, {Amorin},
+  {Bardelli}, {Cassar{\`a}}, {Castellano}, {Cimatti}, {Cucciati}, {Durkalec},
+  {Fontana}, {Giavalisco}, {Grazian}, {Hathi}, {Ilbert}, {Paltani}, {Pforr},
+  {Scodeggio}, {Sommariva}, {Talia}, {Tresse}, {Vergani}, {Capak}, {Charlot},
+  {Contini}, {de la Torre}, {Dunlop}, {Fotopoulou}, {Guaita}, {Koekemoer},
+  {L{\'o}pez-Sanjuan}, {Mellier}, {Salvato}, {Scoville}, {Taniguchi}, \&
+  {Wang}}]{2017A&A...600A.110T}
+{Tasca}, L.~A.~M., {Le F{\`e}vre}, O., {Ribeiro}, B., {et~al.} 2017, \aap, 600,
+  A110
+
+\bibitem[{{Tonry} {et~al.}(2012){Tonry}, {Stubbs}, {Lykke}, {Doherty},
+  {Shivvers}, {Burgett}, {Chambers}, {Hodapp}, {Kaiser}, {Kudritzki},
+  {Magnier}, {Morgan}, {Price}, \& {Wainscoat}}]{2012ApJ...750...99T}
+{Tonry}, J.~L., {Stubbs}, C.~W., {Lykke}, K.~R., {et~al.} 2012, \apj, 750, 99
+
+\bibitem[{{Toshikawa} {et~al.}(2016){Toshikawa}, {Kashikawa}, {Overzier},
+  {Malkan}, {Furusawa}, {Ishikawa}, {Onoue}, {Ota}, {Tanaka}, {Niino}, \&
+  {Uchiyama}}]{2016ApJ...826..114T}
+{Toshikawa}, J., {Kashikawa}, N., {Overzier}, R., {et~al.} 2016, \apj, 826, 114
+
+\bibitem[{{Toshikawa} {et~al.}(2017)}]{toshikawa2017} 
+{Toshikawa}, J., et al. 2017, PASJ in press
+
+\bibitem[{{Trenti} \& {Stiavelli}(2008)}]{2008ApJ...676..767T}
+{Trenti}, M., \& {Stiavelli}, M. 2008, \apj, 676, 767
+
+\bibitem[{{van der Burg} {et~al.}(2010){van der Burg}, {Hildebrandt}, \&
+  {Erben}}]{2010A&A...523A..74V}
+{van der Burg}, R.~F.~J., {Hildebrandt}, H., \& {Erben}, T. 2010, \aap, 523,
+  A74
+
+\bibitem[{{Wang} \& {Heckman}(1996)}]{1996ApJ...457..645W}
+{Wang}, B., \& {Heckman}, T.~M. 1996, \apj, 457, 645
+
+\bibitem[{{Wang} {et~al.}(2016){Wang}, {Wu}, {Fan}, {Yang}, {Yi}, {Bian},
+  {McGreer}, {Yang}, {Ai}, {Dong}, {Zuo}, {Jiang}, {Green}, {Wang}, {Cai},
+  {Wang}, \& {Yue}}]{2016ApJ...819...24W}
+{Wang}, F., {Wu}, X.-B., {Fan}, X., {et~al.} 2016, \apj, 819, 24
+
+\bibitem[{{Willott} {et~al.}(2010{\natexlab{a}}){Willott}, {Albert},
+  {Arzoumanian}, {Bergeron}, {Crampton}, {Delorme}, {Hutchings}, {Omont},
+  {Reyl{\'e}}, \& {Schade}}]{2010AJ....140..546W}
+{Willott}, C.~J., {Albert}, L., {Arzoumanian}, D., {et~al.} 2010{\natexlab{a}},
+  \aj, 140, 546
+
+\bibitem[{{Willott} {et~al.}(2010{\natexlab{b}}){Willott}, {Delorme},
+  {Reyl{\'e}}, {Albert}, {Bergeron}, {Crampton}, {Delfosse}, {Forveille},
+  {Hutchings}, {McLure}, {Omont}, \& {Schade}}]{2010AJ....139..906W}
+{Willott}, C.~J., {Delorme}, P., {Reyl{\'e}}, C., {et~al.} 2010{\natexlab{b}},
+  \aj, 139, 906
+
+\bibitem[{{Willott} {et~al.}(2013){Willott}, {McLure}, {Hibon}, {Bielby},
+  {McCracken}, {Kneib}, {Ilbert}, {Bonfield}, {Bruce}, \&
+  {Jarvis}}]{2013AJ....145....4W}
+{Willott}, C.~J., {McLure}, R.~J., {Hibon}, P., {et~al.} 2013, \aj, 145, 4
+
+\bibitem[{{Wise} {et~al.}(2014){Wise}, {Demchenko}, {Halicek}, {Norman},
+  {Turk}, {Abel}, \& {Smith}}]{2014MNRAS.442.2560W}
+{Wise}, J.~H., {Demchenko}, V.~G., {Halicek}, M.~T., {et~al.} 2014, \mnras,
+  442, 2560
+
+\bibitem[{{Wyithe} {et~al.}(2011){Wyithe}, {Yan}, {Windhorst}, \&
+  {Mao}}]{2011Natur.469..181W}
+{Wyithe}, J.~S.~B., {Yan}, H., {Windhorst}, R.~A., \& {Mao}, S. 2011, \nat,
+  469, 181
+
+\bibitem[{{Yang} {et~al.}(2017){Yang}, {Fan}, {Wu}, {Wang}, {Bian}, {Yang},
+  {McGreer}, {Yi}, {Jiang}, {Green}, {Yue}, {Wang}, {Li}, {Ding}, {Dye}, \&
+  {Lawrence}}]{2017AJ....153..184Y}
+{Yang}, J., {Fan}, X., {Wu}, X.-B., {et~al.} 2017, \aj, 153, 184
+
+\bibitem[{{Yoshida} {et~al.}(2006){Yoshida}, {Shimasaku}, {Kashikawa}, {Ouchi},
+  {Okamura}, {Ajiki}, {Akiyama}, {Ando}, {Aoki}, {Doi}, {Furusawa},
+  {Hayashino}, {Iwamuro}, {Iye}, {Karoji}, {Kobayashi}, {Kodaira}, {Kodama},
+  {Komiyama}, {Malkan}, {Matsuda}, {Miyazaki}, {Mizumoto}, {Morokuma},
+  {Motohara}, {Murayama}, {Nagao}, {Nariai}, {Ohta}, {Sasaki}, {Sato},
+  {Sekiguchi}, {Shioya}, {Tamura}, {Taniguchi}, {Umemura}, {Yamada}, \&
+  {Yasuda}}]{2006ApJ...653..988Y}
+{Yoshida}, M., {Shimasaku}, K., {Kashikawa}, N., {et~al.} 2006, \apj, 653, 988
+
+\end{thebibliography}

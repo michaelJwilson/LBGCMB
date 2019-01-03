@@ -1,0 +1,110 @@
+J/AJ/131/2766      Quasar luminosity function from SDSS-DR3    (Richards+, 2006)
+================================================================================
+The Sloan Digital Sky Survey quasar survey: quasar luminosity function from
+Data Release 3.
+    Richards G.T., Strauss M.A., Fan X., Hall P.B., Jester S., Schneider D.P.,
+    Vanden Berk D.E., Stoughton C., Anderson S.F., Brunner R.J., Gray J.,
+    Gunn J.E., Ivezic Z., Kirkland M.K., Knapp G.R., Loveday J., Meiksin A.,
+    Pope A., Szalay A.S., Thakar A.R., Yanny B., York D.G., Barentine J.C.,
+    Brewington H.J., Brinkmann J., Fukugita M., Harvanek M., Kent S.M.,
+    Kleinman S.J., Krzesinski J., Long D.C., Lupton R.H., Nash T.,
+    Neilsen E.H.JR, Nitta A., Schlegel D.J., Snedden S.A.
+   <Astron. J., 131, 2766-2787 (2006)>
+   =2006AJ....131.2766R
+================================================================================
+ADC_Keywords: QSOs ; Surveys ; Photometry, SDSS ; Redshifts
+Keywords: cosmology: observations - galaxies: active -
+          galaxies: luminosity function, mass function - quasars: general -
+          surveys
+
+Abstract:
+    We determine the number counts and z=0-5 luminosity function for a
+    well-defined, homogeneous sample of quasars from the Sloan Digital Sky
+    Survey (SDSS). We conservatively define the most uniform statistical
+    sample possible, consisting of 15343 quasars within an effective area
+    of 1622{deg}^2^ that was derived from a parent sample of 46420
+    spectroscopically confirmed broad-line quasars in the 5282{deg}^2^ of
+    imaging data from SDSS Data Release 3. The sample extends from i=15 to
+    19.1 at z<~3 and to i=20.2 for z>~3.
+
+Description:
+    The SDSS uses a dedicated wide-field 2.5m telescope at Apache Point
+    Observatory, New Mexico, with a 140megapixel imaging camera and a pair
+    of fiber-fed multiobject double spectrographs. The imaging is carried
+    out in five broad bands (ugriz).
+
+File Summary:
+--------------------------------------------------------------------------------
+ FileName   Lrecl  Records   Explanations
+--------------------------------------------------------------------------------
+ReadMe         80        .   This file
+table1.dat     30     6413   Quasar selection function
+table4.dat     11      550   K-corrections
+table5.dat     54    15343   Statistical quasar sample
+table6.dat     42      101   Binned quasar luminosity function
+--------------------------------------------------------------------------------
+
+See also:
+  VII/243             : SDSS quasar catalog. III. (Schneider+, 2005)
+  VII/241             : The 2dF QSO Redshift Survey (Croom+ 2004)
+  J/AJ/131/2788       : Quasar sample for the SFQS survey (Jiang+, 2006)
+  http://www.sdss.org : SDSS Home Page
+
+Byte-by-byte Description of file: table1.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units Label  Explanations
+--------------------------------------------------------------------------------
+   1-  4  F4.1  mag   imag   The i band magnitude
+   6-  9  F4.2  ---   z      Redshift
+  11- 16  F6.3  ---   point  [0,1]?=-1 Non-radio point source selection function
+  18- 23  F6.3  ---   radio  [0,1]?=-1 Radio-detected point source selection
+                               function
+  25- 30  F6.3  ---   extend [0,1]?=-1 Extended source selection function
+--------------------------------------------------------------------------------
+
+Byte-by-byte Description of file: table4.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units   Label     Explanations
+--------------------------------------------------------------------------------
+   1-  4  F4.2  ---     z         Redshift
+   6- 11  F6.3  ---     KCorr     The i band K correction (1)
+--------------------------------------------------------------------------------
+Note (1): Including both the emission line and continuum
+          ({alpha}_{nu}_=-0.5, normalized at z=2) components.
+--------------------------------------------------------------------------------
+
+Byte-by-byte Description of file: table5.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units Label     Explanations
+--------------------------------------------------------------------------------
+   1-  4  A4    ---   ---       [SDSS]
+   6- 24  A19   ---   SDSSJ     The SDSS name
+                                 (SDSS JHHMMSS.ss+DDMMSS.s in Simbad)
+  26- 30  F5.3  ---   z         Redshift
+  32- 36  F5.2  mag   imag      Dereddened i band magnitude
+  38- 43  F6.2  mag   iMAG      Absolute i band magnitude at z=2
+  45- 49  F5.2  mag   D(g-i)    Relative (g-i) color index
+  51- 54  F4.2  ---   Cor       [0,1] Selection function value
+--------------------------------------------------------------------------------
+
+Byte-by-byte Description of file: table6.dat
+--------------------------------------------------------------------------------
+   Bytes Format Units           Label  Explanations
+--------------------------------------------------------------------------------
+   1-  4  F4.2  ---             z      Redshift bin
+   6- 11  F6.2  mag             iMAG   Absolute i band magnitude at z=2
+  13- 17  F5.2  [Mpc-3.mag-1]   logPhi Log of the space density
+  19- 25  F7.2  10-9Mpc-3.mag-1 errPhi Error in the space density
+      27  I1    ---             Fill   [0/1] Indicator of whether the bin is
+                                        completely covered by data (1=yes, 0=no)
+  29- 32  F4.2  ---             <z>    Mean redshift of quasars in the bin
+  34- 36  I3    ---             NQ     Number of quasars in the bin
+  38- 42  F5.1  ---             NQcor  Corrected number of quasars in bin (1)
+--------------------------------------------------------------------------------
+Note (1): After applying the selection function.
+--------------------------------------------------------------------------------
+
+History:
+    From electronic version of the journal
+================================================================================
+(End)                   Greg Schwarz [AAS], Marianne Brouty [CDS]    14-May-2008

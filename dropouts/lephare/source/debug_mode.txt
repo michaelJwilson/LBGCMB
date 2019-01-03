@@ -1,0 +1,19 @@
+
+ in Makefile use lines :
+ #FFLAGS     = -O5
+	$(FC) $(FFLAGS) -c -pg -g $*.f
+	$(FC) $(FFLAGS) $*.f -o $* -pg -g  $(LIB_ZPHOT)
+
+ todo>  make 
+
+ in local directory 
+
+ todo>> $ZPHOTDIR/source/zphot -c ../zphot.para -CAT_IN hdfs_zslan.in 
+ 
+   --> this creates the gmon.out
+
+ Then do 
+
+ todo>> gprof $ZPHOTDIR/source/zphot > debug.txt
+
+ this creates the full info files with all steps in each function ....

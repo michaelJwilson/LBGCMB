@@ -1,0 +1,37 @@
+# Compiled files
+*.py[co]
+
+# Sphinx
+docs/api
+docs/_build
+
+# Latex documentation
+doc/latex/*.aux
+doc/latex/*.pdf
+doc/latex/*.log
+
+# iPython
+docs/nb/.ipynb_checkpoints
+
+# Packages/installer info
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+distribute-*.tar.gz
+
+# Other
+.*.swp
+*~
+
+# testing
+.coverage
+
+# Mac OSX
+.DS_Store

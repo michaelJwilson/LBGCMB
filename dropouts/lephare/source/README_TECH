@@ -1,0 +1,149 @@
+ 
+#########################################################
+        sedtolib :  SED binary file  + Physical parameter file
+#########################################################
+
+   LIB_TYPE   "S/G/Q"
+
+
+   OUTPUT FILES  :
+   -1- BINARY FILE 
+       reclmax = 8*(iw_max+4)  corresponds to RECORD_LENGTH  in doc file
+       jtype = models 
+       nrec = nrec + 1 
+       write(4,rec=nrec) nrec,jtype,dummy,inw,(w(i),i=1,inw)
+       nrec = nrec + 1    
+       write(4,rec=nrec) nrec,jtype,age,inw,(h(i),i=1,inw)
+
+       Notes:
+       * At least 2 lines per model (First: Lambda, 2nd: Flux at a given age)
+            if more than 1 Age then Nage rows   
+       * age given in (yr)
+       * For FIR models I put Lir (log(Lo)) instead of age  
+       * For BC_STOCH library format is different with only 1 line for Lbda 
+        
+
+   -2- PHYSICAL PARAMETERS FILE for Galaxy only 
+       includes the following informations : 
+
+      write(5,700) nrec,j,tb(n-1),luv,lopt,lnir,ltir,mass,sfr,zmet,tau,d4000
+
+        Age    Age in yr (tb(n-1))
+               3 Monochromatic luminosities [Lnu=L_lbd(integ)/Delta_Lbda*Lbd^2/c]                
+        luv    NUV monochrom. Lum. with Delta_Lbda= 0.21um to 0.25um expressed as log (erg/s/Hz)
+        lopt   R   monochrom. Lum. with Delta_Lbda= 0.55um to 0.65um expressed as log (erg/s/Hz)
+        lnir   K   monochrom. Lum. with Delta_Lbda= 2.10um to 2.30um expressed as log (erg/s/Hz)
+        ltir   Total IR Luminosity between  8um to 1000um expressed  in Log(Lo)
+        Mass   Stellar Mass in Mo 
+        SFR    Star formation rate in Mo/yr
+        zmet   metalicity 
+        tau    exponential declining SFH : in yr   
+        D4000  from Bruzual 1983 
+                  
+      Notes : 
+      * Same number of lines (nrec) than bin files
+   
+      * For BC_STOCH the parameter format is different 
+          write(5,700) nrec,jstoch,tform,luv,lopt,lnir,ltir,mstr1,  
+     >   (sfrav(i),i=3,4),gamma,zmet,tauv0,mu,age_wm,age_wr,
+     >    tlastburst,(fburst(i),i=3,4),DBLE(nburst),mstr0,
+     >    lfuv,lnuv,loptr,lnirk,afuv,anuv,a_g,aopt,a_z,anir,ldusth,d4000
+        mass     = -99.
+        sfr      = -99.
+        jstoch      Model 
+        tform       Age of first stars formed (yr)  
+        luv         monochrom. Lum   in Log erg/s/Hz 
+        lopt        monochrom. Lum   in Log erg/s/Hz 
+        lnir        monochrom. Lum   in Log erg/s/Hz 
+        ltir        Total IR Luminosity in unit Lo
+        mstr1       stellar mass 
+        sfrav(i)    SFR averaged over 10^8 and 10^9 yr   in Mo/yr 
+        gamma       SFH with  SFH ~  exp(-gamma*t)   gamma in Gyr 
+        zmet        metalicity 
+        tauv0       optical depth in V band  Av=1.086 tau_V
+        mu          attenuation law 
+        age_wm      Stellar Mass weighted age (yr) 
+        age_wr      Luminosity (r) weighted age (yr) 
+        tlastburst  Time of the last burst (in yr)
+        fburst(i)   Fraction of burst intensity for the last 10^8 and 10^9 yr  
+        nburst      Number of burst 
+        mstr0       total mass    
+        lfuv        FUV lum. (Int_0.13um^0.17um) in unit Lo
+        lnuv        NUV lum. (Int_0.21um^0.25um) in unit Lo
+        loptr       R   lum. (Int_0.55um^0.65um) in unit Lo
+        lnirk       K   lum. (Int_2.1um^2.3um)   in unit Lo
+        Afuv        FUV attenuation -2.5log(L_obs/L_unextinc)
+        Anuv        NUV attenuation -2.5log(L_obs/L_unextinc)
+        A_g         g   attenuation -2.5log(L_obs/L_unextinc)
+        Aopt        R   attenuation -2.5log(L_obs/L_unextinc)
+        A_z         Z   attenuation -2.5log(L_obs/L_unextinc)
+        Anir        K   attenuation -2.5log(L_obs/L_unextinc)
+        ldustc      Ldust from cold stars (Lbda>4000) 
+        ldusth      Ldust from hot  stars (Lbda<4000) 
+        D4000       from Bruzual 1983 
+
+
+#########################################################
+        mag_gal / mag_star :  MAGNITUDE binary file  +  doc file
+#########################################################
+  generate magnitudes in different filters.
+  Output  Format changes with libraries 
+
+  -1-: For standard GALAXIES/QSO libraries : 
+   
+    *  RECORD LENGTH format changes with options :
+      if (emlines(1:1) .eq. "Y") 
+         orecmax=8*(8+imag*3)
+         write(2,rec=orec) nmod,iel,valebv,ldust,zoss,eta,nrec,imag,
+      >       (mag(ifilt),ifilt=1,imag),
+      >       (kcor(ifilt),ifilt=1,imag),(em(ifilt),ifilt=1,imag)
+
+      else
+         orecmax=8*(8+imag*2)
+         write(2,rec=orec) nmod,iel,ebv,ldust,zoss,eta,nrec,imag,
+      >       (mag(ifilt),ifilt=1,imag),(kcor(ifilt),ifilt=1,imag)
+      endif
+
+      nmod  : model Number
+      iel   : Extinction law used      
+      ebv   : E(B-V) value 
+      ldust : Luminosity from dust (log(Lo)) measured either from the applied 
+              Extintion law+EB-V or from physical parameter if models include extinction
+      zoss  : Redshift 
+      eta   : age (yr)
+      nrec  : Line number to read phys para or flux from sedtolib files (bin+phys para)
+      imag  : number of filters
+      mag() : magnitudes in filters 
+      kcor(): k-correction
+      em()  : Emision lines flux assuming that galaxy Luminosity is NUV_{ABS}=-20
+
+    * library is recorded with the following incremental step :
+        Model, Extinction Law, EB-V, Age, Redshift
+        10x2x6x60x150 > 1,000,000  : grows fast !!
+
+
+  -2- For BC_STOCH library  (LIB_FMT : BC_STOCH)
+
+    *  RECORD LENGTH different than the others with  :
+               orecmax=8*(7+imag*2)
+               write(2,rec=orec) nmod,iel,valebv,zoss,
+     >             eta,nr,imag,(mag(ifilt),ifilt=1,imag),
+     >            (kcor(ifilt),ifilt=1,imag)
+
+    * Following options are forced :
+          -EM_LINES NO -LIB_ASCII NO -EXTINC_LAW NONE
+
+    * this library is recorded with the following incremental step :
+        Redshift,models 
+
+
+  -3-  For stellar library  (mag_star program) 
+         orecmax = 8*(3+imag)
+         write(2,rec=orec) nmod,nr,imag,(mag(if),if=1,imag)
+
+   
+  -4-  For specific mag_zform program that uses Zformation conditions :
+         orecmax = 8*(6+imag*2)           ! if kcorrection added 
+         write(2,rec=orec) nmod,ebv(ie),zoss,eta,zform,imag,
+     >                (mag(if),if=1,imag),(kecor(if),if=1,imag)
+      

@@ -1,0 +1,14 @@
+Construct input to quick spectra and redrock template here:
+/Users/M.J.Wilson/work/LBGCMB/dropouts/Shapley/py
+
+
+sample_rate  =  5
+
+redshifts    =  1.5  + np.linspace(0., 1.50, 25)[::sample_rate]
+magnitudes   =  20.0 + np.linspace(0., 6.00, 25)[::sample_rate]          ##  Magnitudes are not sub-sampled. 
+
+
+Generate DESI-like spectra with quickspectra: 
+/Users/M.J.Wilson/work/LBGCMB/quickspectra/py/quickspectra.py 
+
+exposures    =  60. * 15. * np.arange(1, 22, 1)[::sample_rate]

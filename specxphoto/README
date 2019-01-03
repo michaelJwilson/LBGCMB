@@ -1,0 +1,14 @@
+-- Patej & Eisenstein:
+   6,594,677  galaxies for the photometry.
+   14,555     square degrees
+
+-- Spectroscopy:
+   Further criterion: z > 0.6.
+
+   This yields 205,367 galaxies, and we select a set of random points 10 times larger than this for the construction of the correlation function.
+   We note that while this z > 0.6 data is fairly sparse, it is not a sample for which τ < 0.08.
+
+-- Photometry:
+   The photometric sample used in this paper comes from SDSS DR9 (Ahn et al. 2012) imaging data and comprises 6,594,677 galaxies
+   over 14,555 sq. degs. (see Law-Smith & Eisenstein (2017), https://arxiv.org/pdf/1702.03933.pdf, for a detailed description of the 
+   color cuts used to define this sample); we use a catalog of randoms five times larger than this to construct the correlation function.

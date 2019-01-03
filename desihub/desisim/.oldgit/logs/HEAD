@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 c38dd4d63baf7316285b8a18376e579404683e65 Mike Wilson <mjw@roe.ac.uk> 1506726927 -0700	clone: from https://github.com/desihub/desisim.git
+c38dd4d63baf7316285b8a18376e579404683e65 c38dd4d63baf7316285b8a18376e579404683e65 Mike Wilson <mjw@roe.ac.uk> 1507064458 -0700	checkout: moving from master to quickspectra
+c38dd4d63baf7316285b8a18376e579404683e65 34f5ff971d6bfdcc2e285e8312718327a549e164 Mike Wilson <mjw@roe.ac.uk> 1507064468 -0700	pull origin quickspectra: Fast-forward
+34f5ff971d6bfdcc2e285e8312718327a549e164 29dadfcbae5e53e1b00fcab3791f624901c68211 Mike Wilson <mjw@roe.ac.uk> 1507066802 -0700	commit: also test IOError
+29dadfcbae5e53e1b00fcab3791f624901c68211 c38dd4d63baf7316285b8a18376e579404683e65 Mike Wilson <mjw@roe.ac.uk> 1507066846 -0700	checkout: moving from quickspectra to master
+c38dd4d63baf7316285b8a18376e579404683e65 f013d6488f8990908518e750ef75058d9c9e25d1 Mike Wilson <mjw@roe.ac.uk> 1507066853 -0700	pull origin master: Fast-forward
+f013d6488f8990908518e750ef75058d9c9e25d1 302d1e8591cbaf87b65a7a2587d85133e0f09249 Mike Wilson <mjw@roe.ac.uk> 1507066868 -0700	merge quickspectra: Merge made by the 'recursive' strategy.

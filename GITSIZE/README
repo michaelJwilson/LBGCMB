@@ -1,0 +1,27 @@
+Michaels-MBP-7:LBGCMB M.J.Wilson$ git count-objects -v
+
+warning: garbage found: .git/objects/pack/tmp_pack_i81JYb
+count: 8561
+size: 13918524
+in-pack: 11177
+packs: 3
+size-pack: 5293984
+prune-packable: 0
+garbage: 1
+size-garbage: 56576
+
+
+Notes:
+confluence.atlassian.com/bitbucket/reduce-repository-size-321848262.html#Reducerepositorysize-ReduceRep-DRAFT-Reducerepositorysize-Manuallyreviewinglargefilesinyourrepository
+
+find . -size +10M | cat >> .gitignore
+
+##  fatal: The remote end hung up unexpectedly
+##  https://stackoverflow.com/questions/15240815/git-fatal-the-remote-end-hung-up-unexpectedly
+git config http.postBuffer 524288000
+
+##  Find size of current repo. 
+du -hs .git/objects
+
+https://github.com/github/git-sizer/#getting-started
+/work/git-sizer-1/

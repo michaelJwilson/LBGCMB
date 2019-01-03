@@ -1,0 +1,11 @@
+name: specsim
+
+channels:
+    - astropy
+
+dependencies:
+    - astropy
+    - matplotlib
+    - numpy
+#   - pip:
+#       - dependency_from_pip

@@ -1,0 +1,14 @@
+# pack-refs with: peeled fully-peeled 
+170485e4f45a3815dc74b29c2031f6d64f57edfb refs/remotes/origin/dithering
+794c79fca1a812e0cf1f5668e5a9455ef6afce12 refs/remotes/origin/fast-fiber-acceptance
+e3ed76e9ba7b8ee4b6bdc9fa67365e4a3dcd9d3e refs/remotes/origin/fixoffset
+c25d7121725134ada478b8c486a5dd28533166af refs/remotes/origin/master
+12b30edc29cd76364e746ead5ae99051af62d1ae refs/tags/v0.1
+e80c06a7debcce6d59834fc4b0ed572f76184677 refs/tags/v0.2
+adc1edbc45188e07217cc6f434adde7234bb9c87 refs/tags/v0.3
+7442558f369913b6a51142e93d0c74a529569e71 refs/tags/v0.4
+1a6287c02480fc646f27a97ae6706d69b1527bb5 refs/tags/v0.5
+2924a8cb62404cc38f217cf5da0b9fe4ead68ef7 refs/tags/v0.6
+bfca7215e224204e5896636425127910bbab6bb0 refs/tags/v0.7
+80955ee9381cd38812a78a2936ce98fdf6e0e46c refs/tags/v0.8
+defa3d86a2606ffde181a1bfbf815528d33946eb refs/tags/v0.9

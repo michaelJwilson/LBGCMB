@@ -1,0 +1,18 @@
+# pack-refs with: peeled fully-peeled 
+21b3a3b5c8905811cf7e16cd08d874b54fa50abf refs/remotes/origin/fix_rrdesi_multiprocessing
+a09cba34c0c10b13929198facb6a5ff04aef80fe refs/remotes/origin/master
+56821462a0f412359549e84cce57fae001339a15 refs/remotes/origin/parallelize_on_targets
+72d2b8ed56e0910a925c9e5dac2a109907b64288 refs/remotes/origin/rrboss
+015775621a435b15ed9615b6e52e2d9c0d40a987 refs/tags/0.1
+255441133d7bc249b1e0ea1b03505c9283b8b6e3 refs/tags/0.2
+^a86fc1876dfe4c6d34b5ed1d96826ad8b92be364
+ca94b0e8d5ba93a2002b699e5b2830333e4c06f9 refs/tags/0.3
+^3d49ef23d9fc7e25da9ca800d6099e3cdcd52600
+99ff030fee1277f3dbecc9c9c587e4879a80b2a0 refs/tags/0.4
+^34261a001fdd41f93064bfdc894a4f4ce87f440f
+6da0bab7d37c7bd0ce9b4576345fdaf5b38504bb refs/tags/0.4.1
+^5409bc7d2c39e28c265a2750451aa5d4e1206f8c
+8578a95ff9076fbb36c4ff404d643017204f0e16 refs/tags/0.4.2
+^acb36502d59a55badf716b7ea2700c7710456151
+a4246229ef0b6943a33e5808190e612dbb7f7700 refs/tags/0.5.0
+^1a67922dd56b8cdaac6104f6a83a2c1b1b338154

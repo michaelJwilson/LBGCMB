@@ -1,0 +1,20 @@
+Table 3 of https://arxiv.org/pdf/astro-ph/0301230.pdf and David Schlegel's email
+
+all_811.fits: 
+Composite spectrum of 811 LBGs with good zs.
+
+max_abs199.fits: 
+Composite spectrum of 199 LBGs in the quartile of the sample with the strongest Lya absorption.
+Rest-frame equivalent width of -14.92 +- 0.56
+
+twoquant_em198.fits:  
+Composite spectra of the second quartile, 198 galaxy spectra.
+Rest-frame equivalent width of  -1.10 +- 0.38
+
+threequant_em199.fits:
+Composite spectra of the third Lya quartiles, each with about 200 galaxy spectra.
+Rest-frame equivalent width of  11.00 +- 0.71
+
+max_em198.fits:
+Composite spectrum of 198 LBGs in the quartile of the sample with the strongest Lya emission.
+Rest-frame equivalent width of  52.63 +- 2.74

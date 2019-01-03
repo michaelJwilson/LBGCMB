@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+from __future__ import print_function, division
+
+import os, sys
+import numpy as np
+import fitsio
+
+from desitarget import io
+from desitarget.cuts import select_targets, check_input_files, qso_selection_options, Method_sandbox_options
+from desitarget.brightstar import mask_targets
+
+import warnings
+warnings.simplefilter('error')
+
+import multiprocessing
+nproc = multiprocessing.cpu_count() // 2
+nside = 64 #ADM default HEALPix Nside used throughout desitarget
+
+from argparse import ArgumentParser
+ap = ArgumentParser()
+ap.add_argument("src", help="Tractor/sweeps file or root directory with tractor/sweeps files")
+ap.add_argument("dest", help="Output target selection file")
+ap.add_argument('-v', "--verbose", action='store_true')
+ap.add_argument('-c', "--check", action='store_true',help="Process tractor/sweeps files to check for corruption, without running full target selection")
+ap.add_argument('-s', "--starmask", help="If sent then mask the targets, the name of the star mask file should be supplied")
+ap.add_argument("--sandbox", action='store_true',help="Apply the sandbox target selection algorithms")
+ap.add_argument("--FoMthresh", type=float,help='XD Figure of Merit Threshold for an ELG (sandbox)')
+ap.add_argument('--qsoselection',choices=qso_selection_options,default='randomforest',
+                help="QSO target selection method")
+ap.add_argument('--Method',choices=Method_sandbox_options,default='XD',
+                help="Method used in sandbox target for ELG")
+### ap.add_argument('-b', "--bricklist", help='filename with list of bricknames to include')
+ap.add_argument("--numproc", type=int,
+    help='number of concurrent processes to use [{}]'.format(nproc),
+    default=nproc)
+
+ns = ap.parse_args()
+infiles = io.list_sweepfiles(ns.src)
+if len(infiles) == 0:
+    infiles = io.list_tractorfiles(ns.src)
+if len(infiles) == 0:
+    print('FATAL: no sweep or tractor files found')
+    sys.exit(1)
+
+if ns.check:
+    print('Check input files...')
+    nbadfiles = check_input_files(infiles, numproc=ns.numproc, verbose=ns.verbose)
+    print('{} potentially corrupt files'.format(nbadfiles))
+else:
+    targets = select_targets(infiles, numproc=ns.numproc, verbose=ns.verbose,
+                             qso_selection=ns.qsoselection, sandbox=ns.sandbox, FoMthresh=ns.FoMthresh, Method=ns.Method)
+    if ns.starmask:
+        targets = mask_targets(targets, instarmaskfile=ns.starmask, nside=nside)
+
+    io.write_targets(ns.dest, targets, indir=ns.src,
+        qso_selection=ns.qsoselection, sandboxcuts=ns.sandbox, nside=nside)
+
+    print('{} targets written to {}'.format(len(targets), ns.dest))
+

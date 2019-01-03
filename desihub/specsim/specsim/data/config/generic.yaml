@@ -1,0 +1,210 @@
+name: Test Simulation
+
+# The base path is pre-pended to all non-absolute path values below.
+# Any embedded {...} will be expanded using environment variables.
+# Use <PACKAGE_DATA> to indicate that paths are relative to this package's
+# data/ directory.  You can leave this blank ('') if all paths are absolute or
+# relative to the current working directory.
+base_path: <PACKAGE_DATA>
+
+# Be verbose during the simulation?
+verbose: no
+
+# Specify the wavelength grid to use for simulation.
+wavelength_grid:
+    unit: Angstrom
+    min: 4000.0
+    max: 9000.0
+    step: 0.1
+
+# The atmosphere configuration is interpreted and validated by the
+# specsim.atmosphere module.
+atmosphere:
+    # Sky emission surface brightness.
+    sky:
+        table:
+            # The .ecsv extension is not automatically recognized.
+            format: ascii.ecsv
+            columns:
+                wavelength: { name: wavelength }
+                surface_brightness: { name: flux }
+            path: test/test_sky.ecsv
+        condition: default
+    # Atmospheric seeing (only used when instrument.fiberloss.method = galsim)
+    seeing:
+        # The seeing is assumed to scale with wavelength as
+        # fwhm(wlen) = fwhm_ref * (wlen / wlen_ref) ** -0.2
+        fwhm_ref: 1.1 arcsec
+        wlen_ref: 6355 Angstrom
+        # The seeing PSF is modeled as a Moffat profile.
+        moffat_beta: 3.5
+    # Surface brightness of scattered moonlight.
+    moon:
+        table:
+            # The .ecsv extension is not automatically recognized.
+            format: ascii.ecsv
+            columns:
+                wavelength: { name: wavelength }
+                flux: { name: flux }
+            path: test/test_solar.ecsv
+        constants:
+            # Phase of the moon from 0 (full) to 1 (new).
+            moon_phase: 0.5
+            # Zenith angles of the moon. An angle > 90 (below the horizon)
+            # will zero the scattered moon contribution.
+            moon_zenith: 70 deg
+            # Separation angle between the observation and moon.
+            separation_angle: 60 deg
+    # Zenith extinction coefficients.
+    extinction:
+        table:
+            format: ascii.ecsv
+            columns:
+                wavelength: { name: wavelength }
+                extinction_coefficient: { name: extinction }
+            path: test/test_extinction.ecsv
+    # Should extinction be applied to the sky emission?
+    extinct_emission: yes
+    # Airmass to use.
+    airmass: 1.0
+
+# The instrument configuration is interpreted and validated by the
+# specsim.instrument module.
+instrument:
+    name: Test Instrument
+    constants:
+        primary_mirror_diameter: 3.797 m
+        obscuration_diameter: 1.8 m
+        support_width: 0.025 m
+        fiber_diameter: 107.0 um
+        field_radius: 414.0 mm
+    plate_scale:
+        constants:
+            value: 70.4 um / arcsec
+    fiberloss:
+        # Method for calculating fiberloss fractions.
+        # Either galsim or table.
+        method: table
+        # Number of wavelengths where fiberloss should be calculated
+        # and interpolated. Ignored unless method is galsim.
+        num_wlen: 11
+        # Number of pixels used to subdivide the fiber diameter for
+        # numerical convolution and integration calculations with galsim.
+        num_pixels: 16
+        # Table of pre-tabulated fiberloss fractions vs wavelength for
+        # different source types.  Ignored unless method is table.
+        table:
+            format: ascii
+            paths:
+                # Each path corresponds to a different source type.
+                qso: test/test_fiberloss.ecsv
+            columns:
+                wavelength: { name: wavelength }
+                fiber_acceptance: { name: fiberloss }
+    blur:
+        # RMS blur of the instrument optics.  Use the path keyword instead
+        # to read values tabulated in wavelength and field angle.
+        value: 10 micron
+    offset:
+        # Radial centroid offset of the instrument optics. Use the path keyword
+        # instead to read values tabulated in wavelength and field angle.
+        value: 0 micron
+    cameras:
+        r:
+            constants:
+                read_noise: 2.9 electron/pixel**2
+                dark_current: 2.0 electron/(hour pixel**2)
+                gain: 1.0 electron/adu
+                num_sigmas_clip: 4.5
+                output_pixel_size: 1.2 Angstrom
+            ccd:
+                table:
+                    format: ascii.ecsv
+                    path: test/test_psf.ecsv
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: { name: wavelength }
+                        row_size: { name: angstroms_per_row }
+                        fwhm_resolution: { name: fwhm_wave }
+                        neff_spatial: { name: neff_spatial }
+            throughput:
+                table:
+                    format: ascii.ecsv
+                    path: test/test_throughput.ecsv
+                    extrapolated_value: 0.0
+                    columns:
+                        wavelength: { name: wavelength }
+                        throughput: { name: throughput }
+
+# The source configuration is interpreted and validated by the
+# specsim.source module.
+source:
+    name: Constant flux density test source
+    type: qso
+    table:
+        format: ascii.ecsv
+        path: test/test_source.ecsv
+        columns:
+            wavelength: { name: wavelength }
+            flux: { name: flux }
+    # Transverse profile of the source on the sky, used to calculate the
+    # fiberloss fraction when instrument.fiberloss.method = galsim (but
+    # ignored otherwise).
+    profile:
+        # The sum of disk + bulge fractions must be <= 1. If it is < 1,
+        # the remainder is point-like, i.e., star or QSO.
+        disk_fraction: 0.0
+        bulge_fraction: 0.0
+        disk_shape:
+            half_light_radius: 0.8 arcsec
+            position_angle: 45 deg
+            minor_major_axis_ratio: 0.5
+        bulge_shape:
+            half_light_radius: 1.2 arcsec
+            position_angle: 60 deg
+            minor_major_axis_ratio: 0.8
+    # Location of the source on the sky. A source will not be visible if
+    # it lies out the observation field of view.
+    location:
+        # If focal-plane (x,y) coordinates are left blank, they will be
+        # calculated from the sky coordinates and observing conditions.
+        constants:
+            focal_x: 0mm
+            focal_y: 100mm
+        # Sky coordinates are optional (and ignored) when focal-plane (x,y)
+        # are specified.
+        sky: { coordinates: 0h 0d, frame: icrs }
+    # Set these parameters to apply a redshift transformation.
+    z_in:
+    z_out:
+    # Set these parameters to normalize in a specified filter.
+    filter_name:
+    ab_magnitude_out:
+
+# The observation configuration is interpreted and validated by the
+# specsim.observation module.
+observation:
+    observatory: APO
+    constants:
+        exposure_time: 1000.0 s
+        # Atmospheric pressure at the telescope (not at sea level) used
+        # to calculate atmospheric refraction.  Leave commented out to use a
+        # nominal value calculated for the observatory elevation.
+        pressure: 79 kPa
+        # Air temperature at the telescope used to calculate atmospheric
+        # refraction (but only has a small effect).
+        temperature: 15 deg_C
+        # Relative humidity (0-1) at the telescope used to calculate atmospheric
+        # refraction (but only has a small effect).
+        relative_humidity: 0.
+    exposure_start:
+        timestamp:
+            when: 55000.5
+            format: mjd
+        # This optional parameter adjusts the timestamp by +/-12h to
+        # achieve the specified hour angle for the boresight (ra, dec).
+        adjust_to_hour_angle: -0.5h
+    pointing:
+        sky:
+            coordinates: 0h 0d
+            frame: icrs

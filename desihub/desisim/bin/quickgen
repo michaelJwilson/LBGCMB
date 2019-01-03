@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+
+"""
+Simulate DESI spectra or bricks using quickgen
+"""
+
+import sys
+from desisim.scripts import quickgen
+if __name__ == '__main__':
+    args = quickgen.parse()
+    sys.exit(quickgen.main(args))

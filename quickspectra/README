@@ -1,0 +1,5 @@
+NOTE:  
+
+-- Removed asssert of linear dwave in simexp.py. 
+-- Hard coded output dwave for given camera.
+-- Fluxes over redshift 3.8 of BC03 files are NaN. 

@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 c38dd4d63baf7316285b8a18376e579404683e65 Mike Wilson <mjw@roe.ac.uk> 1507064447 -0700	branch: Created from master
+c38dd4d63baf7316285b8a18376e579404683e65 34f5ff971d6bfdcc2e285e8312718327a549e164 Mike Wilson <mjw@roe.ac.uk> 1507064468 -0700	pull origin quickspectra: Fast-forward
+34f5ff971d6bfdcc2e285e8312718327a549e164 29dadfcbae5e53e1b00fcab3791f624901c68211 Mike Wilson <mjw@roe.ac.uk> 1507066802 -0700	commit: also test IOError

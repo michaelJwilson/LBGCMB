@@ -1,0 +1,5 @@
+c maximal size for the ZPHOTLIB libraries 
+c Mod x Age x Ext-law x EB-V x Zstep   
+	PARAMETER (inlib=900000)
+ 
+

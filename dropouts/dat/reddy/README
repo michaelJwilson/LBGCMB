@@ -1,0 +1,33 @@
+Tables from Reddy++ (2007)
+https://arxiv.org/pdf/0706.4091.pdf
+
+-- Optical images have typical depth of R ~ 27.5 as measured through a ∼ 3'' diameter aperture (3 sigma).
+-- Candidates were selected to R = 25.5 to ensure a sample of galaxies amenable to spectroscopic followup.
+-- We exclude all sources with R < 19 that are saturated in our images, all of which are stars.
+-- Yield was 10013 candidates across 14 fiels, average density of 5 / arcmin2.
+-- Combined BX and LBG samples con- stitute ∼ 25% of the total R and Ks-band counts to R = 25.5 and Ks(AB) = 24.4, respectively.
+-- Similarly, of the 5452 LBG candidates, 1903 were targeted with 1492 successful redshifts.
+-- For the BX sample, most of the contamination at bright magnitudes arises from foreground galaxies. 
+   For the LBG sample, most of the contamination arises from stars.
+-- Applying a bright magnitude limit of R = 23.5 will reduce the overall contamination 
+   fractions of the BX and LBG samples to 9% and 3%, respectively.
+-- The detection rate of such sources is ∼2.8% (similar to the rate found among UV-selected z ∼ 3 galaxies; Steidel et al. 2002), 
+   but is a strong function of apparent magnitude where all but two of the objects with R < 22.0 and z > 1 are QSOs.
+-- Success of measuring redshifts is primarily a function of the weather conditions (e.g., cirrus, seeing) at the time 
+   of observation, with a 90% success rate in the best conditions.
+-- How well the photometric selection function (completeness) reflects the underlying z distribution of all star-forming galaxies.
+
+-- Expected rest-UV colors of a galaxy with a particular redshift and reddening are computed by assuming a Bruzual & Charlot (1996) 
+   template galaxy with constant star formation for 1 Gyr and a Calzetti et al. (2000) extinction law.
+-- Most UV-selected z ∼ 2 − 3 galaxies can be described by long duration (> 100 Myr) starbursts and the constant star formation model 
+   described above should reproduce this behavior to the extent required by the simulations (e.g., Shapley et al. 2005). In particular, 
+   the rest-UV colors of galaxies are essentially constant after 1e8 years of star formation, once the mix of O and B stars stabilizes.
+-- Intrinsic rest-UV colors are randomly assigned to simulated galaxies that are then added to the images in increments of 200 galaxies at a time. 
+   This ensures that the image including all added (simulated) galaxies has confusion statistics similar to the observed image, since this will affect 
+   the photometric uncertainties and systematics due to blending.
+-- Galaxies that are targeted by the BX criteria can be shifted out of the BX selection window due to Ly-a emission or absorption.
+-- We have made the reasonable assumption that the SED K-correction is approximately zero for the average rest-UV SED of BX-selected 
+   galaxies after a star formation age of 100 Myr for the typical reddening (E(B − V ) ∼ 0.15) of galaxies in our sample.
+-- L_Ha [ergs/s] = 1.77e13 * L_1700 [ergs/s/Hz]
+   The resulting Ha luminosities are then perturbed by 0.3 dex to account for the dispersion in the relation between the dust-corrected 
+   UV and Ha estimates (Erb et al. 2006b).

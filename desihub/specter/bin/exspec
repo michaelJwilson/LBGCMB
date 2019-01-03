@@ -1,0 +1,104 @@
+#!/usr/bin/env python
+
+"""
+Vanilla spectral extraction
+"""
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import sys
+import os
+import os.path
+import numpy as np
+from time import time
+
+import specter
+from specter import io
+from specter.psf import load_psf
+from specter.extract import ex2d
+
+import optparse
+parser = optparse.OptionParser(usage = "%prog [options]")
+parser.add_option("-i", "--input", type="string",  help="input image")
+parser.add_option("-p", "--psf", type="string",  help="input psf")
+parser.add_option("-o", "--output", type="string",  help="output extracted spectra")
+parser.add_option("-w", "--wavelength", type="string",  help="wavemin,wavemax,dw", default="8000.0,8200.0,1.0")
+parser.add_option("-b", "--bundlesize", type="int",  help="num spectra per bundle [%default]", default=25)
+# parser.add_option("-s", "--specrange", type="string",  help="specmin,specmax (python style)", default="0,10")
+parser.add_option("-s", "--specmin", type=int,  help="first spectrum to extract", default=0)
+parser.add_option("-n", "--nspec", type=int,  help="number of spectra to extract [%default]", default=25)
+parser.add_option("-r", "--regularize", type="float",  help="regularization amount (%default)", default=0.0)
+parser.add_option("-d", "--noise_decorr", dest='ndecorr', action='store_true', help="decorrelate noise between fibers, at the cost of signal correlations between fibers", default=False)
+parser.add_option("--nwavestep", type=int,  help="number of wavelength steps in core extraction region", default=50)
+### parser.add_option("-x", "--xxx",   help="some flag", action="store_true")
+
+opts, args = parser.parse_args()
+
+#- Get wavelength grid from options
+wstart, wstop, dw = [float(x) for x in opts.wavelength.split(',')]
+wavelengths = np.arange(wstart, wstop+dw/2.0, dw)
+nwave = len(wavelengths)
+
+#- Get specrange from options
+specmin, specmax = opts.specmin, opts.specmin + opts.nspec
+
+#- Load input files
+psf = load_psf(opts.psf)
+img, imgivar, imghdr = io.read_image(opts.input)
+
+#- Confirm that this PSF covers these wavelengths for these spectra
+psf_wavemin = np.max(psf.wavelength(list(range(specmin, specmax)), y=0))
+psf_wavemax = np.min(psf.wavelength(list(range(specmin, specmax)), y=psf.npix_y-1))
+if psf_wavemin > wstart:
+    raise ValueError('Start wavelength {:.2f} < min wavelength {:.2f} for these fibers'.format(wstart, psf_wavemin))
+if psf_wavemax < wstop:
+    raise ValueError('Stop wavelength {:.2f} > max wavelength {:.2f} for these fibers'.format(wstop, psf_wavemax))
+
+#- Print parameters
+print("""\
+#--- Extraction Parameters ---
+input:      {input}
+psf:        {psf}
+output:     {output}
+wavelength: {wstart} - {wstop} AA steps {dw}
+specmin:    {specmin}
+nspec:      {nspec}
+bundlesize: {bundlesize}
+regularize: {regularize}
+#-----------------------------\
+""".format(input=opts.input, psf=opts.psf, output=opts.output,
+    wstart=wstart, wstop=wstop, dw=dw,
+    specmin=opts.specmin, nspec=opts.nspec, bundlesize=opts.bundlesize,
+    regularize=opts.regularize))
+
+#- The actual extraction
+flux, ivar, Rd = ex2d(img, imgivar, psf, opts.specmin, opts.nspec, wavelengths,
+             regularize=opts.regularize, ndecorr=opts.ndecorr,
+             bundlesize=opts.bundlesize, wavesize=opts.nwavestep, verbose=True)
+
+#- Util function to trim path to something that fits in a fits file (!)                            
+def _trim(filepath, maxchar=40):
+    if len(filepath) > maxchar:
+        return '...'+filepath[-maxchar:]
+
+#- Augment input image header for output
+imghdr['SPECMIN'] = (specmin, 'First spectrum')
+imghdr['SPECMAX'] = (specmax-1, 'Last spectrum')
+imghdr['NSPEC']   = (opts.nspec, 'Number of spectra')
+imghdr['WAVEMIN'] = (wstart, 'First wavelength [Angstroms]')
+imghdr['WAVEMAX'] = (wstop, 'Last wavelength [Angstroms]')
+imghdr['WAVESTEP']= (dw, 'Wavelength step size [Angstroms]')
+imghdr['SPECTER'] = (specter.__version__, 'https://github.com/desihub/specter')
+imghdr['IN_PSF']  = (_trim(opts.psf), 'Input spectral PSF')
+imghdr['IN_IMG']  = (_trim(opts.input), 'Input image')
+
+#- Write output
+outdir = os.path.dirname(opts.output)
+if (outdir != '') and (not os.path.exists(outdir)):
+    os.makedirs(outdir)
+
+io.write_spectra(opts.output, wavelengths, flux, ivar, Rd, imghdr)
+
+
+
+

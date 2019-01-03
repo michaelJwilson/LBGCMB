@@ -1,0 +1,50 @@
+Pg. 16, Detailed requirement LSS1 (Y10):                                                                                                                          
+Systematic uncertainty in the mean redshift of each tomographic bin shall not exceed 0.003(1. + z)                                                                 
+in the Y10 DESC LSS analysis.                                                                                                                                       
+
+Pg. 16, Goal LSS1 (Y1):                                                                                                                                          
+Systematic uncertainty in the mean redshift of each tomographic bin should not exceed 0.005(1. + z)                                                              
+in the Y1 DESC LSS analysis.               
+
+-------------------------------------------                                                                                                                        
+
+Pg. 17, Goal LSS2 (Y1):                                                                                                                                           
+Systematic uncertainty in the photometric redshift scatter should not exceed 0.1 * (1 + z)                                                                    
+in the Y1 DESC LSS.                                                                                                                                                
+
+Pg. 17, Detailed requirement LSS2 (Y10)                                                                                                                             
+Systematic uncertainty in the photometric redshift scatter shall not exceed 0.03 * (1 + z)                                                                          
+in the Y10 DESC LSS.                                                                                                                                                
+
+-------------------------------------------                                                                                                                         
+Pg. 18, Goal WL1 (Y1):                                                                                                                                             
+Systematic uncertainty in the mean redshift of each source tomographic bin should not exceed 0.002 * (1 + z)                                                     
+in the Y1 DESC WL analysis                                                                                                                                         
+
+Pg. 18, Detailed requirement WL1 (Y10):                                                                                                                        
+Systematic uncertainty in the mean redshift of each source tomographic bin shall not exceed 0.001 * (1 + z)                                                      
+in the Y10 DESC WL analysis.                                                                                                                                        
+
+-------------------------------------------                                                                                                                         
+
+Pg. 21, Goal CL1 (Y1):                                                                                                                                           
+Systematic uncertainty in the mean redshift of each source tomographic bin should not exceed 0.008 * (1 + z)                                                    
+in the Y1 DESC CL analysis.                                                                                                                                     
+
+Pg. 21, Detailed requirement CL1 (Y10):                                                                                                                         
+Systematic uncertainty in the mean redshift of each source tomographic bin shall not exceed 0.001 * (1 + z)                                                    
+in the Y10 DESC CL analysis.                                                                                                                                      
+
+-------------------------------------------
+
+Pg. 52, D2.1:                                                                                                                                             
+For the lens sample, we assume 10 tomographic bins spaced by 0.1 in photo-z between 0.2 <= z <= 1.2 for Y10,                                             
+and 5 bins spaced by 0.2 in photo-z in that same redshift range for Y1. This is the same as for the LSS                                                  
+analysis in the previous subsection. See PAGE 47.                                                                                                                   
+                                                                                                                                                            
+Pg. 52, 
+For the source sample, we assume 5 redshift bins defined with equal numbers of source galaxies per bin for                                        
+both Y1 and Y10. This is done using the true redshift distribution, and then the bins are convolved with                                          
+the photo-z error distribution to make the photo-z distributions. While this technically does not mimic                                               
+what is done in reality, it is quite a close approximation and easier to implement. Unlike for the lens                                              
+sample described in Appendix D1, there is no upper redshift cutoff at z = 1.2 for the source sample.                                                    

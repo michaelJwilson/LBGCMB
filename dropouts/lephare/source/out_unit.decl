@@ -1,0 +1,6 @@
+          integer*4 UO
+c  output on screen or in fles 
+          PARAMETER (UO=6)
+c         PARAMETER (UO=30)
+
+           

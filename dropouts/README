@@ -1,0 +1,7 @@
+-- Composite doesn't need madau.
+-- what do they do for madau extinction and qsos in redrock.
+
+-- Redrock estimates to date don't take into account degeneracies between LBG and low-z Balmer break looking like Lyman.
+-- As per KG, need 25hr exposure to resolve absorption features such that the two can be distinguished.
+
+-- Need a means to resample noise curve in wavelength/frequency.

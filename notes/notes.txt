@@ -1,0 +1,2 @@
+-- Hard coded wavelength limits in quickspectra.py for PSF.
+-- Loads experiment via $SURVEY.

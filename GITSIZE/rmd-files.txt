@@ -1,0 +1,4 @@
+1248682  1070342  b2083c553e0dd57ba91e0cd2c5c4a977b99e25fc  desihub/basis_templates/v2.5/elgxc_templates_v2.0.fits
+1248682  1070342  b2083c553e0dd57ba91e0cd2c5c4a977b99e25fc  desihub/basis_templates/v2.5/bgs_templates_v2.1.fits
+690412   531709   002c31dae1c15f810973afba21dbabda9c5c7783  desihub/basis_templates/v2.5/star_templates_v2.2.fits
+                                                            desihub/basis_templates/v2.5/star_templates_v2.2.fits

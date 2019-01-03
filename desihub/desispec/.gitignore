@@ -1,0 +1,40 @@
+# Compiled files
+*.py[co]
+
+# Other generated files
+htmlcov
+.coverage
+
+# Sphinx
+doc/api
+doc/_build
+
+# iPython
+docs/nb/.ipynb_checkpoints
+
+# Packages/installer info
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+distribute-*.tar.gz
+
+# Other
+.*.swp
+*~
+
+# Test directories and files
+test-*.fits
+test*.fits.gz
+test-*
+test_raw-*
+test_redux-*
+
+# Mac OSX
+.DS_Store

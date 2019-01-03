@@ -1,0 +1,72 @@
+# Parameters for CAMB for best-fit Planck13+BAO model.
+output_root = cambPB
+
+get_scalar_cls = T
+get_vector_cls = F
+get_tensor_cls = F
+get_transfer   = T
+do_lensing     = T
+do_nonlinear   = 2
+
+l_max_scalar     = 3000
+k_eta_max_scalar = 9000
+l_max_tensor     = 1500
+k_eta_max_tensor = 3000
+
+use_physical = T
+ombh2   = 0.0220
+omch2   = 0.1171
+omnuh2  = 0.0000
+omk     = 0
+hubble  = 69.000
+w       = -1.000
+cs2_lam = 1
+
+temp_cmb= 2.725500
+helium_fraction = 0.2477
+massless_neutrinos = 3.031
+massive_neutrinos  = 0.000
+nu_mass_eigenstates= 0
+nu_mass_degeneracies=0
+nu_mass_fractions  = 1
+
+reionization         = T
+re_use_optical_depth = T
+re_optical_depth     = 0.0952
+
+initial_power_num = 1
+scalar_amp(1)     = 2.1090124480954083e-09
+scalar_spectral_index(1) = 0.965
+scalar_nrun(1) = 0
+tensor_spectral_index = 0
+initial_ratio = 1
+
+initial_condition = 1
+initial_vector    = -1 0 0 0 0
+vector_mode       = 0
+COBE_normalize    = F
+CMB_outputscale   = 7.4311e12
+
+transfer_high_precision = T
+transfer_kmax           = 50
+transfer_k_per_logint   = 1500
+transfer_num_redshifts  = 1
+transfer_redshift(1)    = 0
+transfer_filename(1)    = cambPB_tk.txt
+transfer_matterpower(1) = cambPB_pk.txt
+
+scalar_output_file = cambPB_uCls.txt
+lensed_output_file = cambPB_lCls.txt
+
+feedback_level=1
+lensing_method=1
+accurate_BB=F
+recombination=1
+massive_nu_approx=3
+accurate_polarization=T
+accurate_reionization=T
+do_late_rad_truncation=F
+number_of_threads=0
+accuracy_boost=1
+l_accuracy_boost=1
+l_sample_boost=1

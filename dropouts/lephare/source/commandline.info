@@ -1,0 +1,141 @@
+###################################################################
+#         --- INSTALL ---
+###################################################################
+#   
+###  -1-     PATHNAME for LEPHARE                         ###
+#
+# LEPHAREDIR -> where goes the zphot tar file
+	   setenv LEPHAREDIR /your_path/lephare
+     OR    export LEPHAREDIR='/your_path/lephare' 
+# LEPHAREWORK -> where will go part of the stuff you will create 
+	   setenv LEPHAREWORK /your_path/lepharework
+     OR    export LEPHAREWORK='/your_path/lepharework' 
+#
+###  -2-    Tar file                                      ###
+# 
+           >  cd /your_path
+	   >  tar -zxvf   lephare_main.tar.gz
+
+	(  idem for other SED tar files if you want them 
+           >  cd /your_path
+	   >  tar -zxvf   lephare_sed_gissel.tar.gz
+	   >  tar -zxvf   lephare_sed_hyperz.tar.gz
+	   >  tar -zxvf   lephare_sed_pegase2.tar.gz
+	   >  tar -zxvf   lephare_sed_various.tar.gz
+	)
+#   
+###  -3a-     Compilation                                  ###
+#
+           >  cd $LEPHAREDIR/source
+ 	   >  make -f Makefile
+	    -> change Makefile option if needed 
+
+	   --> It will compile all the programs and will create the 
+       	 subdirectories needed inside  $LEPHAREWORK.       
+
+#
+###  -3b-     Create  LEPHARE Working directory            ###
+	      it can be also done separately with  : 	
+
+	   >  make work 	
+
+  	   --> creates the following directories :
+                    $(LEPHAREWORK)/filt
+	            $(LEPHAREWORK)/lib_bin
+	            $(LEPHAREWORK)/lib_mag
+#
+###  -4-  -->   It s ready         
+#	
+###################################################################
+#         --- COMMAND LINES  ---
+###################################################################
+#
+###################################################################
+###     ASCII SEDs LIST TO BE CONVERTED IN BINARY LIBRARY       ###
+###################################################################
+#
+#  Binary Library for STARs 
+	$LEPHAREDIR/source/sedtolib -c $LEPHAREDIR/config/zphot.para -t S 
+#  Binary Library for QSO ns 
+	$LEPHAREDIR/source/sedtolib -c $LEPHAREDIR/config/zphot.para -t Q 
+#  Binary Library for GALAXIEs 
+	$LEPHAREDIR/source/sedtolib -c $LEPHAREDIR/config/zphot.para -t G 
+#
+#
+###################################################################
+###                 FILTER  FILE  CREATION                      ### 
+###################################################################
+# 
+# create a unique file with all transmission curves to be used 
+	$LEPHAREDIR/source/filter -c $LEPHAREDIR/config/zphot.para
+#  
+###################################################################
+###     Additional stuff relative to filters :
+       ---------------------------------------
+# 
+# gives info about filters used
+	$LEPHAREDIR/source/filter_info -f name_of_variable_FILTER_FILE
+#
+	exemple: $LEPHAREDIR/source/filter_info -f filter_hdfn.dat 
+#
+# plot the transmission curves with a kshell including Supermongo macro
+	$LEPHAREDIR/tools/filterplot   full_pathname_for_FILTER_FILE
+#
+	exemple: $LEPHAREDIR/tools/filterplot $LEPHAREWORK/filt/filter_hdfn.dat
+#
+# atmospheric and galactic extinction through the filters
+	 $LEPHAREDIR/source/filter_extinc -f filter_hdfn.dat -e extinc_etc.dat -o exti_test.out 
+#
+#
+
+###################################################################
+###    THEORETICAL MAGNITUDES AND K-CORRECTION COMPUTATION      ###
+###################################################################
+#
+# mag for stars 
+	$LEPHAREDIR/source/mag_star -c $LEPHAREDIR/config/zphot.para 
+# mag for GALs
+	$LEPHAREDIR/source/mag_gal  -c $LEPHAREDIR/config/zphot.para -t G
+# mag for QSOs
+	$LEPHAREDIR/source/mag_gal  -c $LEPHAREDIR/config/zphot.para -t Q -EB_V 0.
+####################################################################  
+###     Additional stuff :
+       -------------------
+#
+# z + mags + k-corr  extracted in ASCII file in working directory if 
+         option :   LIB_ASCII  YES 
+#
+# mag for GALs with fixed Zformation 
+	$LEPHAREDIR/source/mag_zform -c $LEPHAREDIR/config/zphot.para 
+
+#
+#
+###################################################################
+####                 ZPHOT COMPUTATION                          ###  
+###################################################################
+#
+# run the zphot code 
+	$LEPHAREDIR/source/zphot -c $LEPHAREDIR/config/zphot.para 
+#
+###################################################################
+###     Additional stuff relative to output spectra :
+#       --------------------------------------------
+#
+# look at the best SED-fitting if (SPEC_OUT=YES) inside SM environment
+	prompt>  sm
+	sm> macro read "{$LEPHAREDIR}/tools/spec.sm" zsp Name [1-7] [0-1]
+	Name :  file Name of the object to plot
+	[1-7] : SED of the best Gal/QSO/Star to plot
+			 1: GAL only    
+			 2: QSO only    
+			 3: GAL + QSO
+			 4: STAR only    
+			 5: GAL + STAR
+			 6: QSO + STAR    
+			 7: GAL + QSO + STAR 
+
+	[0-1] : 0 plot on screen 
+		1 plot in ps file 
+
+###################################################################
+###################################################################

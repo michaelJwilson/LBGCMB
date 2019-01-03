@@ -1,0 +1,2 @@
+c   Size for redshift vector  : Zmax/dz : 6/0.04=150
+	PARAMETER (chisize=500)
