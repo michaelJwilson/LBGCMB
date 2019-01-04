@@ -1,3 +1,4 @@
+*.pyc
 desihub/desimodel/.DS_Store
 desihub/desitutorials/redrock/spectro/redux/dc17a2/spectra-64/xs
 dropouts/specxphoto_bao/cmass/galaxy_DR12v5_CMASS_North.fits
