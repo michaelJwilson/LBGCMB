@@ -12,7 +12,7 @@ def pz_slice(zmin, zmax, pz):
     zz      = np.arange(zmin, zmax, dz)
 
     ##  Integrate over unnormalised survey_pz from zmin to zmax.                                                                                            
-    result  = np.trapz(ps(zz), zz, dx=dz)
+    result  = np.trapz(pz(zz), zz, dx=dz)
 
     return  result
 
