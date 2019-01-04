@@ -13,14 +13,14 @@ from    zeldovich_Lmax      import  Lcutmax
 from    Cgg                 import  Cgg, var_Cgg, Ngg
 from    numpy.linalg        import  inv
 from    fisher_contour      import  plot_ellipse
-from    get_uvudf_dndz      import  get_uvudf_dndz
+from    get_Rafelski15_dNdz import  get_Rafelski15_pz
 from    planck18_bao        import  get_sig8z
 from    whitebook_pz        import  whitebook_pz
 
 
 params = get_params()
 
-def get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz, bz2 = None, survey_pz2 = None, zeff=True, samplevar_lim=False):
+def get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz, bz2 = None, survey_pz2 = None, zeff=False, samplevar_lim=False):
   ##  Nkk.
   nkk          =      Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
                           thetab=thetab, DeltaT=DeltaT, iterative=iterative, pickleit=False)
@@ -39,26 +39,26 @@ def get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz, bz2 = None, sur
   
   return  {'gg': cgg, 'kg': ckg, 'gk': ckg, 'kk': ckk}, {'gg': ngg, 'kg': np.zeros_like(ckg), 'gk': np.zeros_like(ckg), 'kk': nkk}
   
-def get_ClsCov(Llls, Cls, Nls, fsky):
+def get_ClsCov(Llls, Cls, Nls, fsky, printit=False):
   result = {}
 
   for key in Cls:
     for kkey in Cls:
       ##  Gaussian covariance;  eqn. (14) of https://arxiv.org/pdf/1710.09465.pdf.
-      result[key + kkey]  =  0.0
-      result[key + kkey] +=  (Cls[key[0] + kkey[0]] + Nls[key[0] + kkey[0]]) * (Cls[key[1] + kkey[1]] + Nls[key[1] + kkey[1]]) 
-      result[key + kkey] +=  (Cls[key[0] + kkey[1]] + Nls[key[0] + kkey[1]]) * (Cls[key[1] + kkey[0]] + Nls[key[1] + kkey[0]])  ## Cross-terms should be identically zero. 
-      result[key + kkey] /= (2. * Llls + 1.)  ## To be viewed as covariance sampled at Llls.  I.e. to be corrected  
-      result[key + kkey] /=  fsky             ## for further binning in L.   
+      result[key + kkey]  = (Cls[key[0] + kkey[0]] + Nls[key[0] + kkey[0]]) * (Cls[key[1] + kkey[1]] + Nls[key[1] + kkey[1]]) 
+      result[key + kkey] += (Cls[key[0] + kkey[1]] + Nls[key[0] + kkey[1]]) * (Cls[key[1] + kkey[0]] + Nls[key[1] + kkey[0]])  ##  Cross-terms should be identically zero. 
+      result[key + kkey] /= (2. * Llls + 1.)                                                                                   ##  To be viewed as covariance sampled at Llls.  I.e. to be corrected  
+      result[key + kkey] /=  fsky                                                                                              ##  for further binning in L.   
   
-  for key in result:
-    print key, result[key]
+  if printit:
+    for key in result:
+      print key, result[key]
 
   return  result
 
 def dp_DL(p, fid_sig8, fid_b1, DL):
   ##  DL = (Ckk, Ckg, Cgg) for given L.  Partial derivative wrt the parameters {sig8, b1}.
-  if   p == 's8':
+  if  p == 's8':
     return  (2. / fid_sig8) * DL
 
   elif p == 'b1':
@@ -90,7 +90,7 @@ if __name__ == "__main__":
   
   ## Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                     
   plotit                             =  True 
-
+  
   cambx                              =  CAMB()
   Pk_interps                         =  get_PkInterps(cambx)
   
@@ -153,21 +153,19 @@ if __name__ == "__main__":
   drop_bz            =  get_dropoutbz()
   bz                 =  lambda z:  drop_bz(peakz)
 
+  ##  LSST whitebook p(z).
+  pz                 =  lambda z:  whitebook_pz(z, ilim = 25.30)
+  
   ##  Get Rafelski based estimates on p(z).                                                                                                               
-  pz                 =  lambda z:  whitebook_pz(z, ilim = 25.3)
-  ## pz              =  get_uvudf_dndz(band='g', field='UVUDF', mag='')    
-
+  ##  Raf15_pz       =  get_Rafelski15_pz(droptype='u', field='cosmos', depth='FULL', dz=0.1)    
+  
   ##  Change in Ckg with dN/dz -> dN/dz'.  TO DO:  Set low-z population to have red galaxy bias.                                                                    
-  bzz                =  lambda z:  1.0 * bz(z)
-
-  pzz                =  lambda z:  whitebook_pz(z, ilim = 24.3)
-  ##  pzz            =  get_uvudf_dndz(band='g', field='UVUDF', mag='24.5') 
+  bzz                =  lambda z:  bz(z)
+  pzz                =  lambda z:  whitebook_pz(z, ilim = 25.25)
 
   ##  and the parameter Fisher matrix.                                                                                                                    
-  fid_b1             =  drop_bz(peakz)
+  fid_b1             =       bz(peakz)
   fid_sig8           =    sig8z(peakz)
-
-  print('\n\nFiducial b1(z) and fsig8(z):  %.3lf and %.3lf.' % (fid_b1, fid_sig8))
 
   ##  Dry run.
   ##  cgg            =  Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
@@ -183,97 +181,107 @@ if __name__ == "__main__":
   if plotit:
     pl.clf()
 
-    pl.semilogy(Llls,  Cls['gg'],  label='base Cgg')
-    pl.semilogy(Llls, xCls['gg'],  label='shifted Cgg')
-
-    pl.semilogy(Llls,  Cls['kg'],  label='base Ckg')
-    pl.semilogy(Llls, xCls['kg'],  label='shifted Ckg')
-
+    pl.plot(Llls,       100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$dC_{gg}/C_{gg} [\%]$')
+    pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$') ## kg is linear, gg is quad. in dNdz.
+    
     pl.xlim(50., 4.e3)
     pl.xlabel(r'L')
 
     pl.legend(ncol=2)
 
-    pl.savefig('plots/interloper_bias_cls_%sband.pdf' % band, bbox_inches='tight')  
+    pl.savefig('plots/interloper_bias_cls_%s-drops.pdf' % band, bbox_inches='tight')  
 
-  ##  Per-L covariance;  e.g. 'ggkk' etc ... Sum of siganl and noise.  eqn (14) of https://arxiv.org/pdf/1710.09465.pdf
+  ##  The resulting parameter bias, (dsig8, db1).                                                                                                                                                                   
+  nparam             =  2  
+  dtheta             =  np.zeros(nparam)
+
+  ## dtheta stripped of iFab, eqn. (5.1) of https://arxiv.org/pdf/1706.03173.pdf 
+  interim            =  np.zeros(nparam)
+
+  ##  Parameter Fisher matrix.                                                                                                                                                                        
+  Fisher             =  np.zeros(nparam * nparam).reshape(nparam, nparam)
+  iFisher            =  np.zeros_like(Fisher)
+
+  ##  Per-L covariance;  e.g. 'ggkk' etc ... Sum of signal and noise.  eqn (14) of https://arxiv.org/pdf/1710.09465.pdf
   covs               =  get_ClsCov(Llls, Cls, Nls, fsky)
 
-  ##  Covariance matrix of {kk, kg, gg} for given L.
-  Cov_Lll            =  np.zeros(3 * 3).reshape(3,3)
+  ##  Covariance matrix of {kk, kg, gg} for given L = Llls[LL].
+  nspectra           =  3
+  Cov_Lll            =  np.zeros(nspectra * nspectra).reshape(nspectra, nspectra)
 
   ## and inverse.
   iCov_Lll           =  np.zeros_like(Cov_Lll) 
 
-  ##  Parameter Fisher matrix.
-  Fisher             =  np.zeros(2 * 2).reshape(2, 2)
-  iFisher            =  np.zeros_like(Fisher)
-
-  ##  Finally, the parameter bias.                                                                                                                        
-  dtheta             =  np.zeros(2)
-  interim            =  np.zeros(2)
+  ## Lmax cut. 
+  Lmax               =  1500.
+  Llls               =  Llls[Llls < Lmax]
 
   for LL, dummy in enumerate(Llls):
     dckg         =  Cls['kg'][LL] - xCls['kg'][LL]
     
-    ##  Noise bias in Fisher?
-    dcgg         =  Cls['gg'][LL] - xCls['gg'][LL] - xNls['gg'][LL]
+    ##  Noise bias in Fisher expectation.
+    dcgg         = (Cls['gg'][LL] + Nls['gg'][LL]) - (xCls['gg'][LL] + xNls['gg'][LL])
 
-    ##  Construct D(LL) = [Ckk, Ckg, Cgg].                                                                                  
+    ##  Construct D(LL) = [Ckk(LL), Ckg(LL), Cgg(LL)].  Noise bias?                                                                                  
     DL           =  np.array([Cls['kk'][LL], Cls['kg'][LL], Cls['gg'][LL]])
 
     for i, tracer in enumerate(['kk', 'kg', 'gg']):
       for j, ttracer in enumerate(['kk', 'kg', 'gg']):
-        ##  Covariance between tracers at given L, e.g. Cov(kk, kg).
+        ##  Symmetric covariance between tracers at given LL, e.g. Cov(Ckk[LL], Ckg[LL]).
         Cov_Lll[i, j] = covs[tracer + ttracer][LL]
 
-    ## .. and invert.  
+    ## .. and the inverse.  
     iCov_Lll = inv(Cov_Lll)
 
     for i, pp in enumerate(['s8', 'b1']):
       for j, ss in enumerate(['s8', 'b1']):
-        Fisher[i, j] = np.dot(dp_DL(pp, fid_sig8, fid_b1, DL), np.dot(iCov_Lll, dp_DL(ss, fid_sig8, fid_b1, DL)))
-    
-    ##  No change to kk due to interloper population. 
-    DDL           =  np.array([0.0, dckg, dcgg])
-    XXX           =    np.dot(iCov_Lll, DDL)
+        ##  Per-L Fisher matrix.  Eqn. (17) of https://arxiv.org/pdf/1710.09465.pdf
+        ##  Effectively working with samples in bins.  Fisher is a sum over modes.  Account for N>1 L modes per bin.
+        Fisher[i, j] += nmodes[LL] * np.dot(dp_DL(pp, fid_sig8, fid_b1, DL), np.dot(iCov_Lll, dp_DL(ss, fid_sig8, fid_b1, DL)))
+
+    ##  Eqn. (5.1) of https://arxiv.org/pdf/1706.03173.pdf;  No change to kk due to interloper population; Noise bias? 
+    DDL     = np.array([0.0, dckg, dcgg])
+    iCovDDL =   np.dot(iCov_Lll, DDL)
     
     for j, pparam in enumerate(['s8', 'b1']):
-      interim[j] +=  np.dot(dp_DL(pparam, fid_sig8, fid_b1, DL), XXX)
+      ##  dmu_m / dp_beta * iCov(m,n) dDn.
+      ##  Effectively working with samples in bins.  Fisher is a sum over modes.  Account for N>1 L modes per bin. 
+      interim[j] += nmodes[LL] * np.dot(dp_DL(pparam, fid_sig8, fid_b1, DL), iCovDDL)
   
   ##  Invert Fisher. 
-  iFisher  =  inv(Fisher)
+  iFisher = inv(Fisher)
   
   for i, param in enumerate(['s8', 'b1']):
     for j, pparam in enumerate(['s8', 'b1']):
       dtheta[i] += iFisher[i,j] * interim[j]
+      
+  ##
+  biased_sig8 = fid_sig8 + dtheta[0]
+  biased_b1   = fid_b1 + dtheta[1]
 
+  print('\n\nFiducial sig8(z) and b1(z):  %.6lf +- %.6lf and %.6lf +- %.6lf.' % (fid_sig8, np.sqrt(iFisher[0,0]), fid_b1, np.sqrt(iFisher[1,1])))
+  print('Biased   sig8(z) and b1(z):  %.6lf and %.6lf.' % (biased_sig8, biased_b1))
+  print('Bias: %.6lf \t %.6lf [sigma]' % (np.abs(fid_sig8 - biased_sig8) / np.sqrt(iFisher[0,0]), np.abs(fid_b1 - biased_b1) / np.sqrt(iFisher[1,1])))
 
   ##  And plot contour ...                                                                                                                                        
-  latexify(fig_width=None, fig_height=None, columns=1, equal=True)
+  pl.clf()
 
-  fig = plt.gcf()
-  ax  = fig.add_subplot(111)
+  latexify(columns=1, equal=True)
 
-  pl.plot(fid_b1, fid_sig8, 'k*', label='Fiducial', markersize=5)
+  fig    = plt.gcf()
+  ax     = fig.add_subplot(111)
 
-  plot_ellipse(x_cent = fid_b1 + dtheta[1], y_cent = fid_sig8 + dtheta[0], ax = ax, cov = iFisher, mass_level = 0.99,\
-                        fill=False, fill_kwargs={'alpha':  0.5}, plot_kwargs={'c': 'g'})
+  for mass_level, color, alpha in zip([0.99, 0.95, 0.68], ['b', 'b', 'b'], [0.2, 0.4, 0.6]):
+    plot_ellipse(x_cent = fid_sig8, y_cent = fid_b1, ax = ax, cov = iFisher, mass_level = mass_level,\
+                 fill=True, fill_kwargs={'alpha': alpha, 'c': color}, plot_kwargs={'c': color, 'alpha': 0.0})
+  
+  pl.plot(fid_sig8, fid_b1, 'w*', markersize=5, label=r'$(\sigma_8, b_1)$')
+  pl.plot(biased_sig8, biased_b1, 'k*', markersize=5, alpha=0.4, label=r'$(\hat \sigma_8, \hat b_1)$')
 
-  plot_ellipse(x_cent = fid_b1 + dtheta[1], y_cent = fid_sig8 + dtheta[0], ax = ax, cov = iFisher, mass_level = 0.95,\
-               fill=False, fill_kwargs={'alpha':  0.5}, plot_kwargs={'c': 'r'})
-
-  plot_ellipse(x_cent = fid_b1 + dtheta[1], y_cent = fid_sig8 + dtheta[0], ax = ax, cov = iFisher, mass_level = 0.68,\
-               fill=False, fill_kwargs={'alpha':  0.5}, plot_kwargs={'c': 'b'})
-
-  ## plt.arrow(fid_b1, fid_sig8, dtheta[1], dtheta[0], 'k', linewidth=.25, head_width=0.01, overhang=.8, color='k')                                         
-
-  ## pl.xlim(0.95 * fid_b1,   1.05 * fid_b1)
-  ## pl.ylim(0.95 * fid_sig8, 1.05 * fid_sig8)
-
-  pl.xlabel(r'$b_1(z=%.1lf)$'      % peakz)
-  pl.ylabel(r'$\sigma_8(z=%.1lf)$' % peakz)
-
-  pl.savefig('plots/interloper_bias_%sband.pdf' % band, bbox_inches='tight')
-  '''
+  pl.legend()
+  pl.xlabel(r'$\sigma_8(z=%.1lf)$' % peakz)
+  pl.ylabel(r'$b_1(z=%.1lf)$'      % peakz)
+  
+  pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band, bbox_inches='tight')
+  
   print("\n\nDone.\n\n")
