@@ -6,11 +6,13 @@ from    Gaussian_pz  import  Gaussian_pz
 def pz_slice(zmin, zmax, pz):
     '''                                                                                                                                                    
     Returns pz integrated between zmin and zmax.
+    Relies on p(z) being correctly normalised. 
     '''
-    zz      = np.arange(zmin, zmax, 0.01)
+    dz      = 0.001
+    zz      = np.arange(zmin, zmax, dz)
 
     ##  Integrate over unnormalised survey_pz from zmin to zmax.                                                                                            
-    result  = np.trapz(pz(zz), zz)
+    result  = np.trapz(ps(zz), zz, dx=dz)
 
     return  result
 

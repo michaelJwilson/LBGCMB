@@ -19,12 +19,12 @@ class CAMB:
     self.pars.set_cosmology(H0=100.*params['h_100'], ombh2 = params['om_b']*params['h_100']**2., omch2 = params['om_cm']*params['h_100']**2.)
     self.pars.InitPower.set_params(ns = params['ns'], As = params['As'])
 
-    self.get_background()
-
     ## Interpolate in k, given z. 
     self.calc_linear(0.0)
     self.calc_nonlinear(0.0)
-
+    
+    self.get_background() 
+    
     ## Interpolate in both k and z. 
     self.get_lpower_interpolatekz()
     self.get_nlpower_interpolatekz()
@@ -53,13 +53,16 @@ class CAMB:
     return  self.nlpower_interpolatek
 
   def get_lpower_interpolatekz(self, zscatter=params['zscatter']):
-    pkinterp = camb.get_matter_power_interpolator(self.pars, nonlinear=False, hubble_units=True, k_hunit=True, log_interp=True, kmax=10., zmax=1.1*zscatter)
+    ##  Previously kmax=10., zmax=1.1 * zscatter
+    pkinterp = camb.get_matter_power_interpolator(self.pars, nonlinear=False, hubble_units=True, k_hunit=True, log_interp=True, kmax=5., zmax=1.01*zscatter)
+    
     self.lpower_interpolatekz = np.vectorize(pkinterp.P) 
     
     return  self.lpower_interpolatekz  ## To be called as pkinterp.P(z, k);
 
   def get_nlpower_interpolatekz(self, zscatter=params['zscatter']):
-    pkinterp = camb.get_matter_power_interpolator(self.pars, nonlinear=True, hubble_units=True, k_hunit=True, log_interp=True, kmax=10., zmax=1.1*zscatter)
+    pkinterp = camb.get_matter_power_interpolator(self.pars, nonlinear=True, hubble_units=True, k_hunit=True, log_interp=True, kmax=5., zmax=1.01*zscatter)
+    
     self.nlpower_interpolatekz = np.vectorize(pkinterp.P)
 
     return  self.nlpower_interpolatekz  ## To be called as pkinterp.P(z, k);

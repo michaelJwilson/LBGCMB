@@ -18,12 +18,17 @@ mpl.rc('text', usetex = True)
 params = get_params()
 
 def Ckg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = True):
-  if zeff:
-    dz      = 0.01
-    zs      = np.arange(zmin, zmax, dz)
+  dz       = 0.01
+  zs       = np.arange(zmin, zmax, dz)
+  
+  ##  Catch normalisation of p(z).  Added 03/01/19.                                                                                                                                                                                 
+  ps       = survey_pz(zs)
+  norm     = np.sum(ps) * dz
+  ps      /= norm
 
+  if zeff:
     ##  Calculate the mean redshift.
-    zg      = np.sum(dz * survey_pz(zs) * zs) / np.sum(dz * survey_pz(zs))
+    zg      = np.sum(ps * zs) * dz / np.sum(dz * survey_pz(zs))
 
     chi_g   = comoving_distance(zg)
 
@@ -37,9 +42,7 @@ def Ckg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = True):
 
   else:                            
      ## Assumes integral over dz slice.                                                                                       
-     zs          = np.linspace(zmin, zmax, 200)
      chis        = comoving_distance(zs)
-
      result      = np.zeros((len(zs), len(Llls)))
 
      for i, redshift in enumerate(zs):

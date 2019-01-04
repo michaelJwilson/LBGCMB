@@ -24,16 +24,27 @@ latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 params = get_params()
          
 def Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, survey_pz2=None, bz2=None, zeff=True):
-  dz          = 0.01
+  dz          = 0.001
   zs          = np.arange(zmin, zmax + dz, dz)
+
+  ##  Catch normalisation of p(z).  Added 03/01/19.
+  ps          = survey_pz(zs)
+  norm        = np.sum(ps) * dz
+  ps         /= norm
 
   chis        = comoving_distance(zs)
 
   if bz2 is None:
-     bz2 = bz
+     bz2      = bz
 
   if survey_pz2 is None:
      survey_pz2 = survey_pz
+     ps2        = np.copy(ps)
+
+  else:
+    ps2         = survey_pz2(zs)
+    norm        = np.sum(ps2) * dz
+    ps2        /= norm
 
   if zeff: 
     ''' 
@@ -41,29 +52,27 @@ def Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, survey_pz2=None, bz2=None, 
     for a slice of galaxies at zz of width dz;  eqn. (5) of 
     https://arxiv.org/pdf/1511.04457.pdf
     '''
-    zz        = np.sum(dz * survey_pz(zs) * zs) / np.sum(dz * survey_pz(zs))   ## Normalisation should already be unity.  
-
-    ks        = (Llls + 0.5) / comoving_distance(zz)                           ## For the Phh evaluation in the integral, we take a zeff approx. 
-                                                                               ## i.e. \int dz .... Phh(zeff).
+    zz        =  np.sum(dz * ps * zs) / (np.sum(ps) * dz)                      ##  Normalisation should already be unity.  
+    ks        = (Llls + 0.5) / comoving_distance(zz)                           ##  For the Phh evaluation in the integral, we take a zeff approx. 
+                                                                               ##  i.e. \int dz .... Phh(zeff).
 
     result    =  Pmm(Pk_interps, ks, zz) * bz(zz) * bz2(zz)
-    result    =  np.broadcast_to(result, (len(zs), len(Llls)))                 ## Broadcast to each redshift.  
+    result    =  np.broadcast_to(result, (len(zs), len(Llls)))                 ##  Broadcast to each redshift.  
 
   else: 
     result    = np.zeros((len(zs), len(Llls)))
 
     for i, z in enumerate(zs):
-      ks          = (Llls + 0.5)/chis[i]                                       ## Evaluate Phh for each z and k(ell, z).
+      ks          = (Llls + 0.5) / chis[i]                                     ##  Evaluate Phh for each z and k(ell, z).
       result[i,:] =  Pmm(Pk_interps, ks, z) * bz(z) * bz2(z)
 
-  ##  Accounts for both spatial to angular mapping as function of z, 
-  ##  i.e. k = (l + 0.5)/chi(z) and redshift evolution of P_mm(k).
-  prefactor   = (cosmo.H(zs).value/const.c.to('km/s').value) * sliced_pz(zs, zmin, zmax, survey_pz) * sliced_pz(zs, zmin, zmax, survey_pz2) / chis**2.
+  ##  Accounts for both spatial to angular mapping as function of z;  i.e. k = (l. + 0.5) / chi(z) and redshift evolution of P_mm(k).
+  prefactor   = (cosmo.H(zs).value / const.c.to('km/s').value) * sliced_pz(zs, zmin, zmax, survey_pz) * sliced_pz(zs, zmin, zmax, survey_pz2) / chis**2.
   
   integrand   =  prefactor[:, None] * result
   integrand  /=  params['h_100']
 
-  return  simps(integrand, dx = zs[1] - zs[0], axis=0)                         ## integral over z. 
+  return  simps(integrand, dx = dz, axis=0)                                    ## integral over z. 
 
 def var_Cgg(Llls, zmin, zmax, survey_pz, bz, nbar, fsky, cgg = None, Pk_interps=None, samplevar_lim=False):
   if cgg is None:    

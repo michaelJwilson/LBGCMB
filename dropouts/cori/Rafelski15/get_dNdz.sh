@@ -1,0 +1,1 @@
+scp -r mjwilson@cori.nersc.gov:/global/homes/m/mjwilson/Rafelski15/eazy-photoz/dNdz/ .

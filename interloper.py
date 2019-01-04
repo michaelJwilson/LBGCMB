@@ -13,7 +13,7 @@ from    zeldovich_Lmax      import  Lcutmax
 from    Cgg                 import  Cgg, var_Cgg, Ngg
 from    numpy.linalg        import  inv
 from    fisher_contour      import  plot_ellipse
-from    get_uvudf_pz        import  get_uvudf_pz
+from    get_uvudf_dndz      import  get_uvudf_dndz
 from    planck18_bao        import  get_sig8z
 from    whitebook_pz        import  whitebook_pz
 
@@ -37,14 +37,19 @@ def get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz, bz2 = None, sur
   ckk          =      Ckk(Pk_interps, Llls)
   vkk          =  var_Ckk(Llls, fsky, nkk, Pk_interps, samplevar_lim=samplevar_lim)
   
-  return  {'gg': cgg + ngg, 'kg': ckg, 'gk': ckg, 'kk': ckk + nkk}
+  return  {'gg': cgg, 'kg': ckg, 'gk': ckg, 'kk': ckk}, {'gg': ngg, 'kg': np.zeros_like(ckg), 'gk': np.zeros_like(ckg), 'kk': nkk}
   
-def get_ClsCov(Llls, Cls, fsky):
+def get_ClsCov(Llls, Cls, Nls, fsky):
   result = {}
 
   for key in Cls:
     for kkey in Cls:
-      result[key + kkey] = (Cls[key[0] + kkey[0]] * Cls[key[1] + kkey[1]] + Cls[key[0] + kkey[1]] * Cls[key[1] + kkey[0]]) / (2. * Llls + 1.) / fsky
+      ##  Gaussian covariance;  eqn. (14) of https://arxiv.org/pdf/1710.09465.pdf.
+      result[key + kkey]  =  0.0
+      result[key + kkey] +=  (Cls[key[0] + kkey[0]] + Nls[key[0] + kkey[0]]) * (Cls[key[1] + kkey[1]] + Nls[key[1] + kkey[1]]) 
+      result[key + kkey] +=  (Cls[key[0] + kkey[1]] + Nls[key[0] + kkey[1]]) * (Cls[key[1] + kkey[0]] + Nls[key[1] + kkey[0]])  ## Cross-terms should be identically zero. 
+      result[key + kkey] /= (2. * Llls + 1.)  ## To be viewed as covariance sampled at Llls.  I.e. to be corrected  
+      result[key + kkey] /=  fsky             ## for further binning in L.   
   
   for key in result:
     print key, result[key]
@@ -84,9 +89,11 @@ if __name__ == "__main__":
   print("\n\nWelcome to a calculator for the parameter bias due to interlopers.\n\n")
   
   ## Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                     
+  plotit                             =  True 
+
   cambx                              =  CAMB()
   Pk_interps                         =  get_PkInterps(cambx)
-
+  
   ## No Detector noise -- this should be handled by Clxy of prep_camb.                                                                                  
   (lensCl_interps, nolensCl_interps) =  cambx.get_Cls()
 
@@ -96,28 +103,31 @@ if __name__ == "__main__":
 
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
-
+  
   ##  Get interp1d for sigma8(z) and its Planckian error.                                                                                               
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
 
   ##  Dropout selection.   
-  band = 'g'
+  band  = 'Malkan'
+
+  zmin  =  0.01
+  zmax  =  10.00
   
   if  band == 'g':
     stats        =  gsample_stats()
-    stats        =  get_nbar_nocontam(band, depth='W', printit=False)
+    stats        =  get_nbar_nocontam(band, depth='W', printit=False)  ## Contamination corrected estimate. 
   
+    nbar         =  stats[band]['nbar_nointerlopers']
+    peakz        =  stats[band]['z']
+
     ##  Effectively overwrites hard z limits above.                                                                                                 
     zee, pzee    =  get_gdropoutpz()
     pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
-    nbar         =  stats[band]['nbar_nointerlopers']
-    peakz        =  stats[band]['z']
-
-    detband      =   'i'                                                                                          ## Detection band.
+    detband      =  'i'                                                ## Detection band.
     colors       =  ['darkgreen', 'limegreen', 'g']
-  
-  elif band == 'Malkan': 
+
+  elif band in ['u', 'Malkan']: 
     ##  Reddy u-drops.
     stats        =  usample_stats()
 
@@ -137,7 +147,7 @@ if __name__ == "__main__":
     colors       =  ['darkblue', 'deepskyblue', 'b']
 
   else:
-    raise ValueError('\n\nChosen band is not available.\n\n')
+    raise  ValueError('\n\nChosen band is not available.\n\n')
 
   ##  Bias with z.
   drop_bz            =  get_dropoutbz()
@@ -150,7 +160,7 @@ if __name__ == "__main__":
   ##  Change in Ckg with dN/dz -> dN/dz'.  TO DO:  Set low-z population to have red galaxy bias.                                                                    
   bzz                =  lambda z:  1.0 * bz(z)
 
-  pzz                =  lambda z:  whitebook_pz(z, ilim = 22.3)
+  pzz                =  lambda z:  whitebook_pz(z, ilim = 24.3)
   ##  pzz            =  get_uvudf_dndz(band='g', field='UVUDF', mag='24.5') 
 
   ##  and the parameter Fisher matrix.                                                                                                                    
@@ -159,37 +169,40 @@ if __name__ == "__main__":
 
   print('\n\nFiducial b1(z) and fsig8(z):  %.3lf and %.3lf.' % (fid_b1, fid_sig8))
 
-  zmin               =   0.01
-  zmax               =  10.00 
+  ##  Dry run.
+  ##  cgg            =  Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
+  ##  ckg            =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
+  ##  print(Llls, cgg, ckg)
 
   ##  {'gg': cgg + ngg, 'kg': ckg, 'gk': ckg, 'kk': ckk + nkk}
-  Cls                =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz,   zeff=False, samplevar_lim=False)
+  Cls, Nls           =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz,   zeff=False, samplevar_lim=False)
 
-  ## 
-  xCls               =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pzz, bzz, zeff=False, samplevar_lim=False)
+  ##  Distorted Cls, i.e. with differing p(z). 
+  xCls, xNls         =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pzz, bzz, zeff=False, samplevar_lim=False)
 
-  pl.semilogy(Llls,  Cls['gg'],  label='base Cgg')
-  pl.semilogy(Llls, xCls['gg'],  label='shifted Cgg')
+  if plotit:
+    pl.clf()
 
-  pl.semilogy(Llls,  Cls['kg'],  label='base Ckg')
-  pl.semilogy(Llls, xCls['kg'],  label='shifted Ckg')
+    pl.semilogy(Llls,  Cls['gg'],  label='base Cgg')
+    pl.semilogy(Llls, xCls['gg'],  label='shifted Cgg')
 
-  pl.xlim(50., 4.e3)
-  pl.xlabel(r'L')
+    pl.semilogy(Llls,  Cls['kg'],  label='base Ckg')
+    pl.semilogy(Llls, xCls['kg'],  label='shifted Ckg')
 
-  pl.legend(ncol=2)
+    pl.xlim(50., 4.e3)
+    pl.xlabel(r'L')
 
-  pl.savefig('plots/interloper_bias_cls_%sband.pdf' % band, bbox_inches='tight')  
+    pl.legend(ncol=2)
 
-  pl.clf()
+    pl.savefig('plots/interloper_bias_cls_%sband.pdf' % band, bbox_inches='tight')  
 
-
-  '''
-  ##  'ggkk' etc ...
-  covs               =  get_ClsCov(Llls, Cls, fsky)
+  ##  Per-L covariance;  e.g. 'ggkk' etc ... Sum of siganl and noise.  eqn (14) of https://arxiv.org/pdf/1710.09465.pdf
+  covs               =  get_ClsCov(Llls, Cls, Nls, fsky)
 
   ##  Covariance matrix of {kk, kg, gg} for given L.
   Cov_Lll            =  np.zeros(3 * 3).reshape(3,3)
+
+  ## and inverse.
   iCov_Lll           =  np.zeros_like(Cov_Lll) 
 
   ##  Parameter Fisher matrix.
@@ -200,25 +213,25 @@ if __name__ == "__main__":
   dtheta             =  np.zeros(2)
   interim            =  np.zeros(2)
 
-
   for LL, dummy in enumerate(Llls):
-    dckg         =  Cls['kg'][LL] - Ckg(Pk_interps, Llls, zmin, zmax, pzz, bzz, zeff=False)[LL]
-    dcgg         =  Cls['gg'][LL] - Cgg(Pk_interps, Llls, zmin, zmax, pzz, bzz, zeff=False)[LL] - Ngg(Llls, zmin, zmax, pzz, nbar)[LL]
+    dckg         =  Cls['kg'][LL] - xCls['kg'][LL]
+    
+    ##  Noise bias in Fisher?
+    dcgg         =  Cls['gg'][LL] - xCls['gg'][LL] - xNls['gg'][LL]
 
     ##  Construct D(LL) = [Ckk, Ckg, Cgg].                                                                                  
     DL           =  np.array([Cls['kk'][LL], Cls['kg'][LL], Cls['gg'][LL]])
 
     for i, tracer in enumerate(['kk', 'kg', 'gg']):
       for j, ttracer in enumerate(['kk', 'kg', 'gg']):
-        ##  Restricted to first L=50 mode.
+        ##  Covariance between tracers at given L, e.g. Cov(kk, kg).
         Cov_Lll[i, j] = covs[tracer + ttracer][LL]
 
     ## .. and invert.  
-    iCov_Lll     =  inv(Cov_Lll)
+    iCov_Lll = inv(Cov_Lll)
 
     for i, pp in enumerate(['s8', 'b1']):
       for j, ss in enumerate(['s8', 'b1']):
-        ##  Here, DL restricted to first L=50 mode. 
         Fisher[i, j] = np.dot(dp_DL(pp, fid_sig8, fid_b1, DL), np.dot(iCov_Lll, dp_DL(ss, fid_sig8, fid_b1, DL)))
     
     ##  No change to kk due to interloper population. 
@@ -227,7 +240,6 @@ if __name__ == "__main__":
     
     for j, pparam in enumerate(['s8', 'b1']):
       interim[j] +=  np.dot(dp_DL(pparam, fid_sig8, fid_b1, DL), XXX)
-    ##  End of loop over LL.   
   
   ##  Invert Fisher. 
   iFisher  =  inv(Fisher)
