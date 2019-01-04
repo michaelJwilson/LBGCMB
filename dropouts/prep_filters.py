@@ -5,10 +5,10 @@ import  numpy             as np
 import  astropy.constants as const
 
 
-def prep_filters(filter='LSST'):
+def prep_filters(names=['LSST', 'VIDEO'], normed=False):
   filters  = collections.OrderedDict()                                              ## Generate the required filters; Euclid: Y, J and H.                    
 
-  if filter == 'LSST':
+  if 'LSST' in names:
     for band in ['u', 'g', 'r', 'i', 'z', 'y']:
       ppkey  = r"LSST-$" + "%s" % band + r"$"                                       ## Pretty print version of key.  
 
@@ -23,22 +23,73 @@ def prep_filters(filter='LSST'):
       ls     = 10. * data[:,0]
       vs     = (1e10/ls) * const.c.to('m/s').value
 
-      filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1]}
-  
-  elif filter == 'VIDEO':
-    for band in ['Y', 'J', 'H', 'K']:
-      ppkey  = r"VIDEO-$" + "%s" % band + r"$"                                       ## Pretty print version of key.
+      if normed:
+        filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1] / data[:,1].max()}
 
-      fname  = "filters/video/%s.txt" % band
+      else:
+        filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1]}
+
+    names.remove('LSST')
+  
+    if 'VIDEO' in names:
+      for band in ['Y', 'J', 'H', 'K']:
+        ppkey  = r"VIDEO-$" + "%s" % band + r"$"                                       ## Pretty print version of key.
+
+        fname  = "filters/video/%s.txt" % band
+        data   = np.loadtxt(fname)
+
+        ls     = data[:,0]
+        vs     = (1e10/ls) * const.c.to('m/s').value
+
+        if normed:
+          filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1] / data[:,1].max()}
+
+        else:
+          filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1]}
+
+      names.remove('VIDEO')
+
+  if 'SUBARU' in names:
+    print('Adding Subaru filters (B and V).')
+
+    for band in ['B', 'V']:
+      ppkey  = r"SUBARU-$" + "%s" % band + r"$"
+      fname  = root + "/filters/subaru/%s.pb" % band
       data   = np.loadtxt(fname)
 
       ls     = data[:,0]
-      vs     = (1e10/ls) * const.c.to('m/s').value
+      vs     = (1.e10 / ls) * const.c.to('m/s').value
 
-      filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1] / data[:,1].max()}
+      if normed:
+        filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1] / data[:,1].max()}
 
-  else:
-    raise ValueError('Requested filter set is not available.')
+      else:
+        filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1]}
+
+    names.remove('SUBARU')
+
+  if 'JKC' in names:
+    print('Adding JKC filters (I).')
+
+    for band in ['I']:
+      ppkey  = r"JKC-$" + "%s" % band + r"$"
+      fname  = root + "/filters/jkc/%s.pb" % band
+      data   = np.loadtxt(fname)
+
+      ls     = data[:,0]
+      vs     = (1.e10 / ls) * const.c.to('m/s').value
+
+      if normed:
+        filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1] / data[:,1].max()}
+
+      else:
+        filters[band] = {'ppkey': ppkey, 'fname': fname, 'ls': ls, 'vs': vs, 'Ts': data[:,1]}
+
+    names.remove('JKC')
+
+  if len(names) != 0:
+    ##  Catch any requested filters that are not either LSST or VIDEO.                                                                                                                                                                     
+    raise ValueWarning('Requested filters are not available:' + '  '.join(x for x in name))
   
   return  filters
   

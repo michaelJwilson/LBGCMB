@@ -51,9 +51,11 @@ def get_appmags(vs, Fv, filters, printit=False):
     result       = np.trapz(iFv(filter['vs']) * filter['Ts'] / filter['vs'], filter['vs'])
     result      /= norm
 
-    mm           = -2.5*np.log10(result) - 48.60                                             ## AB bandpass magnitude.
+    if result == 0.0:
+      mags[band] = -99.
 
-    mags[band]   = mm
+    else:
+      mags[band] = -2.5 * np.log10(result) - 48.60                                           ##  AB bandpass magnitude.           
 
     if printit:
       print("%s \t %.6f" % (band, mags[band]))
