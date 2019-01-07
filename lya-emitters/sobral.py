@@ -11,6 +11,9 @@ from    massfn        import  tinker_bias
 params = get_params()
 
 def Sobral_LyaSch(z):
+    if (z < 2.2) | (z > 5.4):
+        raise  ValueError('Sobral SC4k defined for 2.2 < z < 5.4 only.')
+
     ##  Table 6 of https://arxiv.org/pdf/1712.04451.pdf
     ##  redshift    alpha    log10(L*) [erg/s]    log10(Phi*) [Mpc ** -3]    rho Lya /10^40 [ergs/s/Mpc3].
     sc4kfits =  np.array([[2.2, -1.8, 42.69, -3.33, 0.48], [2.5, -1.80, 42.76, -3.23, 0.73], [3.1, -1.80, 42.69, -2.73, 1.90], [3.9, -1.80, 42.89, -3.71, 0.34], [4.7, -1.80, 43.10, -3.82, 0.48], [5.4, -1.80, 43.35, -4.18, 0.41]])
@@ -54,9 +57,9 @@ def lya_nbar(z, logLmin=None, printit=False):
     wmin     =  np.log10(Lmin / L_star)
 
     dw       =  0.1
-    ws       =  np.arange(wmin, wmin + 4., dw)
-    xs       =  np.log(10) * ws
-    ys       =  10. ** ws
+    ws       =  np.arange(wmin, wmin + 4., dw)  ##  w = log10(L / L*)
+    xs       =  np.log(10) * ws                 ##  x =    ln(L / L*) 
+    ys       =  10. ** ws                       ##  y =       L / L*  
 
     nbar     =  phi_star * np.exp(-ys) * 10.**((1. + alpha) * ws)
     nbar     =  np.log(10.) * np.sum(nbar) * dw                 
@@ -64,7 +67,7 @@ def lya_nbar(z, logLmin=None, printit=False):
     if printit:
       print('%.3lf  %.3lf  %.3lf  %.3le  %.3le  %.3le' % (z, synfits[ind,0], alpha, L_star, phi_star, nbar))
 
-    return  nbar  ##  [(Mpc / h)^-3] 
+    return  nbar                                ##  [(Mpc / h)^-3] 
 
 def lya_logmeanlum(z, logLmin=None, printit=False):
     alpha, L_star, phi_star = Sobral_LyaSch(z)
@@ -79,9 +82,9 @@ def lya_logmeanlum(z, logLmin=None, printit=False):
     wmin     =  np.log10(Lmin / L_star)
 
     dw       =  0.1
-    ws       =  np.arange(wmin, wmin + 4., dw)
-    xs       =  np.log(10) * ws
-    ys       =  10. ** ws
+    ws       =  np.arange(wmin, wmin + 4., dw)   ##  w = log10(L / L*)
+    xs       =  np.log(10) * ws                  ##  x =    ln(L / L*)
+    ys       =  10. ** ws                        ##  y =       L / L*  
 
     nbar     =  lya_nbar(z, logLmin=logLmin, printit=printit)  ##  [(Mpc / h)^-3] 
 
@@ -101,30 +104,28 @@ if __name__ == '__main__':
 
     logLya  =  42.5
 
-    zs      =  np.arange(2., 6.,  0.1)
+    zs      =  np.arange(2.2, 5.4,  0.1)
     dVs     =  dVols(zs, cosmo, params)
 
     results =  [] 
-
+    
     for z in zs:
-      nbar       = lya_nbar(z, logLmin=None, printit=False)        ## [(Mpc / h)^-3]   
+      nbar       = lya_nbar(z, logLmin=logLya, printit=False)      ## [(Mpc / h)^-3]   
       logmeanlum = lya_logmeanlum(z, logLmin=None, printit=False)  ## [ergs / s]
-
       logmhalo   = logMhalo(logLya, z)                             ## [Msun / h]
 
       results.append([np.log10(nbar), logmeanlum, logmhalo])
 
     results = np.array(results)
       
-    pl.plot(zs, results[:,0])
-
-    ## pl.plot(zs, results[:,1], label='<L> [ergs/s]')
-    ## pl.plot(zs, results[:,2], label=r'Mhalo [M$_\odot / h$]') 
+    pl.plot(zs, results[:,0], label=r'$\bar n(z) \ [(h^{-1} \rm{Mpc})^3]$ for $\rm{log}_{10}|L_{\rm{min}}| =$' + ' %.2lf' % logLya)
+    ##  pl.plot(zs, results[:,1], label='log$_{10}$|<L> / (ergs/s)|')
+    ##  pl.plot(zs, results[:,2], label=r'log$_{10}|M_{\rm{halo}} / (M_\odot / h$)|') 
 
     pl.xlabel(r'$z$')
     ## pl.ylabel(r'$\bar n(z, L > L_*)$')
     pl.yscale('linear')
     pl.legend()
     pl.show()
-
+    
     print('\n\nDone.\n\n')
