@@ -1,3 +1,4 @@
+import  os 
 import  numpy              as      np
 import  pylab              as      pl
 import  matplotlib         as      mpl
@@ -5,10 +6,9 @@ import  matplotlib.pyplot  as      plt
 
 from    nbar               import  mlimitedM, dVols
 from    params             import  get_params
+from    qso_kcorr          import  get_qsokcorr
+from    cosmo              import  cosmo
 
-
-plt.style.use('ggplot')
-mpl.rc('text', usetex = True)
 
 params = get_params()
 
@@ -18,19 +18,19 @@ def  get_Mgs(zee):
     Mgs_zp      =  -26.71
 
     ##  Parameters split across zpivot.                                                                                                                    
-    if (0.68 < zee) & (zee < 2.2):
+    if (0.68 <= zee) & (zee <= 2.2):
       alpha       =  -4.31
       beta        =  -1.54
 
       k1          =  -0.08
       k2          =  -0.40
 
-    elif (2.2 < zee) & (zee < 4.0):
-      alpha       =  -4.31
-      beta        =  -1.54
+    elif (2.2 < zee) & (zee <= 4.0):
+      alpha       =  -3.04
+      beta        =  -1.38
 
-      k1          =  -0.08
-      k2          =  -0.40
+      k1          =  -0.25
+      k2          =  -0.05
 
     else:
         raise ValueError("\n\nQSO luminosity fn. of Palanque-Delabrouille is not defined at this redshift: %.3lf" % zee)
@@ -50,13 +50,13 @@ def get_Phi(Mg, zee):
     Mgs         = get_Mgs(zee)
 
     ##  Parameters split across zpivot.                                                                                                                    
-    if (0.68 < zee) & (zee < 2.2):
+    if (0.68 <= zee) & (zee <= 2.2):
       alpha       =  -4.31
       beta        =  -1.54
 
     elif (2.2 < zee) & (zee < 4.0):
-      alpha       =  -4.31
-      beta        =  -1.54
+      alpha       =  -3.04
+      beta        =  -1.38
 
     else:
         raise ValueError("\n\nQSO luminosity fn. of Palanque-Delabrouille is not defined at this redshift: %.3lf" % zee)
@@ -69,16 +69,40 @@ def get_Phi(Mg, zee):
     return  Phi
 
 def kcorr(zee):
-    alphav = -0.5
+    if zee > 4.0:
+        raise ValueError('NPD k-correction (McGreer) not defined for z<0.6 or z>4.')
 
-    return  -2.5 * (1. + alphav) * np.log10(1. + zee)
+    zs, Ks, Ksp = get_qsokcorr(plotit=False)
+
+    return  Ksp(zee)
+
+def gmag(Mg, zee, restM=False, printit=False):
+    ##  Observationally, this is the galactic extinction corrected g band mag. 
+    ##  i.e. gdered of NPD++.
+    ##  Mg is the z=2 absolute mag. in the g-band. 
+    ##  eqn. (4) of https://arxiv.org/pdf/1509.05607.pdf
+
+    ##  g-band k-correction.
+    k = kcorr(zee)
+
+    if not restM:
+        ##  If not rest Absolute Mag, then assumed z=2 as per NPD.
+        k -= kcorr(2.0)
+
+    if printit:
+      print(zee)
+      print(Mg)
+      print(kcorr(zee), kcorr(2.0))
+      print(cosmo.distmod(zee))
+
+    return  Mg + cosmo.distmod(zee).value + k
 
 def get_ns(Ms, zee=2.5):
-    Phis  =  get_Phi(Ms, zee)
+    Phis  = get_Phi(Ms, zee)
 
     dM    =  Ms[1] - Ms[0]
 
-    ns    =  np.cumsum(Phis * dM)
+    ns    =  np.cumsum(Phis) * dM
     ns   /=  params['h_100'] ** 3.
 
     return  ns
@@ -87,45 +111,42 @@ def get_ns(Ms, zee=2.5):
 if __name__ == '__main__':
     print('\n\nWelcome to a qso luminosity fn. calculator.\n\n')
 
-    zee = 2.5
+    dM, dz = 0.1, 0.4
+    zs     = np.arange( 0.68,   3.2, dz)
+    Ms     = np.arange(-32.,   -15., dM)
 
-    dm  =  0.1
+    result = []
 
-    ms  = np.arange(22.5, 25.5, dm)
-    Ms  = mlimitedM(zee, ms, M_standard=None, kcorr=True)
+    for zee in zs:        
+      Phis  = get_Phi(Ms, zee)
+      ns    = get_ns(Ms, zee=zee)
 
-    ns  =  get_ns(Ms)
-
- 
-    pl.semilogy(ms, ns, label=r'$2.2 \ \leq \ z \ \leq \ 2.6$')
-
-    pl.xlabel(r'$m_g$')
-    pl.ylabel(r'$n(m < m_g) \quad [(h^{-1} \ \rm{Mpc})^{-3}]$')
-
-    pl.xlim(-29.,   -15.)
-    pl.ylim(5.e-8, 1.e-3)
+      pl.semilogy(Ms, Phis, label=r'$z=$' + '%.1lf' % zee)
     
-    pl.legend(loc=2)
+    ## Fig 10. of https://arxiv.org/pdf/1509.05607.pdf  
+    pl.xlabel(r'$M_g(z=2)$')
+    pl.ylabel(r'$\Phi(M_g, z) = dN/dM/dV \ [\rm{Mpc}^{-3} \rm{\ per \ mag}]$')
+    
+    pl.legend(ncol=2)
+    pl.show()
 
-    pl.savefig('plots/qso_lumfn.pdf')
-
-    '''
+    ##  Number counts. 
     pl.clf()
 
-    ## Plot simple k-correction. 
-    zs  = np.arange(0.0, 4.5, 0.01)
-    ks  = kcorr(zs)
+    for zee in zs:
+      ## Mlo to Mhi -> faintest object included in bin is M+dM.
+      gs = gmag(Ms + dM, zee, restM=False, printit=False)
+      ns = get_ns(Ms, zee=zee)
 
-    pl.plot(zs, ks, 'r-')
+      pl.semilogy(gs, ns, label=r'$z=$' + '%.1lf' % zee)
 
-    dat = np.loadtxt('kcorr/table4.dat')
-    pl.plot(dat[:,0], dat[:,1], 'k-')
+    pl.xlim(20., 26.)
+    pl.ylim(1.e-6, 1.e-2)
 
-    pl.xlim( 0.5,  3.0)
-    pl.ylim( 0.2, -1.4)
+    pl.xlabel(r'$g_{AB}$')
+    pl.ylabel(r'$n$ [(h/Mpc)$^3$]')
 
-    pl.xlabel(r'$z$')
-    
-    pl.savefig('plots/kcorr.pdf')
-    '''
+    pl.legend(ncol=2)
+    pl.show()
+
     print('\n\nDone.\n\n')
