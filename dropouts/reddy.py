@@ -1,4 +1,5 @@
-from __future__ import division
+from __future__  import division
+from schechterfn import SchechterMfn
 
 import numpy as np
 
@@ -29,7 +30,7 @@ def load_tables(printit = False):
 
   return tab_one, tab_three
 
-def samplestats(mag=23., printit=False):
+def samplestats(mag=23., printit=False, h70=False):
   '''
   Load specifications of Reddy BX and LBG samples from tabular data and create a dictionary containing (interloper free) gals. per sq. deg. 
   '''
@@ -73,9 +74,10 @@ def samplestats(mag=23., printit=False):
   stats['BX']['schechter']['M_star']     =  -20.97
   stats['BX']['schechter']['alpha']      =   -1.84
 
-  ##  Convert phi_star to (h_100 / Mpc)^3 per mag.
-  stats['LBG']['schechter']['phi_star'] *= (10. / 7.) ** 3.
-  stats['BX']['schechter']['phi_star']  *= (10. / 7.) ** 3.
+  if not h70:
+    ##  Convert phi_star to (h_100 / Mpc)^3 per mag.
+    stats['LBG']['schechter']['phi_star'] *= (10. / 7.) ** 3.
+    stats['BX']['schechter']['phi_star']  *= (10. / 7.) ** 3.
   
   for survey in ['BX', 'LBG']:
     if printit:
@@ -88,9 +90,23 @@ def samplestats(mag=23., printit=False):
 
 
 if __name__ == "__main__":
+  import pylab as pl
+
   print('\n\nWelcome to the Reddy (Schechter) calculator.\n\n')
 
-  stats = samplestats(mag=22.5, printit = False)
+  Ms    = np.arange(-23., -18., 0.1)
+  stats = samplestats(mag=22.5, printit = False, h70=True)
+
+  ##  Fig. 12 of https://arxiv.org/pdf/0706.4091.pdf
+  for survey in stats:
+    Phis = SchechterMfn(Ms, stats[survey]['schechter']['phi_star'], stats[survey]['schechter']['M_star'], stats[survey]['schechter']['alpha'])
+    pl.semilogy(Ms, Phis, label=survey)
+
+  pl.xlabel(r'$M_{AB}(1700\AA)$')
+  pl.ylabel(r'$N/mag/h_{70}^{-3}\rm{Mpc}^3$')
+
+  pl.legend()
+  pl.show()
 
   print('\n\nDone.\n\n')
 
