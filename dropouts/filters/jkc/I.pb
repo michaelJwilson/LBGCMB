@@ -1,4 +1,4 @@
-66  I standard (JKC)
+# 66  I standard (JKC)
   7000    0.0     
   7050    0.031   
   7100    0.074   

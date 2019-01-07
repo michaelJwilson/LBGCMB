@@ -19,7 +19,7 @@ def magAB(vs, mag, redshift, line = 912., depth=None):
   vs            /= (1. + redshift)
   norm           = 3631. * 1e-23
 
-  Fv             = norm * 10. ** dm * np.ones_like(vs)  ## [ergs/s/Hz].
+  Fv             = norm * 10. ** dm * np.ones_like(vs)            ## [ergs/s/Hz].
   Fv[vs > line]  = 0.0 
   
   if depth is not None:

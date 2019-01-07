@@ -52,7 +52,7 @@ def get_appmags(vs, Fv, filters, printit=False):
     result      /= norm
 
     if result == 0.0:
-      mags[band] = -99.
+      mags[band] = -1. * np.NaN
 
     else:
       mags[band] = -2.5 * np.log10(result) - 48.60                                           ##  AB bandpass magnitude.           

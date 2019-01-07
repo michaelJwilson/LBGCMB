@@ -181,11 +181,13 @@ if __name__ == "__main__":
   if plotit:
     pl.clf()
 
+    latexify(columns=1, equal=True)
+
     pl.plot(Llls,       100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$dC_{gg}/C_{gg} [\%]$')
     pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$') ## kg is linear, gg is quad. in dNdz.
     
     pl.xlim(50., 4.e3)
-    pl.xlabel(r'L')
+    pl.xlabel(r'$L$')
 
     pl.legend(ncol=2)
 
@@ -269,7 +271,7 @@ if __name__ == "__main__":
   latexify(columns=1, equal=True)
 
   fig    = plt.gcf()
-  ax     = fig.add_subplot(111)
+  ax     = plt.gca() ## fig.add_subplot(111)
 
   for mass_level, color, alpha in zip([0.99, 0.95, 0.68], ['b', 'b', 'b'], [0.2, 0.4, 0.6]):
     plot_ellipse(x_cent = fid_sig8, y_cent = fid_b1, ax = ax, cov = iFisher, mass_level = mass_level,\

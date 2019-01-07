@@ -1,4 +1,4 @@
-172	G	2	(G Steidel, private com.)
+# 172	G	2	(G Steidel, private com.)
 3910.000000   0.000
 3920.000000   0.000535
 3930.000000   0.000973

@@ -1,0 +1,17 @@
+Mike,
+
+I downloaded Peter Behroozi's UniverseMachine code and data to generate the attached stellar-mass/halo-mass relations at z=2, 3, 4 and 5.  Note the units here are Msun, not Msun/h.  I used his parameter file:
+
+smhm_true_med_params.txt
+
+which should give the median relations from his fits.  Those are the ones we want I think.
+
+At this high redshift I think his mass definition becomes the "typical" one, since rho_m~rho_crit (OmM~1) at these redshifts.Mike,
+
+I downloaded Peter Behroozi's UniverseMachine code and data to generate the attached stellar-mass/halo-mass relations at z=2, 3, 4 and 5.  Note the units here are Msun, not Msun/h.  I used his parameter file:
+
+smhm_true_med_params.txt
+
+which should give the median relations from his fits.  Those are the ones we want I think.
+
+At this high redshift I think his mass definition becomes the "typical" one, since rho_m~rho_crit (OmM~1) at these redshifts.

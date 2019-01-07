@@ -1,4 +1,4 @@
-31	U	1	( U Steidel, private com.) 
+# 31	U	1	( U Steidel, private com.) 
 3150 0.0
 3170 0.05
 3200 0.18
