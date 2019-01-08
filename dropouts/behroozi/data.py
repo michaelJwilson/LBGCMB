@@ -15,7 +15,7 @@ for zee in [4, 5]:
   pl.loglog(Mstar, nbarperdex, '^', markersize=3, label=r'$z=%.1lf$' % zee)
 
 pl.legend()
-pl.xlabel(r'$M_*$')
+pl.xlabel(r'$M_* \ [M_{\odot}]$')
 pl.ylabel(r'$\bar{n} \ [\rm{Mpc}^{-3} \ \rm{dex}^{-1}] $')
 pl.savefig('plots/obs_sm.pdf', bbox_inches='tight')
 

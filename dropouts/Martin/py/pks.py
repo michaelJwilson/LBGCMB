@@ -13,8 +13,6 @@ latexify(fig_width=None, fig_height=None, columns=1, equal=True)
 params   = get_params()
 
 ############################
-
-############################
 ilist    = [10, 11, 12, 13, 14]
 
 drops    = {3.0: [12.33, 4.0, 0.40], 4.0: [12.83, 6.15, 0.45]}
@@ -34,9 +32,10 @@ for irun in ilist[1:]:
   dm += np.loadtxt(("../dat/dm/dm_%.4lf_{:d}.pkr" % a).format(irun))
 
 dm      /= float(len(ilist))
-dm[:,1] *= 2. * np.pi ** 2. / dm[:,0]**3
+dm[:,1] *= 2*np.pi**2/dm[:,0]**3
 
-pks = np.loadtxt("../dat/summary/drop_%.4lf_%.2lf_%.2lf.pks" % (a, mass, unknown))
+pkr = np.loadtxt("../dat/summary/drop_%.4lf_%.2lf_%.2lf.pkr" % (a, mass, unknown))
+pxr = np.loadtxt("../dat/summary/drop_%.4lf_%.2lf_%.2lf.pxr" % (a, mass, unknown))
 
 if  zee  == 3.0:
    labels = ['$P_{gg}$', '$bP_{gm}$', '$b^2P_{mm}$',          '',         '',                '']
@@ -48,7 +47,11 @@ else:
   raise  ValueError('\n\nSomething went wrong with zee and labels.\n\n')
 
 pl.loglog(pkr[:,0],        pkr[:,1], label=labels[0])
+pl.loglog(pxr[:,0],   pxr[:,1]*bias, label=labels[1])
 pl.loglog(dm[:,0],  dm[:,1]*bias**2, label=labels[2])
+
+pl.plot(pxr[:,0], pxr[:,1], label=labels[3], dashes=[3,1])
+pl.plot(dm[:,0],  dm[:,1],  label=labels[4], dashes=[3,1])
 
 ## Plot linear. 
 linear  = np.loadtxt('../dat/thy/pklin_%.4lf.txt' % a)
@@ -82,4 +85,4 @@ ax2.set_xlabel(r"$L = k \cdot \chi_*$")
 text = plt.text(0.045, 20, r'$z$ = ' + '%.1lf' % zee)
 text.set_bbox(dict(facecolor='white', alpha=0.5, edgecolor='white'))
 
-pl.savefig('../plots/pks_z%.2lf.pdf' % zee, bbox_inches='tight')
+pl.savefig('../plots/pk_z%.2lf.pdf' % zee, bbox_inches='tight')

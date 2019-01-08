@@ -6,9 +6,11 @@ import pylab as pl
 from   scipy              import optimize
 from   scipy.interpolate  import interp1d
 from   camb               import model, initialpower
+from   params             import get_params 
 
 
-params           = {'om_m':0.292, 'om_b':0.0468, 'om_L': 0.708, 'h_100':0.69, 'sig_8':0.819, 'Tcmb':2.786}  ## RunPB.
+##  params       = {'om_m':0.292, 'om_b':0.0468, 'om_L': 0.708, 'h_100':0.69, 'sig_8':0.819, 'Tcmb':2.786}  ## RunPB.
+params           = get_params()
 params['om_cm']  = params['om_m'] - params['om_b']
 
 data             = np.loadtxt('EisensteinAndHu.dat')  ## See EisensteinAndHu.c for configuration choices.

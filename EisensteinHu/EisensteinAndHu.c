@@ -274,10 +274,6 @@ CDM + Baryon + Massive Neutrino perturbations. */
 
 
 int main(){
-  /*
-  params           = {'om_m':0.292, 'om_b':0.0468, 'om_L': 0.708, 'h_100':0.69, 'sig_8':0.819, 'Tcmb':2.786}  // RunPb
-  */
-
   int        i;
   double k, Tk;
 
@@ -285,11 +281,17 @@ int main(){
   char  filepath[200];
 
   /* Set cosmology. 
-  1) omega_matter -- Density of CDM, baryons, and massive neutrinos, in units of the critical density.                                                                                                                               
-  2) omega_baryon -- Density of baryons, in units of critical.                                                                                                                                                                              3) omega_hdm    -- Density of massive neutrinos, in units of critical                                                                                                                                                                     4) degen_hdm    -- (Int) Number of degenerate massive neutrino species                                                                                                                                                                    5) omega_lambda -- Cosmological constant, in units of critical.                                                                                                                                                                           6) hubble       -- Hubble constant, in units of 100 km/s/Mpc                                                                                                                                                                              7) redshift     -- The redshift at which to evaluate 
+  1) omega_matter -- Density of CDM, baryons, and massive neutrinos, in units of the critical density.                                                                                                         
+  2) omega_baryon -- Density of baryons, in units of critical.                                                                                                                                                      
+  3) omega_hdm    -- Density of massive neutrinos, in units of critical                                                                                                                                              
+  4) degen_hdm    -- (Int) Number of degenerate massive neutrino species                                                                                                                                             
+  5) omega_lambda -- Cosmological constant, in units of critical.                                                                                                                                                 
+  6) hubble       -- Hubble constant, in units of 100 km/s/Mpc                                                                                                                                                 
+  7) redshift     -- The redshift at which to evaluate 
   */ 
 
-  TFmdm_set_cosm(0.292, 0.0468, 0.0, 0, 0.708, 0.69, 2.0);
+  //  params = {'om_m': 0.3106, 'om_b': 0.04898, 'om_L': 0.6894, 'h_100': 0.6770, 'sig_8': 0.811, 'Tcmb': 2.7255, 'zscatter': 1100, 'ns': 0.96824, 'As': 2.1073e-9}
+  TFmdm_set_cosm(0.3106, 0.04898, 0.0, 3, 0.6894, 0.677, 3.0);
 
   sprintf(filepath, "EisensteinAndHu.dat");
 

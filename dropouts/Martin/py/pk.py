@@ -13,8 +13,6 @@ latexify(fig_width=None, fig_height=None, columns=1, equal=True)
 params   = get_params()
 
 ############################
-
-############################
 ilist    = [10, 11, 12, 13, 14]
 
 drops    = {3.0: [12.33, 4.0, 0.40], 4.0: [12.83, 6.15, 0.45]}

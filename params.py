@@ -1,5 +1,5 @@
 def get_params():
-  ## Planck '18 + BAO.  
+  ## Planck '18 + BAO, right column of Table 6 (https://arxiv.org/abs/1807.06205)  
   ## params  = {'om_m': 0.3106, 'om_b': 0.04898, 'om_L': 0.6894, 'h_100': 0.6770, 'sig_8': 0.811, 'Tcmb': 2.7255, 'zscatter': 1100, 'ns': 0.96824, 'As': 2.1073e-9}
 
   ## Run PB (modi_lensing.py)
