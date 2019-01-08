@@ -9,13 +9,10 @@ from     ilim               import  get_contamination
 
 from     goldrush.specs     import  samplestats  as goldrush_stats
 from     Malkan.specs       import  samplestats  as malkan_stats
-## from  reddy              import  samplestats  as reddy_stats
+from     reddy              import  samplestats  as reddy_stats
 
 
-plt.style.use('ggplot')
-mpl.rc('text', usetex = True)
-
-def plot_schechters():
+def plot_schechters(magbias=False, nointerloper=False):
     import  os
     import  pylab              as      pl
     import  matplotlib.pyplot  as      plt
@@ -27,9 +24,7 @@ def plot_schechters():
 
 
     latexify(fig_width=None, fig_height=None, columns=2, equal=False)
-    
-    colors = ['b', 'r', 'indigo']
-    
+        
     ##  Create figure.                                                                                                                        
     fig, axarray = plt.subplots(1, 1, sharey=False)
     fig.set_size_inches(6.5, 3.5)
@@ -37,16 +32,27 @@ def plot_schechters():
     dm           = 0.25
     mlims        = np.arange(20.5, 28.0, dm)
 
-    ##  The old fashioned way. 
     count        = 0
+    pnbars       = []
 
-    samples      = [malkan_stats(), goldrush_stats(), goldrush_stats()]
-    bands        = ['Malkan', 'g', 'r']
-    labels       = [r'$u$-dropouts', r'$g$-dropouts', r'$r$-dropouts']
-    
-    stop         = 1
+    ##  QSOs first. 
+    for mlim in mlims:
+        pnbar    = projdensity(2., 3., None, None, None, mlim=mlim, type='qso')
+        pnbars.append(pnbar)
 
-    for stats, band, label in zip(samples[:stop], bands[:stop], labels[:stop]):         
+    pnbars  = np.array(pnbars)
+    pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
+
+    ##  Now dropouts.
+    samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
+    bands        = ['BX', 'Malkan', 'g', 'r']
+    labels       = ['BX-dropouts', r'$u$-dropouts', r'$g$-dropouts', r'$r$-dropouts']
+    colors       = ['y', 'b', 'r', 'indigo']
+
+    stop         =  -1
+
+    ##  for stats, band, label, color in zip(samples[:stop], bands[:stop], labels[:stop], colors[:stop]):         
+    for stats, band, label, color in zip(samples, bands, labels, colors):
       zee        = stats[band]['z']   
       dzee       = 0.5
 
@@ -57,40 +63,45 @@ def plot_schechters():
       pnbars     = []
 
       for mlim in mlims:
-        pnbar = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, printit = True, completeness=None)
+        pnbar = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, type='app', printit = True, completeness=None)
         pnbars.append(pnbar)
   
       pnbars  = np.array(pnbars)
 
-      pl.semilogy(mlims, pnbars, '-', label=label, color=colors[count], alpha=0.5)
+      pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
 
-      ## Malkan u-dropouts contamination corrected. 
-      if band == 'Malkan':
-          pl.semilogy(mlims, (1. - get_contamination(mlims, zee=3, depth='W')) * pnbars, '^', label=label + ' (corrected)', color=colors[count],\
+      ##  Malkan u-dropouts contamination corrected. 
+      if (band == 'Malkan') & (nointerloper):
+          pl.semilogy(mlims, (1. - get_contamination(mlims, zee=3, depth='W')) * pnbars, '^', label=label + ' (corrected)', color=color,\
                       alpha=0.5, markersize=2)
 
-      ## Gradient for magnification bias. 
-      grads   = np.gradient(pnbars, dm)
-      indexs  = (mlims / pnbars) * grads
+      if band == 'Malkan':
+          for mlim in mlims:
+              stats = malkan_stats(mlim)
+              nbar  = stats['Malkan']['nbar'] 
 
-      pl.semilogy(mlims, indexs, '--', c=str(colors[count]), dashes=[3,1])
+              pl.plot(mlim, nbar, 'b^', markersize=3)
 
-      
-      for i, n in enumerate(indexs):
+      if magbias:
+        ##  Gradient for magnification bias. 
+        grads   = np.gradient(pnbars, dm)
+        indexs  = (mlims / pnbars) * grads
+
+        pl.semilogy(mlims, indexs, '--', c=str(color), dashes=[3,1])
+
+        for i, n in enumerate(indexs):
           if i % 4 == 0:
-            A   = pnbars[i] / mlims[i] ** n
+            A = pnbars[i] / mlims[i] ** n
           
             pl.semilogy(mlims, A * mlims ** n, '--', color='k', label='', alpha=0.5) 
-      
-      count     += 1
 
     pl.xlim(22.5,  27.0)
     pl.ylim(1.e0,  7.e4)
 
-    pl.xlabel(r'$m_{\rm{UV}}$')
-    pl.ylabel(r'$N(<m_{\rm{UV}})$ / deg$^2$')
+    pl.xlabel(r'$m_{5\sigma}$')
+    pl.ylabel(r'$N(<m_{5\sigma})$ / deg$^2$')
       
-    pl.legend(loc=2)
+    pl.legend(loc=2, ncol=2)
 
     pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 

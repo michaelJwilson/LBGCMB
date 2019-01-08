@@ -37,7 +37,7 @@ def samplestats(mag=23., printit=False, h70=False):
 
   tab_one, tab_three = load_tables(printit=printit)  
   stats              = {'BX': {'z': 2.3, 'frac_AGN': 0.03, 'schechter': {}}, 'LBG': {'z': 3.05, 'frac_AGN': 0.02, 'schechter': {}}}
-
+  
   for survey in ['BX', 'LBG']:      
     if mag < 19.0:
       raise ValueError('Brightest characteristics available for Reddy are R > 19.0')
@@ -83,8 +83,8 @@ def samplestats(mag=23., printit=False, h70=False):
     if printit:
       print "\n\n%s Survey Specifications:\n" % survey
 
-    for k, v in stats[survey].iteritems():
-      print "%s \t\t %s" % (k.ljust(20), v)
+      for k, v in stats[survey].iteritems():
+        print "%s \t\t %s" % (k.ljust(20), v)
   
   return  stats
 

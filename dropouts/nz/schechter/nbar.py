@@ -63,18 +63,36 @@ def MM2LL(MM, M_star):
   
   return LL
 
-def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', printit=True, qso=True):
-    ''' 
-    Given a redshift, Schecter fn. parameters and a selection function type, 
-    e.g. apparent mag. limited or Goldrush selection, return the expected 
-    number density of observed objects.  
-    '''
+def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', printit=True, qso=False):
+  ''' 
+  Given a redshift, Schecter fn. parameters and a selection function type, 
+  e.g. apparent mag. limited or Goldrush selection, return the expected 
+  number density of observed objects.  
+  '''
 
+  if type == 'qso':
+    from  luminosity_fn  import  gmag
+    from  luminosity_fn  import  get_ns
+
+    dM     = 0.05
+    Ms     = np.arange(-32.,   -15., dM)
+    gs     = gmag(Ms + dM, z, restM=False, printit=False)
+
+    nbar   = get_ns(Ms, zee=z)
+    nbar   = np.log10(nbar)
+
+    ##  Cut to maglim.                                                                                                                                                                                                                     
+    nbar   = nbar[gs <= mlim][-1]
+
+    return  nbar
+
+  else:
+    ##  Derived from a Schechter fn.
     import  astropy.constants  as      const
     from    schechterfn        import  SchechterMfn
 
 
-    ## Rest-frame absolute magnitude, z=0 and D_L = 10pc.
+    ##  Rest-frame absolute magnitude, z=0 and D_L = 10pc.
     MM                 = np.linspace(M_star - 15., M_star + 15., 1000)     ## Integrate from sources 10**10. times brighter than M* to 10**10. times dimmer.
                                                                            ## Even spacing in Magnitude -> intergral dM.     
 
@@ -86,7 +104,7 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     if type   == 'app':
       PhiMUV          *= visibilecut(MM, Mlim, type='mag')
 
-    """
+    '''
     elif type == 'hsc': 
       hsc_selectiondict = colourcuts.get_SubaruSelectionfn(printit = False, plotit = False) 
       hsc_selection     = hsc_selectiondict[band]
@@ -99,7 +117,7 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
 
       for i, x in enumerate(PhiMUV): 
         PhiMUV[i]      *= np.maximum(hsc_selection((z, Lv[i])), 0.0)        ## interpolation does not enforce positive definite selection.
-    """
+    '''
 
     ## Calculate expected number density (integral dM). 
     nbar     = np.trapz(PhiMUV, MM)                    ## log_10(nbar [(h_100/Mpc)^3]) 
@@ -121,25 +139,25 @@ def dVols(zs, cosmo, params):
 
   return  zs, dVs
 
-def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, printit = True, completeness=None):
+def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None):
   ''' 
   Integrate (e.g. app. mag. selected) \bar n(z) over a redshift slice of 
   width dz to get expected galaxies per sq. degree.  
   '''
   
-  zs      =  np.linspace(zmin, zmax, 1500)
-  zs, dVs =  dVols(zs, cosmo, params)
+  zs       =  np.linspace(zmin, zmax, 1500)
+  zs, dVs  =  dVols(zs, cosmo, params)
 
 
-  pnbar   =  0.0
+  pnbar = 0.0
 
   for i, zee in enumerate(zs):
-    """
+    '''
     Get expected number density for app. mag. (dropout colour) selected expected sample at this redshift slice. 
     Note:  Neglects evolution in luminosity fn., but includes change in app. mag with z.
-    """
-    nbar   = comovdensity(zee, phi_star, M_star, alpha, type='app', mlim = mlim, printit=False)  
-    nbar   = 10.**nbar               ## [(h_100/Mpc)^3]
+    '''
+    nbar   = comovdensity(zee, phi_star, M_star, alpha, type=type, mlim = mlim, printit=False)  
+    nbar   = 10. ** nbar             ## [(h_100/Mpc)^3]
 
     if completeness is not None:
       pnbar += dVs[i] * nbar * completeness(zee)
