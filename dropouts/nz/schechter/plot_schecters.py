@@ -49,9 +49,9 @@ def plot_schechters(magbias=False, nointerloper=False):
     labels       = ['BX-dropouts', r'$u$-dropouts', r'$g$-dropouts', r'$r$-dropouts']
     colors       = ['y', 'b', 'r', 'indigo']
 
-    stop         =  -1
+    stop         =  2
 
-    ##  for stats, band, label, color in zip(samples[:stop], bands[:stop], labels[:stop], colors[:stop]):         
+    ## for stats, band, label, color in zip(samples[:stop], bands[:stop], labels[:stop], colors[:stop]):         
     for stats, band, label, color in zip(samples, bands, labels, colors):
       zee        = stats[band]['z']   
       dzee       = 0.5
@@ -76,7 +76,8 @@ def plot_schechters(magbias=False, nointerloper=False):
                       alpha=0.5, markersize=2)
 
       if band == 'Malkan':
-          for mlim in mlims:
+          ##  Only 0.5 sampling available. 
+          for mlim in mlims[::2]:
               stats = malkan_stats(mlim)
               nbar  = stats['Malkan']['nbar'] 
 

@@ -7,7 +7,6 @@ import  matplotlib.pyplot  as      plt
 
 plt.style.use('ggplot')
 
-
 if __name__ == '__main__':
     colors = ['b', 'r', 'indigo']
 
