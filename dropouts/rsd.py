@@ -40,8 +40,8 @@ def integrand(z, mu, y, Pk_interps, fsky):
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
 
-    compute     = False
-    params      = get_params()
+    compute     =  True
+    params      =  get_params()
 
     if compute:
         print('Loading CAMB module.')
