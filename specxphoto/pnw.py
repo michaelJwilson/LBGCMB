@@ -9,11 +9,11 @@ from   camb               import model, initialpower
 from   params             import get_params 
 
 
-##  params       = {'om_m':0.292, 'om_b':0.0468, 'om_L': 0.708, 'h_100':0.69, 'sig_8':0.819, 'Tcmb':2.786}  ## RunPB.
 params           = get_params()
 params['om_cm']  = params['om_m'] - params['om_b']
 
-data             = np.loadtxt('EisensteinAndHu.dat')  ## See EisensteinAndHu.c for configuration choices.
+## See EisensteinAndHu.c for configuration choices.
+data             = np.loadtxt('EisensteinAndHu.dat')
 
 ns               = 0.9688e+0
 As               = 2.1870e-9
@@ -27,7 +27,7 @@ EHpk             = PriPk * Tk**2.
 EHpk_nu          = PriPk * Tk_nu**2.
 
 
-## Load camb. 
+##  Load camb. 
 pars  = camb.CAMBparams()
 
 pars.set_accuracy(AccuracyBoost=2)

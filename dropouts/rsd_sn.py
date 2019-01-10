@@ -40,7 +40,7 @@ def integrand(z, mu, y, Pk_interps, fsky):
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
 
-    compute     =  True
+    compute     =  False
     params      =  get_params()
 
     if compute:
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         kmaxs, results = np.loadtxt('dat/rsd.txt', unpack=True)
         
 
-    latexify(columns=2, equal=False, fontsize=10, ratio=None, ggplot=True, usetex=True)
+    latexify(columns=1, equal=True, fontsize=10, ratio=None, ggplot=True, usetex=True)
 
     pl.plot(kmaxs, np.log10(results))
 

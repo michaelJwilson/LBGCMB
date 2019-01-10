@@ -13,8 +13,8 @@ from   scipy.integrate    import  simps
 from   scipy.misc         import  derivative
 from   dplus              import  growth_factor
 from   qso_bz             import  qso_bz
+from   cosmo              import  cosmo
 
-cosmo            = FlatLambdaCDM(H0 = 100.*params['h_100'], Om0 = params['om_m'], Ob0 = params['om_b'])
 
 wiggle           = np.loadtxt('wiggle.dat')
 nowiggle         = np.loadtxt('nowiggle.dat')
@@ -26,7 +26,8 @@ diff_interp      = interp1d(    diff[:,0],     diff[:,1], bounds_error=False, fi
 wiggle_interp    = interp1d(  wiggle[:,0],   wiggle[:,1], bounds_error=False, fill_value=0.0)
 nowiggle_interp  = interp1d(nowiggle[:,0], nowiggle[:,1], bounds_error=False, fill_value=0.0) 
 
-survey_dzs       = {"LSST": 2.0, "SDSS9": 2.0, "CMASS": 0.15, "QSO": 0.15}  ## Assumed width in dz. 
+##  Assumed width in dz.
+survey_dzs       = {"LSST": 2.0, "SDSS9": 2.0, "CMASS": 0.15, "QSO": 0.15}
 
 def lsst_bz(z):
     return 1.0 + z
@@ -55,7 +56,8 @@ def bzs(z, survey):
 
 def Pab(k, ba, bb, alpha = 1.0, sigma = 2., nowiggle=False):
     if nowiggle == False:
-        interim = ba * bb * (nowiggle_interp(k / alpha) + diff_interp(k / alpha) * np.exp( - k * k * sigma * sigma / 2.))  ## Include wiggles.
+        ##  Include wiggles.
+        interim = ba * bb * (nowiggle_interp(k / alpha) + diff_interp(k / alpha) * np.exp( - k * k * sigma * sigma / 2.))
         
         return interim * alpha**2.
 
