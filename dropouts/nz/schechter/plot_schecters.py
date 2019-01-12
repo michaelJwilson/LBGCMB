@@ -83,6 +83,13 @@ def plot_schechters(magbias=False, nointerloper=False):
 
               pl.plot(mlim, nbar, 'b^', markersize=3)
 
+      if band == 'BX':
+          for mlim in np.arange(22.5, 26.0, 0.5):
+              stats = reddy_stats(mlim)
+              nbar  = stats['BX']['nbar']
+
+              pl.plot(mlim, nbar, 'y^', markersize=3)
+
       if magbias:
         ##  Gradient for magnification bias. 
         grads   = np.gradient(pnbars, dm)
@@ -102,7 +109,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     pl.xlabel(r'$m_{5\sigma}$')
     pl.ylabel(r'$N(<m_{5\sigma})$ / deg$^2$')
       
-    pl.legend(loc=2, ncol=2)
+    pl.legend(loc=4, ncol=2)
 
     pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 

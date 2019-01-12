@@ -1,6 +1,10 @@
 import numpy as np
 import pylab as pl
+
+import matplotlib.pyplot as plt
+
 from   scipy.misc import derivative
+from   utils      import latexify
 
 
 def _f(x, alpha, delta, gamma):
@@ -211,31 +215,38 @@ if __name__ == '__main__':
     
     ## zs = np.array([0.1, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])  ## [Msun].
     zs = np.array([3.0, 4.0, 5.0])
-
-    Ms = np.logspace(10.0, 15.0, num=50)                          ## [Msun].
+    Ms = np.logspace(10.0, 15.0, num=50)                             ## [Msun].
     
+    latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, ggplot=True, usetex=True)
+    
+    '''
     for z in zs:
         SMs, Errs, c = med_SMHM(z, Ms) 
         epsilon, alpha, delta, gamma, Sigma, M1, c = _params(z)
         
-        pl.loglog(Ms, SMs / Ms, label=r'$z = $' + '%.1lf' % z)
+        pl.loglog(Ms, SMs, label=r'$z = $' + '%.1lf' % z)
 
         Mc = _Mc(alpha, delta, gamma, M1)
 
-        pl.axvline(Mc, ymin=0., ymax=1., c='k', alpha=0.4)
-
+        ## pl.axvline(Mc, ymin=0., ymax=1., c='k', alpha=0.4)
+    '''
+    
     for drop in ['u','g', 'r']:
       SMs, Errs, c = ishikawa(drop, Ms)
-      pl.loglog(Ms, SMs / Ms, label=r'%s-dropout' % drop)
+      pl.loglog(Ms, SMs, label=r'$%s$-dropout' % drop)
+    
 
     pl.xlabel(r'$M_{\rm{halo}} \ [M_{\odot}]$')
     ## pl.ylabel(r'$M_{*} \ [M_{\odot}]$')
-    pl.ylabel(r'$M_{*} / M_{\rm{halo}}$')   
+    pl.ylabel(r'$M_{*} \ [M_{\odot}]$')   
     
-    pl.xlim(1.e11, 1.e13)
-    pl.ylim(1.e-3, 0.1)
+    pl.xlim(1.e10, 1.e14)
+    pl.ylim(1.e8, 3.e11)
 
-    pl.legend(loc=4, ncol=2)
+    pl.legend(loc=4, ncol=1)
+    
+    plt.tight_layout()
+
     pl.savefig('ishikawa.pdf')
 
     print('\n\nDone.\n\n')

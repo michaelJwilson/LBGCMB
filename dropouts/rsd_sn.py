@@ -79,7 +79,7 @@ if __name__ == '__main__':
         kmaxs, results = np.loadtxt('dat/rsd.txt', unpack=True)
         
 
-    latexify(columns=1, equal=True, fontsize=10, ratio=None, ggplot=True, usetex=True)
+    latexify(columns=1, equal=True, fontsize=10, ratio=1., ggplot=True, usetex=True)
 
     pl.plot(kmaxs, np.log10(results))
 
