@@ -114,23 +114,24 @@ if __name__ == "__main__":
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
 
   ##  Dropout selection.   
-  band  =     'u'
+  band  =     'g'
 
   zmin  =   0.01
   zmax  =  10.00
   
   if  band == 'g':
     stats        =  gsample_stats()
-    stats        =  get_nbar_nocontam(band, depth='W', printit=False)  ## Contamination corrected estimate. 
+    stats        =  get_nbar_nocontam(band, depth='W', printit=False)
   
-    nbar         =  stats[band]['nbar_nointerlopers']
     peakz        =  stats[band]['z']
+
+    ##  Contamination corrected estimate.
+    nbar         =  stats[band]['nbar_nointerlopers']
+    nbar_wint    =  stats[band]['nbar']
 
     ##  Effectively overwrites hard z limits above.                                                                                                 
     zee, pzee    =  get_gdropoutpz()
     pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
-
-    detband      =  'i'                                                ## Detection band.
 
   elif band in ['u', 'Malkan']: 
     ##  Malkan u-drops.
@@ -147,12 +148,18 @@ if __name__ == "__main__":
     dzee         =  0.50             ##  0.61 / 2.
     peakz        =  stats[band]['z']
 
-    ##  Actual u-dropouts.
+    ##  Actual u-dropouts;  N per sq. deg. 
     nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, printit=True, completeness=None)
-    nbar_wint    =  stats[band]['nbar']
+    nbar        /=  (4. * np.pi / 41253.)
+
+    ##  With contamination. 
+    nbar_wint    =  stats[band]['nbar']    ##  per sq. deg.
+    nbar_wint   /=  (4. * np.pi / 41253.)  ##  per steradian. 
 
   else:
     raise  ValueError('\n\nChosen sample is not available.\n\n')
+
+  exit(0)
 
   ##  Bias with z.
   drop_bz            =      get_dropoutbz(m=24.5) ## [24.5, 25.0, 25.5] 
@@ -165,7 +172,7 @@ if __name__ == "__main__":
   midz, ps           =  Raf15_pz(droptype='u', field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
   pz                 =  interp1d(midz, ps, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
-  ##  Change in Ckg with p(z), b(z) -> p'(z) and b'(z).
+  ##  Change in Ckg with p(z), b(z), nbar -> p'(z), b'(z) and nbar'.
   ##  We assume the z < 1 population of likely red galaxies has a bias of 2.04 at a mean z 0.87;
   bzz                =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
 
@@ -183,12 +190,12 @@ if __name__ == "__main__":
   ##  print(Llls, cgg, ckg)
 
   ##  {'gg': cgg + ngg, 'kg': ckg, 'gk': ckg, 'kk': ckk + nkk}
-  Cls, Nls           =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz,   zeff=False, samplevar_lim=False)
+  Cls, Nls           =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz, zeff=False, samplevar_lim=False)
 
   ##  Distorted Cls, i.e. with differing p(z), b(z) and nbar. 
   xCls, xNls         =  get_allCls(Pk_interps, Llls, nbar_wint, fsky, zmin, zmax, pzz, bzz, zeff=False, samplevar_lim=False)
 
-  ## Lll max cut;  Zel'dovich.                                                                                                                             
+  ##  Lll max cut;  Zel'dovich.                                                                                                                          
   LllMax             =  Lcutmax[peakz][0]
 
   if plotit:
@@ -199,7 +206,9 @@ if __name__ == "__main__":
     pl.axvline(LllMax, label='ZA limit.', c='k', alpha=0.5)
 
     pl.plot(Llls,       100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$dC_{gg}/C_{gg} [\%]$')
-    pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$') ## kg is linear, gg is quad. in dNdz.
+
+    ##  kg is linear, gg is quad. in dNdz.
+    pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$')
     
     pl.xlim(50., 4.e3)
     pl.ylim(-1.,  50.)
@@ -208,7 +217,6 @@ if __name__ == "__main__":
     pl.legend(ncol=2)
 
     pl.savefig('plots/interloper_bias_cls_%s-drops.pdf' % band, bbox_inches='tight')  
-
 
   ##  The resulting parameter bias, (dsig8, db1).                                                                                                        
   nparam             =  2  
@@ -273,7 +281,6 @@ if __name__ == "__main__":
     for j, pparam in enumerate(['s8', 'b1']):
       dtheta[i] += iFisher[i,j] * interim[j]
       
-  ##
   biased_sig8 = fid_sig8 + dtheta[0]
   biased_b1   = fid_b1 + dtheta[1]
 
