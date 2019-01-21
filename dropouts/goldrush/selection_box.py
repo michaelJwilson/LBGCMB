@@ -29,7 +29,7 @@ i5s = 26.53
 z5s = 26.10
 y5s = 25.28
 '''
-## Shallower W survey:
+##  Shallower W survey:
 g5s = 26.40
 r5s = 25.90
 i5s = 25.70
@@ -141,48 +141,19 @@ def Subaru_colourcut(mags, band='g', nocolourcut = False, mask = False):
         else:
             return (zs[crit], mass[crit], Luv[crit], u[crit], g[crit], r[crit], i[crit], z[crit], y[crit])
 
-def Reddy_colourcut(zs, luv, u, g, r, i, z, y, type='BX', nocolourcut = False):
-    if type == 'BM':
-        ## 1.5 < z < 2.0
-        crit  = (g - r) >= -0.2
-        crit &= (u - g) >= (g - r)     - 0.1
-        crit &= (g - r) <= 0.2*(u - g) + 0.4
-        crit &= (u - g) <= (g - r)     + 0.2
-
-    elif type == 'BX':
-        ## 2.0 < z < 2.5
-        crit  = (g - r) >= -0.2
-        crit &= (u - g) >= (g - r)     + 0.2
-        crit &= (g - r) <= 0.2*(u - g) + 0.4
-        crit &= (u - g) <= (g - r)     + 1.0   
-
-    else:
-        raise ValueError("Specified Reddy colour selection is not available.")
-
-def get_pEBV():
-  names       = ['loEBV', 'hiEBV', 'p(z=2)', 'p(z=3)']
-
-  data        = pd.read_csv("dat/reddy_tabfive.dat", sep='\s+', skiprows=0, names=names)
-
-  data['EBV'] = 0.5 * (data['loEBV'].values + data['hiEBV'].values)
-  
-  ## for i, x in enumerate(data['EBV'].values):
-  ##  print x, data['p(z=3)'].values[i]
-  
-  return data
-
 def get_SubaruSelectionfn(printit = True, plotit = True):
-    """ Based on Bruzual & Charlot SEDS (Le Phare output of .phys and .output) and Subaru colour cut criteria, return a (selection) function specified 
-        by redshift and UV absolute magnitude arguments. """
+    '''
+    Based on Bruzual & Charlot SEDS (Le Phare output of .phys and .output) and Subaru colour cut criteria, return a (selection) function specified 
+    by redshift and UV absolute magnitude arguments. 
+    '''
 
     EBVs = get_pEBV()
     Hs   = []
 
-    
     results = {'g': [], 'r': [], 'i': [], 'z': []}
 
     for EBV in np.array([-0.15, -0.05, 0.05, 0.15, 0.25, 0.35, 0.45]):
-       mags          = pd.read_csv("/Users/M.J.Wilson/work/cmbcross/mjw/dropouts/test_ebv_%.3lf.dat" % EBV,\
+       mags          = pd.read_csv(os.environ['CMBLBG'] + 'dropouts/test_ebv_%.3lf.dat' % EBV,\
                             names=["zee", "age", "mass", "Luv", "u", "g", "r", "i", "z", "y"], delim_whitespace=True)  ## stellar mass. 
     
        ## Generate result object.

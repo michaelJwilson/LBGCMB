@@ -142,7 +142,7 @@ def read_ised(file = None, AgeMyr = None, printit = False, plotit = False):
     ##  pl.ylabel(r'Flux density [ergs/s/Hz]')
 
     pl.legend(ncol=2, loc=4)
-    
+
     pl.show()
     ## pl.savefig('plots/ised.pdf')
 

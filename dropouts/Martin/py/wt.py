@@ -110,4 +110,13 @@ if __name__=="__main__":
     ##  bbox_inches='tight'
     plt.savefig("../plots/br.pdf")
 
-    print('\n\nDone.\n\n')
+
+if __name__=="__main__":
+  print('\n\nWelcome to a (plotter) of the angular correlation fn.\n\n')
+
+  plot_wt()
+    
+  ## plot_bias()
+
+  print('\n\nDone.\n\n')
+

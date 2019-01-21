@@ -16,10 +16,9 @@ latexify(fig_width=None, fig_height=None, columns=2, equal=False)
 params = get_params()
 
 def get_contamination(m, zee=4, depth='W'):
-    """
+    '''
     Get magnitude bins defined by GoldRush and corresponding contamination fraction.                                                         
-    Note:  Currently assumes z = 4 and Wide coverage. 
-    """
+    '''
     import  os
     from    scipy.interpolate  import  interp1d
 
@@ -45,8 +44,8 @@ def get_contamination(m, zee=4, depth='W'):
     return  interp(m)
 
 def effective_depth(dropband='g', depth='W'):
-    ## Table 1 of https://arxiv.org/pdf/1704.06004.pdf.
-    if dropband == 'g' and depth == 'W':
+    ##  Table 1 of https://arxiv.org/pdf/1704.06004.pdf.
+    if  dropband == 'g' and depth == 'W':
         return (26.43 + 26.35 + 26.38 + 26.39 + 26.47 + 26.31) / 6.0 
     
     elif dropband == 'g' and depth == 'D':
@@ -80,8 +79,9 @@ def get_galaxyfraction(ms, dropband='g'):
     return  frac(Ms)
 
 def get_nbar_nocontam(band, depth='W', printit=False):
-    """                                                                                                                                                      Get the number counts per magnitude bin,                                                                                                                 and the contamination corrected counts.                                                                                                              
-    """
+    '''                                                                                                                                                     
+    Get the number counts per magnitude bin, and the contamination corrected counts.                                                                  
+    '''
     if band == 'Malkan':
       from    Malkan.specs       import  samplestats
       
@@ -113,13 +113,13 @@ def get_nbar_nocontam(band, depth='W', printit=False):
         raise ValueError('\n\nnbar without contamination is not available for %s' % band)
 
 def get_nbarbymag(dropband, depth, printit=False):
-    """    
+    '''    
     For selection bands, e.g. gri, and depth type, [UD, D, W], 
     calculate the total number of objects with a magnitude less 
     than a given limit and the area of that field type. 
     
     From this, calculate the angular number density.  NOTE:  No zy for Ultra Deep. 
-    """
+    '''
     import  os
     import  glob
 

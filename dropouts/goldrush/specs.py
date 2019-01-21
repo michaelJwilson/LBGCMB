@@ -8,9 +8,10 @@ from    collections   import  OrderedDict
 params = get_params()
 
 def samplestats(printit = False):
-  """                                                                                                                                                           Load specifications of Reddy BX and LBG samples from tabular data and create a dictionary
+  '''                                                                                                                                                      
+  Load specifications of Reddy BX and LBG samples from tabular data and create a dictionary
   containing (interloper free) gals. per sq. deg. HSC Goldrush sample stats.
-  """
+  '''
 
   stats                = OrderedDict()
 
@@ -27,19 +28,19 @@ def samplestats(printit = False):
   stats['areas']['D']  = {'XMM_LSS':  2.4,  'COSMOS':   6.5, 'ELAIS_N1':  3.3, 'DEEP2_3':  5.5}                                   ## deg^2
   stats['areas']['UD'] = {'SXDS':     1.1,  'COSMOS':   1.3}                                                                      ## deg^2
 
-  ## Total area.
+  ##  Total area.
   stats['Total area']  = {}
   
   for depth in ['W', 'D', 'UD']:
     stats['Total area'][depth] = sum(stats['areas'][depth].values())  ## deg^2.
 
-  ## Counts in the Wide field.
+  ##  Counts in the Wide field.
   stats['g']['counts'] = {'XMM': 113582, 'GAMA9': 44670, 'WIDE': 94544, 'GAMA15': 104224, 'HECTO': 30663, 'VVDS': 23677}   ## g-band dropout at z=4.
   stats['r']['counts'] = {'XMM':   6371, 'GAMA9':  5989, 'WIDE':  5243, 'GAMA15':   6457, 'HECTO':  1082, 'VVDS':  1500}
   stats['i']['counts'] = {'XMM':     81, 'GAMA9':    98, 'WIDE':    36, 'GAMA15':     73, 'HECTO':    11, 'VVDS':    20}
   stats['z']['counts'] = {'XMM':      7, 'GAMA9':    16, 'WIDE':     8, 'GAMA15':     14, 'HECTO':     7, 'VVDS':    11}
 
-  ## Counts in the Deep field.                                                                                                                                                                                                   
+  ##  Counts in the Deep field.                                                                                                                                                                                                   
   stats['g']['deepcounts']  = {'XMM': 6730, 'COSMOS': 45767, 'ELAIS': 19631, 'DEEP2': 35963}                                 ## g-band dropout at z=4.                                                                         
   stats['r']['deepcounts']  = {'XMM':  711, 'COSMOS': 6282,  'ELAIS': 612,   'DEEP2': 1498}
   stats['i']['deepcounts']  = {'XMM':    6, 'COSMOS': 64,    'ELAIS': 15,    'DEEP2': 47}
