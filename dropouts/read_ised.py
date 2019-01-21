@@ -38,7 +38,7 @@ def read_ised(file = None, AgeMyr = None, printit = False, plotit = False):
   '''
   
   if file is None:
-    ## Default to EzGal template.
+    ##  Default to EzGal template.
     file = './SED/GAL/EZGAL/models/bc03_exp_1.0_z_0.02_chab.model'
 
   if not(os.path.isfile(file)):
@@ -60,7 +60,7 @@ def read_ised(file = None, AgeMyr = None, printit = False, plotit = False):
 
   ##  Read ages                                                                                                                                           
   ages  = np.asarray(_read_binary(fh, type='f', number=nages))
-  ages /= 10.**6.                                                    ## Convert to units of Myrs.                                                       
+  ages /= 10.**9.                                                    ## Convert to units of Gyrs.                                                       
 
   ##  Read in a bunch of stuff that I'm not interested in but which I read like this to make sure I get to the right spot in the file.                     
   junk = _read_binary(fh, number=2)
@@ -115,33 +115,36 @@ def read_ised(file = None, AgeMyr = None, printit = False, plotit = False):
 
   if AgeMyr is not None:
     seds = seds[:, np.argmin(np.abs(ages - AgeMyr))]            ##  Get the SED at that age [Lo/A].
-    ages = ages[   np.argmin(np.abs(ages - AgeMyr))]            ##  Get only the SED with age closest to AgeMyr.                                               
-    
+    ages = ages[   np.argmin(np.abs(ages - AgeMyr))]            ##  Get only the SED with age closest to AgeMyr.                                             
+
     print("\n\nAge closest to %.3lf Myr:  %.3lf [Myr]\n\n" % (AgeMyr, ages))
 
   ##  Now convert the SEDS from Lo/A to Fv [ergs/s/Hz].                                                                                                     
-  seds  *=  3.826e33 * ls ** 2.0 / (const.c.value * 1e10)       ##  [ergs/s/Hz]
+  ## seds  *=  3.826e33 * ls ** 2.0 / (const.c.value * 1e10)    ##  [ergs/s/Hz]
   
   ls     = ls * u.AA                                            ##  Angstroms
-  
   vs     = ls.to(u.Hz, equivalencies = u.spectral())            ##  Hertz
 
-  Ll     = (seds * vs**2.) / const.c.value                      ##  [ergs/s/meter].                                                             
-  Ll    *= 1e-10                                                ##  [ergs/s/AA].
+  ## Ll     = (seds * vs**2.) / const.c.value                   ##  [ergs/s/meter].                                                             
+  ## Ll    *= 1e-10                                             ##  [ergs/s/AA].
   
   if plotit:
     import pylab as pl
 
-    pl.loglog(ls, seds, label = 'Age: %.1le' % AgeMyr + ' Myr.')
+    for ii, sed in enumerate(seds.T):
+      if ii % 25 == 0:
+        pl.loglog(ls, vs * sed, label = 'Age: %.2lf' % ages[ii] + ' Gyr.')
 
-    pl.ylim(1e13, 1e21)
+    pl.xlim(300., 3.e4)
+    ## pl.ylim(1e13, 1e21)
 
     pl.xlabel(r'Wavelength [$\AA$]')
-    pl.ylabel(r'Flux density [ergs/s/Hz]')
+    ##  pl.ylabel(r'Flux density [ergs/s/Hz]')
 
-    pl.legend(loc=4)
-
-    pl.savefig('plots/ised.pdf')
+    pl.legend(ncol=2, loc=4)
+    
+    pl.show()
+    ## pl.savefig('plots/ised.pdf')
 
   ##  Age [Myr]; vs [Hz]; SEDS [ergs/s/Hz]; ls [A]; Ll [ergs/s/angstrom].   
   ##  Ordered by increasing frequency.   
@@ -155,6 +158,6 @@ if __name__ == "__main__":
   print("\n\nWelcome to read-ised.\n\n")
 
   ## Age [Myr]; vs [Hz]; SEDS [ergs/s/Hz]; ls [A]; Ll [ergs/s/angstrom].
-  ages, vs, Fv, ls, Ll = read_ised('GALAXEV/models/Padova1994/salpeter/bc2003_hr_m72_salp_ssp.ised', AgeMyr = 25., printit = True)
+  ages, vs, Fv, ls, Ll = read_ised('GALAXEV/models/Padova1994/salpeter/bc2003_hr_m72_salp_ssp.ised', AgeMyr = None, printit = True, plotit=True)
   
   print("\n\nDone.\n\n")

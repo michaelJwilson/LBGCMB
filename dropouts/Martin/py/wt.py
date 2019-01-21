@@ -51,6 +51,9 @@ if __name__=="__main__":
     ##  Model
     wt = np.loadtxt("../dat/summary_v2/drop_0.2000_12.60_0.60.wt")
     pl.plot(wt[:,0]*60., wt[:,1], '-', color=cc, label='$z \simeq 4$ HOD', alpha=0.5)
+
+    ##  Add text label about rescaling.
+    plt.text(3.e2, 0.2, r'$\times 2$', fontsize=12, color='darkblue')
     
     pl.xlim(20., thi)
     pl.ylim(1e-2,0.5)
