@@ -2,9 +2,9 @@ import numpy as np
 
 
 def des_depths():
-  """
+  '''
   NOTE:  SV is equivalent to the 5 yr DES depth.
-  """
+  '''
 
   ## Assume that flux of 10 sig. source is double that of 5 sigma source:  m5 = m10 + 0.75                                                                 
   stats     = {'Y1': {'g': 24.15, 'r': 23.95, 'i': 23.25, 'z': 22.55},\
