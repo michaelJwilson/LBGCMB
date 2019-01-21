@@ -10,7 +10,7 @@ from    utils              import  comoving_distance
 from    astropy            import  constants as const
 from    scipy.integrate    import  simps
 from    pmh                import  Pmm, get_PkInterps, linz_bz
-from    reddy              import  reddy_samplestats
+from    reddy              import  samplestats as reddy_samplestats
 from    sliced_pz          import  sliced_pz
 from    bz                 import  get_dropoutbz
 from    utils              import  latexify

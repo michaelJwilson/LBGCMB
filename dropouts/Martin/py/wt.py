@@ -95,8 +95,8 @@ def plot_bias():
 if __name__=="__main__":
   print('\n\nWelcome to a (plotter) of the angular correlation fn.\n\n')
 
-  ## plot_wt()
+  plot_wt()
     
-  plot_bias()
+  ## plot_bias()
 
   print('\n\nDone.\n\n')

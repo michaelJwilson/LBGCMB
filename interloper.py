@@ -13,7 +13,7 @@ from    zeldovich_Lmax      import  Lcutmax
 from    Cgg                 import  Cgg, var_Cgg, Ngg
 from    numpy.linalg        import  inv
 from    fisher_contour      import  plot_ellipse
-from    get_Rafelski15_dNdz import  get_Rafelski15_pz
+from    Raf15               import  Raf15_pz
 from    planck18_bao        import  get_sig8z
 from    whitebook_pz        import  whitebook_pz
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
   from    prep_Llls          import  prep_Llls
   from    Gaussian_pz        import  Gaussian_pz
   from    prep_camb          import  CAMB
-  from    schmittfull        import  ss_pz
+  from    schmittfull_nz     import  ss_pz
   from    completeness       import  get_dropoutpz       as  get_gdropoutpz
   from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
   from    specs              import  samplestats         as  gsample_stats

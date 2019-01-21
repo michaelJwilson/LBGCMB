@@ -141,7 +141,8 @@ def read_ised(file = None, AgeMyr = None, printit = False, plotit = False):
 
     pl.legend(loc=4)
 
-    pl.savefig('plots/ised.pdf')
+    pl.show()
+    ## pl.savefig('plots/ised.pdf')
 
   ##  Age [Myr]; vs [Hz]; SEDS [ergs/s/Hz]; ls [A]; Ll [ergs/s/angstrom].   
   ##  Ordered by increasing frequency.   

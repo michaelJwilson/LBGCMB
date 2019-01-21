@@ -2,12 +2,11 @@ import  numpy  as      np
 
 
 def lephare_madau(rwl, z):
-    """
+    '''
     Input:   Rest wavelength, redshift. 
-
-    Output:  Return the madau extragalactic extinction (by neutral hydrogen) curve
-             shipped with Le Phare.
-    """
+    Output:  Return the madau extragalactic extinction (by neutral hydrogen) 
+             curve shipped with Le Phare.
+    '''
 
     from scipy  import interpolate
 
