@@ -1,19 +1,19 @@
-import pickle
-import numpy              as      np
-import pylab              as      pl
-import astropy.constants  as      const
+import  pickle
+import  numpy              as      np
+import  pylab              as      pl
+import  astropy.constants  as      const
 
-from   numpy.linalg       import  inv
-from   scipy.interpolate  import  interp1d
-from   params             import  params
-from   astropy.cosmology  import  FlatLambdaCDM
-from   utils              import  prefactor, comoving_distance
-from   Cgg                import  sliced_pz, Ngg
-from   scipy.integrate    import  simps
-from   scipy.misc         import  derivative
-from   dplus              import  growth_factor
-from   qso_bz             import  qso_bz
-from   cosmo              import  cosmo
+from    numpy.linalg       import  inv
+from    scipy.interpolate  import  interp1d
+from    params             import  params
+from    astropy.cosmology  import  FlatLambdaCDM
+from    utils              import  prefactor, comoving_distance
+from    Cgg                import  sliced_pz, Ngg
+from    scipy.integrate    import  simps
+from    scipy.misc         import  derivative
+from    dplus              import  growth_factor
+from    qso_bz             import  qso_bz
+from    cosmo              import  cosmo
 
 
 wiggle           = np.loadtxt('wiggle.dat')
@@ -30,61 +30,55 @@ nowiggle_interp  = interp1d(nowiggle[:,0], nowiggle[:,1], bounds_error=False, fi
 survey_dzs       = {"LSST": 2.0, "SDSS9": 2.0, "CMASS": 0.15, "QSO": 0.15}
 
 def lsst_bz(z):
-    return 1.0 + z
-
-def qso_bz(z):
-    return 0.278 * ((1. + z)**2. - 6.565) + 2.393
-
-def cmass_bz(z):
-    return 2.0
+    return  1.0 + z
 
 def bzs(z, survey):
     if survey == "CMASS":
-        return cmass_bz(z)
+        return  2.0
 
     elif survey == "QSO":
-        return qso_bz(z)
+        return  qso_bz(z)
 
     elif survey == "LSST":
-        return lsst_bz(z)
+        return  lsst_bz(z)
 
     elif survey == "SDSS9":
-        return lsst_bz(z)
+        return  lsst_bz(z)
 
     else:
-        raise ValueError("Erroneous input to bzs:  ", z, survey)
+        raise  ValueError("Erroneous input to bzs:  ", z, survey)
 
 def Pab(k, ba, bb, alpha = 1.0, sigma = 2., nowiggle=False):
-    if nowiggle == False:
-        ##  Include wiggles.
-        interim = ba * bb * (nowiggle_interp(k / alpha) + diff_interp(k / alpha) * np.exp( - k * k * sigma * sigma / 2.))
+  if nowiggle == False:
+    ##  Include wiggles.
+    interim = ba * bb * (nowiggle_interp(k / alpha) + diff_interp(k / alpha) * np.exp( - k * k * sigma * sigma / 2.))
         
-        return interim * alpha**2.
+    return  interim * alpha**2.
 
-    elif nowiggle == True:
-        interim = ba * bb *  nowiggle_interp(k / alpha)
+  elif nowiggle == True:
+    interim = ba * bb *  nowiggle_interp(k / alpha)
         
-        return interim * alpha**2.
+    return  interim * alpha**2.
 
-    else:
-        raise ValueError("Erroneous input to Pab.")
+  else:
+    raise  ValueError("Erroneous input to Pab.")
 
 def nPab(k, ba, bb, alpha = 1.0, sigma = 2., Aps = 1.0, Am3=0.0, Am2=0.0, Am1=0.0, Ap0=0.0, Ap2=0.0, nowiggle=False):
-    ## Pps with additional nuisance parameters to mitigate information emanating from the broad-band power shape.
-    result   = Pab(k, ba, bb, alpha, sigma, nowiggle=nowiggle)
-    result  *= Aps
+    ##  Pps with additional nuisance parameters to mitigate information emanating from the broad-band power shape.
+    result   =  Pab(k, ba, bb, alpha, sigma, nowiggle=nowiggle)
+    result  *=  Aps
     
-    result  += Am3 * k **-3.
-    result  += Am2 * k **-2.
-    result  += Am1 * k **-1.
-    result  += Ap0 * k **+0.
-    result  += Ap2 * k **+2.
+    result  +=  Am3 * k **-3.
+    result  +=  Am2 * k **-2.
+    result  +=  Am1 * k **-1.
+    result  +=  Ap0 * k **+0.
+    result  +=  Ap2 * k **+2.
 
-    return result
+    return  result
 
-def Cab(Llls, spec_z, surveya = "LSST", surveyb = "QSO", alpha = 1.0, sigma = 2., zeff=True, nowiggle=False):
+def Cab(Llls, spec_z, surveya = 'LSST', surveyb = 'QSO', alpha = 1.0, sigma = 2., zeff=True, nowiggle=False):
   '''
-  Angular correlation function: i.e. C_sp(ell, z).
+  Angular correlation function: i.e. C_sp(L, z).
   '''
 
   z           = np.arange(0.01, 5.0, 0.01)
@@ -120,12 +114,12 @@ def Cab(Llls, spec_z, surveya = "LSST", surveyb = "QSO", alpha = 1.0, sigma = 2.
   return  simps(integrand, dx = z[1] - z[0], axis=0)                                                ## integral over z. 
 
 def _aCab(alpha, Llls, spec_z, surveya="LSST", surveyb="QSO", sigma=2., zeff=True, nowiggle=True):
-    ## wrapper with alpha as leading argument for derivative calc.
-    return Cab(Llls, spec_z, surveya, surveyb, alpha, sigma, zeff=True, nowiggle=nowiggle)
+    ##  wrapper with alpha as leading argument for derivative calc.
+    return  Cab(Llls, spec_z, surveya, surveyb, alpha, sigma, zeff=True, nowiggle=nowiggle)
 
 def _sCab(sigma, Llls, spec_z, surveya="LSST", surveyb="QSO", alpha=1., zeff=True, nowiggle=True):
-    ## wrapper with sigma as leading argument for derivative calc.                                                                                         
-    return Cab(Llls, spec_z, surveya, surveyb, alpha, sigma, zeff=True, nowiggle=nowiggle)
+    ##  wrapper with sigma as leading argument for derivative calc.                                                                                      
+    return  Cab(Llls, spec_z, surveya, surveyb, alpha, sigma, zeff=True, nowiggle=nowiggle)
 
 def get_errors(Fisher, nowiggle=False, print_it=True):
     iFisher   = inv(Fisher)
@@ -133,11 +127,13 @@ def get_errors(Fisher, nowiggle=False, print_it=True):
 
     if  Fisher[0][0] > 0.0:
         CondErr  = 1./np.sqrt(Fisher[0][0])
+
     else:
         CondErr  = np.NaN 
 
     if iFisher[0][0] > 0.0:
-        MargErr  =    np.sqrt(iFisher[0][0])
+        MargErr  = np.sqrt(iFisher[0][0])
+
     else:
         MargErr  = np.NaN 
 
@@ -151,20 +147,20 @@ def get_errors(Fisher, nowiggle=False, print_it=True):
         print "\nConditional error on alpha: %.6lf" % CondErr
         print "Marginal    error on alpha: %.6lf"   % MargErr
 
-    return iFisher, CondErr, MargErr
+    return  iFisher, CondErr, MargErr
 
 
-if __name__ == "__main__":
-    surveys  = "CMASS"
-    surveyp  = "SDSS9"
+if __name__ == '__main__':
+    surveys  = 'CMASS'
+    surveyp  = 'SDSS9'
 
     spec_z   = 0.75
-    fsky     = 0.23                                                    ## Assumes CMASS is the limiting area.   
-                                                                       ## QSOs are slightly smaller, but same ball park.
+    fsky     = 0.23                                                    ##  Assumes CMASS is the limiting area.   
+                                                                       ##  QSOs are slightly smaller, but same ball park.
     alpha    = 1.0
 
-    sigma_z0 = 7.0                                                     ## [Mpc/h] at z=0 for LCDM models (close to what we now believe).
-    sigma    = sigma_z0 * growth_factor(1./(1. + spec_z))              ## Scales as D(z).
+    sigma_z0 = 7.0                                                     ##  [Mpc/h] at z=0 for LCDM models (close to what we now believe).
+    sigma    = sigma_z0 * growth_factor(1./(1. + spec_z))              ##  Scales as D(z).
 
     ells     = np.arange(2., 1500., 1.)
 

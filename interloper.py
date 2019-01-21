@@ -5,7 +5,7 @@ import  numpy               as      np
 import  astropy.units       as      u
   
 from    params              import  get_params
-from    pmh                 import  get_PkInterps, linz_bz
+from    pmh                 import  get_PkInterps
 from    bz                  import  get_dropoutbz
 from    utils               import  latexify
 from    nbar                import  projdensity
@@ -46,10 +46,16 @@ def get_ClsCov(Llls, Cls, Nls, fsky, printit=False):
     for kkey in Cls:
       ##  Gaussian covariance;  eqn. (14) of https://arxiv.org/pdf/1710.09465.pdf.
       result[key + kkey]  = (Cls[key[0] + kkey[0]] + Nls[key[0] + kkey[0]]) * (Cls[key[1] + kkey[1]] + Nls[key[1] + kkey[1]]) 
-      result[key + kkey] += (Cls[key[0] + kkey[1]] + Nls[key[0] + kkey[1]]) * (Cls[key[1] + kkey[0]] + Nls[key[1] + kkey[0]])  ##  Cross-terms should be identically zero. 
-      result[key + kkey] /= (2. * Llls + 1.)                                                                                   ##  To be viewed as covariance sampled at Llls.  I.e. to be corrected  
-      result[key + kkey] /=  fsky                                                                                              ##  for further binning in L.   
-  
+
+      ##  Cross-terms should be identically zero.
+      result[key + kkey] += (Cls[key[0] + kkey[1]] + Nls[key[0] + kkey[1]]) * (Cls[key[1] + kkey[0]] + Nls[key[1] + kkey[0]])
+
+      ##  To be viewed as covariance sampled at Llls.  I.e. to be corrected
+      result[key + kkey] /= (2. * Llls + 1.)                                                                                  
+
+      ##  for further binning in L.
+      result[key + kkey] /=  fsky                                                                                            
+
   if printit:
     for key in result:
       print key, result[key]
@@ -74,8 +80,7 @@ if __name__ == "__main__":
   from    prep_Llls          import  prep_Llls
   from    Gaussian_pz        import  Gaussian_pz
   from    prep_camb          import  CAMB
-  from    schmittfull_nz     import  ss_pz
-  from    completeness       import  get_dropoutpz       as  get_gdropoutpz
+  ## from    completeness       import  get_dropoutpz       as  get_gdropoutpz
   from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
   from    specs              import  samplestats         as  gsample_stats
   from    ilim               import  get_nbar_nocontam
@@ -99,6 +104,7 @@ if __name__ == "__main__":
 
   NLlls, Llls, nmodes                =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5000., log10=True)
 
+  ##  CMB specification.
   cmbexp                             =  'CMBS4'
 
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
@@ -108,9 +114,9 @@ if __name__ == "__main__":
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
 
   ##  Dropout selection.   
-  band  = 'Malkan'
+  band  =     'u'
 
-  zmin  =  0.01
+  zmin  =   0.01
   zmax  =  10.00
   
   if  band == 'g':
@@ -125,47 +131,51 @@ if __name__ == "__main__":
     pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
     detband      =  'i'                                                ## Detection band.
-    colors       =  ['darkgreen', 'limegreen', 'g']
 
   elif band in ['u', 'Malkan']: 
-    ##  Reddy u-drops.
-    stats        =  usample_stats()
+    ##  Malkan u-drops.
+    mlim         =    24.5
+    band         = 'Malkan'
 
+    stats        =  usample_stats(mag=mlim)
     peakz        =  stats[band]['z']
 
     alpha        =  stats[band]['schechter']['alpha']
     Mstar        =  stats[band]['schechter']['M_star']
     phi_star     =  stats[band]['schechter']['phi_star']
     
-    dzee         =  0.61 / 2.
+    dzee         =  0.50             ##  0.61 / 2.
     peakz        =  stats[band]['z']
-    nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=24.5, printit = True, completeness=None)
-  
-    pz           =  Gaussian_pz
 
-    decband      =   'R'
-    colors       =  ['darkblue', 'deepskyblue', 'b']
+    ##  Actual u-dropouts.
+    nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, printit=True, completeness=None)
+    nbar_wint    =  stats[band]['nbar']
 
   else:
-    raise  ValueError('\n\nChosen band is not available.\n\n')
+    raise  ValueError('\n\nChosen sample is not available.\n\n')
 
   ##  Bias with z.
-  drop_bz            =  get_dropoutbz()
+  drop_bz            =      get_dropoutbz(m=24.5) ## [24.5, 25.0, 25.5] 
   bz                 =  lambda z:  drop_bz(peakz)
 
   ##  LSST whitebook p(z).
-  pz                 =  lambda z:  whitebook_pz(z, ilim = 25.30)
+  ##  pz             =  lambda z:  whitebook_pz(z, ilim = 25.30)
   
   ##  Get Rafelski based estimates on p(z).                                                                                                               
-  ##  Raf15_pz       =  get_Rafelski15_pz(droptype='u', field='cosmos', depth='FULL', dz=0.1)    
-  
-  ##  Change in Ckg with dN/dz -> dN/dz'.  TO DO:  Set low-z population to have red galaxy bias.                                                                    
-  bzz                =  lambda z:  bz(z)
-  pzz                =  lambda z:  whitebook_pz(z, ilim = 25.25)
+  midz, ps           =  Raf15_pz(droptype='u', field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
+  pz                 =  interp1d(midz, ps, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
+
+  ##  Change in Ckg with p(z), b(z) -> p'(z) and b'(z).
+  ##  We assume the z < 1 population of likely red galaxies has a bias of 2.04 at a mean z 0.87;
+  bzz                =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
+
+  ##  pzz            =  lambda z:  whitebook_pz(z, ilim = 25.25)
+  midzz, pss         =  Raf15_pz(droptype='u', field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
+  pzz                =  interp1d(midzz, pss, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
   ##  and the parameter Fisher matrix.                                                                                                                    
-  fid_b1             =       bz(peakz)
-  fid_sig8           =    sig8z(peakz)
+  fid_b1             =     bz(peakz)
+  fid_sig8           =  sig8z(peakz)
 
   ##  Dry run.
   ##  cgg            =  Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
@@ -175,32 +185,39 @@ if __name__ == "__main__":
   ##  {'gg': cgg + ngg, 'kg': ckg, 'gk': ckg, 'kk': ckk + nkk}
   Cls, Nls           =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz,   zeff=False, samplevar_lim=False)
 
-  ##  Distorted Cls, i.e. with differing p(z). 
-  xCls, xNls         =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pzz, bzz, zeff=False, samplevar_lim=False)
+  ##  Distorted Cls, i.e. with differing p(z), b(z) and nbar. 
+  xCls, xNls         =  get_allCls(Pk_interps, Llls, nbar_wint, fsky, zmin, zmax, pzz, bzz, zeff=False, samplevar_lim=False)
+
+  ## Lll max cut;  Zel'dovich.                                                                                                                             
+  LllMax             =  Lcutmax[peakz][0]
 
   if plotit:
     pl.clf()
 
     latexify(columns=1, equal=True)
 
+    pl.axvline(LllMax, label='ZA limit.', c='k', alpha=0.5)
+
     pl.plot(Llls,       100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$dC_{gg}/C_{gg} [\%]$')
     pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$') ## kg is linear, gg is quad. in dNdz.
     
     pl.xlim(50., 4.e3)
-    pl.xlabel(r'$L$')
+    pl.ylim(-1.,  50.)
 
+    pl.xlabel(r'$L$')
     pl.legend(ncol=2)
 
     pl.savefig('plots/interloper_bias_cls_%s-drops.pdf' % band, bbox_inches='tight')  
 
-  ##  The resulting parameter bias, (dsig8, db1).                                                                                                                                                                   
+
+  ##  The resulting parameter bias, (dsig8, db1).                                                                                                        
   nparam             =  2  
   dtheta             =  np.zeros(nparam)
 
-  ## dtheta stripped of iFab, eqn. (5.1) of https://arxiv.org/pdf/1706.03173.pdf 
+  ##  dtheta stripped of iFab, eqn. (5.1) of https://arxiv.org/pdf/1706.03173.pdf 
   interim            =  np.zeros(nparam)
 
-  ##  Parameter Fisher matrix.                                                                                                                                                                        
+  ##  Parameter Fisher matrix.                                                                                                                        
   Fisher             =  np.zeros(nparam * nparam).reshape(nparam, nparam)
   iFisher            =  np.zeros_like(Fisher)
 
@@ -213,10 +230,9 @@ if __name__ == "__main__":
 
   ## and inverse.
   iCov_Lll           =  np.zeros_like(Cov_Lll) 
-
-  ## Lmax cut. 
-  Lmax               =  1500.
-  Llls               =  Llls[Llls < Lmax]
+ 
+  ## Lll max cut;  Zel'dovich.                                                                                                                             
+  Llls               =  Llls[Llls < LllMax]
 
   for LL, dummy in enumerate(Llls):
     dckg         =  Cls['kg'][LL] - xCls['kg'][LL]
@@ -265,7 +281,7 @@ if __name__ == "__main__":
   print('Biased   sig8(z) and b1(z):  %.6lf and %.6lf.' % (biased_sig8, biased_b1))
   print('Bias: %.6lf \t %.6lf [sigma]' % (np.abs(fid_sig8 - biased_sig8) / np.sqrt(iFisher[0,0]), np.abs(fid_b1 - biased_b1) / np.sqrt(iFisher[1,1])))
 
-  ##  And plot contour ...                                                                                                                                        
+  ##  And plot contour ...                                                                                                                                 
   pl.clf()
 
   latexify(columns=1, equal=True)

@@ -18,7 +18,8 @@ computation of the fitting formula.  The input parameters are:
 6) hubble       -- Hubble constant, in units of 100 km/s/Mpc 
 7) redshift     -- The redshift at which to evaluate */
 
-/* TFmdm_onek_mpc() -- User passes a single wavenumber, in units of Mpc^-1.
+/* 
+TFmdm_onek_mpc() -- User passes a single wavenumber, in units of Mpc^-1.
 Routine returns the transfer function from the Eisenstein & Hu
 fitting formula, based on the cosmology currently held in the 
 internal variables.  The routine returns T_cb (the CDM+Baryon
@@ -53,31 +54,31 @@ static float sqrarg;
 
 /* The following are set in TFmdm_set_cosm() */
 float   alpha_gamma,/* sqrt(alpha_nu) */
-alpha_nu,/* The small-scale suppression */
-beta_c,/* The correction to the log in the small-scale */
-num_degen_hdm,/* Number of degenerate massive neutrino species */
-f_baryon,/* Baryon fraction */
-f_bnu,/* Baryon + Massive Neutrino fraction */
-f_cb,/* Baryon + CDM fraction */
-f_cdm,/* CDM fraction */
-f_hdm,/* Massive Neutrino fraction */
-growth_k0,/* D_1(z) -- the growth function as k->0 */
-growth_to_z0,/* D_1(z)/D_1(0) -- the growth relative to z=0 */
-hhubble,/* Need to pass Hubble constant to TFmdm_onek_hmpc() */
-k_equality,/* The comoving wave number of the horizon at equality*/
-obhh,/* Omega_baryon * hubble^2 */
-omega_curv,/* = 1 - omega_matter - omega_lambda */
-omega_lambda_z, /* Omega_lambda at the given redshift */
-omega_matter_z,/* Omega_matter at the given redshift */
-omhh,/* Omega_matter * hubble^2 */
-onhh,/* Omega_hdm * hubble^2 */
-p_c,/* The correction to the exponent before drag epoch */
-p_cb,/* The correction to the exponent after drag epoch */
-sound_horizon_fit,  /* The sound horizon at the drag epoch */
-theta_cmb,/* The temperature of the CMB, in units of 2.7 K */
-y_drag,/* Ratio of z_equality to z_drag */
-z_drag,/* Redshift of the drag epoch */
-z_equality;/* Redshift of matter-radiation equality */
+        alpha_nu,/* The small-scale suppression */
+        beta_c,/* The correction to the log in the small-scale */
+        num_degen_hdm,/* Number of degenerate massive neutrino species */
+        f_baryon,/* Baryon fraction */
+        f_bnu,/* Baryon + Massive Neutrino fraction */
+        f_cb,/* Baryon + CDM fraction */
+        f_cdm,/* CDM fraction */
+        f_hdm,/* Massive Neutrino fraction */
+        growth_k0,/* D_1(z) -- the growth function as k->0 */
+        growth_to_z0,/* D_1(z)/D_1(0) -- the growth relative to z=0 */
+        hhubble,/* Need to pass Hubble constant to TFmdm_onek_hmpc() */
+        k_equality,/* The comoving wave number of the horizon at equality*/
+        obhh,/* Omega_baryon * hubble^2 */
+        omega_curv,/* = 1 - omega_matter - omega_lambda */
+        omega_lambda_z, /* Omega_lambda at the given redshift */
+        omega_matter_z,/* Omega_matter at the given redshift */
+        omhh,/* Omega_matter * hubble^2 */
+        onhh,/* Omega_hdm * hubble^2 */
+        p_c,/* The correction to the exponent before drag epoch */
+        p_cb,/* The correction to the exponent after drag epoch */
+        sound_horizon_fit,  /* The sound horizon at the drag epoch */
+        theta_cmb,/* The temperature of the CMB, in units of 2.7 K */
+        y_drag,/* Ratio of z_equality to z_drag */
+        z_drag,/* Redshift of the drag epoch */
+        z_equality;/* Redshift of matter-radiation equality */
 
 /* The following are set in TFmdm_onek_mpc() */
 float gamma_eff,/* Effective \Gamma */
@@ -85,11 +86,11 @@ float gamma_eff,/* Effective \Gamma */
       growth_cbnu,/* Growth factor for CDM+Baryon+Neutrino pert. */
       max_fs_correction,  /* Correction near maximal free streaming */
       qq,/* Wavenumber rescaled by \Gamma */
-qq_eff,/* Wavenumber rescaled by effective Gamma */
-qq_nu,/* Wavenumber compared to maximal free streaming */
-tf_master,/* Master TF */
-tf_sup,/* Suppressed TF */
-y_freestream; /* The epoch of free-streaming for a given scale */
+      qq_eff,/* Wavenumber rescaled by effective Gamma */
+      qq_nu,/* Wavenumber compared to maximal free streaming */
+      tf_master,/* Master TF */
+      tf_sup,/* Suppressed TF */
+      y_freestream; /* The epoch of free-streaming for a given scale */
 
 /* Finally, TFmdm_onek_mpc() and TFmdm_onek_hmpc() give their answers as */
 float   tf_cb,/* The transfer function for density-weighted CDM + Baryon perturbations. */
@@ -99,23 +100,28 @@ float   tf_cb,/* The transfer function for density-weighted CDM + Baryon perturb
 
 /* ------------------------- TFmdm_set_cosm() ------------------------ */
 int TFmdm_set_cosm(float omega_matter, float omega_baryon, float omega_hdm, int degen_hdm, float omega_lambda, float hubble, float redshift)
-/* This routine takes cosmological parameters and a redshift and sets up
-all the internal scalar quantities needed to compute the transfer function. */
+/* 
+This routine takes cosmological parameters and a redshift and sets up
+all the internal scalar quantities needed to compute the transfer function. 
+*/
 /* INPUT: omega_matter -- Density of CDM, baryons, and massive neutrinos, in units of the critical density. */
-/*   omega_baryon -- Density of baryons, in units of critical. */
-/*   omega_hdm    -- Density of massive neutrinos, in units of critical */
-/*   degen_hdm    -- (Int) Number of degenerate massive neutrino species */
+/*        omega_baryon -- Density of baryons, in units of critical. */
+/*        omega_hdm    -- Density of massive neutrinos, in units of critical */
+/*        degen_hdm    -- (Int) Number of degenerate massive neutrino species */
 /*        omega_lambda -- Cosmological constant */
-/*   hubble       -- Hubble constant, in units of 100 km/s/Mpc */
+/*        hubble       -- Hubble constant, in units of 100 km/s/Mpc */
 /*        redshift     -- The redshift at which to evaluate */
-/* OUTPUT: Returns 0 if all is well, 1 if a warning was issued.  Otherwise,
-sets many global variables for use in TFmdm_onek_mpc() */
+/* 
+OUTPUT: Returns 0 if all is well, 1 if a warning was issued.  Otherwise,
+sets many global variables for use in TFmdm_onek_mpc() 
+*/
 {
     float z_drag_b1, z_drag_b2, omega_denom;
     int qwarn;
     qwarn = 0;
-
-theta_cmb = 2.7255/2.7;  // SHIPPED with:  theta_cmb = 2.7280/2.7;/* Assuming T_cmb = 2.728 K */
+    
+    // SHIPPED with:  theta_cmb = 2.7280/2.7;/* Assuming T_cmb = 2.728 K */
+    theta_cmb = 2.7255/2.7;  
 
     /* Look for strange input */
     if (omega_baryon<0.0) {
@@ -194,7 +200,7 @@ theta_cmb = 2.7255/2.7;  // SHIPPED with:  theta_cmb = 2.7280/2.7;/* Assuming T_
 	    (1.0+omega_matter_z/2.0)*(1.0+omega_lambda_z/70.0));
     growth_to_z0 = z_equality*2.5*omega_matter/(pow(omega_matter,4.0/7.0)
 						       -omega_lambda + (1.0+omega_matter/2.0)*(1.0+omega_lambda/70.0));
-growth_to_z0 = growth_k0/growth_to_z0;
+    growth_to_z0 = growth_k0/growth_to_z0;
     
     /* Compute small-scale suppression */
     alpha_nu = f_cdm/f_cb*(5.0-2.*(p_c+p_cb))/(5.-4.*p_cb)*
@@ -204,8 +210,9 @@ pow(1+y_drag,p_cb-p_c)*
 (1+(p_c-p_cb)/2*(1+1/(3.-4.*p_c)/(7.-4.*p_cb))/(1+y_drag));
     alpha_gamma = sqrt(alpha_nu);
     beta_c = 1/(1-0.949*f_bnu);
+
     /* Done setting scalar variables */
-hhubble = hubble;/* Need to pass Hubble constant to TFmdm_onek_hmpc() */
+    hhubble = hubble;/* Need to pass Hubble constant to TFmdm_onek_hmpc() */
     return qwarn;
 }
 
@@ -273,24 +280,35 @@ CDM + Baryon + Massive Neutrino perturbations. */
 }
 
 
-int main(){
-  int        i;
-  double k, Tk;
+int main(int argc, char *argv[]){
+  int               i;
+  double        k, Tk;
 
   FILE*        output;
   char  filepath[200];
 
-  /* Set cosmology. 
-  1) omega_matter -- Density of CDM, baryons, and massive neutrinos, in units of the critical density.                                                                                                         
-  2) omega_baryon -- Density of baryons, in units of critical.                                                                                                                                                      
-  3) omega_hdm    -- Density of massive neutrinos, in units of critical                                                                                                                                              
-  4) degen_hdm    -- (Int) Number of degenerate massive neutrino species                                                                                                                                             
-  5) omega_lambda -- Cosmological constant, in units of critical.                                                                                                                                                 
-  6) hubble       -- Hubble constant, in units of 100 km/s/Mpc                                                                                                                                                 
+  /* 
+     Set cosmology. 
+  1) omega_matter -- Density of CDM, baryons, and massive neutrinos, in units of the critical density.                                                  
+  2) omega_baryon -- Density of baryons, in units of critical.                                                                                           
+  3) omega_hdm    -- Density of massive neutrinos, in units of critical                                                                               
+  4) degen_hdm    -- (Int) Number of degenerate massive neutrino species                                                                                
+  5) omega_lambda -- Cosmological constant, in units of critical.                                                                                     
+  6) hubble       -- Hubble constant, in units of 100 km/s/Mpc                                                                                     
   7) redshift     -- The redshift at which to evaluate 
   */ 
 
-  //  params = {'om_m': 0.3106, 'om_b': 0.04898, 'om_L': 0.6894, 'h_100': 0.6770, 'sig_8': 0.811, 'Tcmb': 2.7255, 'zscatter': 1100, 'ns': 0.96824, 'As': 2.1073e-9}
+  /*  params = {'om_m': 0.3106, 
+                'om_b': 0.04898, 
+                'om_L': 0.6894, 
+                'h_100': 0.6770, 
+                'sig_8': 0.811, 
+                'Tcmb': 2.7255, 
+                'zscatter': 1100, 
+                'ns': 0.96824, 
+                'As': 2.1073e-9} 
+  */
+  /*
   TFmdm_set_cosm(0.3106, 0.04898, 0.0, 3, 0.6894, 0.677, 3.0);
 
   sprintf(filepath, "EisensteinAndHu.dat");
@@ -308,7 +326,7 @@ int main(){
 
     fprintf(output, "\n%.6le \t %.6le \t %.6le", k, tf_cb, tf_cbnu);
   }
-
+  */
   fclose(output);
 
   printf("Done.\n\n");
