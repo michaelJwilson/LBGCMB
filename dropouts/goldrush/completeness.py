@@ -12,7 +12,7 @@ def interp_completeness(zee, drop='g'):
   stats          = samplestats(printit = False)
 
   root           = os.environ['LBGCMB']
-  path           = root + '/dropouts/goldrush/cats/nz/completeness/completeness_z%d.dat' % round(stats[drop]['z'])
+  path           = root + '/dropouts/goldrush/cats/completeness/completeness_z%d.dat' % round(stats[drop]['z'])
 
   completeness   = np.loadtxt(path)
 
@@ -39,7 +39,7 @@ def get_dropoutpz(drop='g'):
   stats          = samplestats(printit = False)
 
   root           = os.environ['LBGCMB']
-  path           = root + '/dropouts/goldrush/cats/nz/completeness/completeness_z%d.dat' % round(stats[drop]['z'])
+  path           = root + '/dropouts/goldrush/cats/completeness/completeness_z%d.dat' % round(stats[drop]['z'])
 
   data           = np.loadtxt(path)
   

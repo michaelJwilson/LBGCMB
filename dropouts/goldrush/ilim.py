@@ -28,7 +28,7 @@ def get_contamination(m, zee=4, depth='W'):
       path        = root + '/dropouts/dat/yoshida08.dat'
 
     elif zee in [4., 5., 6.]:
-      path        = root + '/dropouts/goldrush/cats/nz/contamination/contamination_z%d%s.dat' % (zee, depth)
+      path        = root + '/dropouts/goldrush/cats/contamination/contamination_z%d%s.dat' % (zee, depth)
 
     else:
         raise  ValueError("\n\nContamination rate is not available for z = %.4lf.\n\n" % zee)

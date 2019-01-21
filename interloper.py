@@ -80,7 +80,7 @@ if __name__ == "__main__":
   from    prep_Llls          import  prep_Llls
   from    Gaussian_pz        import  Gaussian_pz
   from    prep_camb          import  CAMB
-  ## from    completeness       import  get_dropoutpz       as  get_gdropoutpz
+  from    completeness       import  get_dropoutpz       as  get_gdropoutpz
   from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
   from    specs              import  samplestats         as  gsample_stats
   from    ilim               import  get_nbar_nocontam
@@ -129,6 +129,10 @@ if __name__ == "__main__":
     nbar         =  stats[band]['nbar_nointerlopers']
     nbar_wint    =  stats[band]['nbar']
 
+    ##  With and without interlopers.
+    nbar        /=  (4. * np.pi / 41253.)
+    nbar_wint   /=  (4. * np.pi / 41253.)
+
     ##  Effectively overwrites hard z limits above.                                                                                                 
     zee, pzee    =  get_gdropoutpz()
     pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
@@ -158,8 +162,6 @@ if __name__ == "__main__":
 
   else:
     raise  ValueError('\n\nChosen sample is not available.\n\n')
-
-  exit(0)
 
   ##  Bias with z.
   drop_bz            =      get_dropoutbz(m=24.5) ## [24.5, 25.0, 25.5] 
@@ -196,7 +198,7 @@ if __name__ == "__main__":
   xCls, xNls         =  get_allCls(Pk_interps, Llls, nbar_wint, fsky, zmin, zmax, pzz, bzz, zeff=False, samplevar_lim=False)
 
   ##  Lll max cut;  Zel'dovich.                                                                                                                          
-  LllMax             =  Lcutmax[peakz][0]
+  LllMax             =  Lcutmax[round(peakz)][0]
 
   if plotit:
     pl.clf()
@@ -216,6 +218,7 @@ if __name__ == "__main__":
     pl.xlabel(r'$L$')
     pl.legend(ncol=2)
 
+    ##  pl.show()
     pl.savefig('plots/interloper_bias_cls_%s-drops.pdf' % band, bbox_inches='tight')  
 
   ##  The resulting parameter bias, (dsig8, db1).                                                                                                        
@@ -294,7 +297,7 @@ if __name__ == "__main__":
   latexify(columns=1, equal=True)
 
   fig    = plt.gcf()
-  ax     = plt.gca() ## fig.add_subplot(111)
+  ax     = plt.gca()
 
   for mass_level, color, alpha in zip([0.99, 0.95, 0.68], ['b', 'b', 'b'], [0.2, 0.4, 0.6]):
     plot_ellipse(x_cent = fid_sig8, y_cent = fid_b1, ax = ax, cov = iFisher, mass_level = mass_level,\
@@ -306,7 +309,8 @@ if __name__ == "__main__":
   pl.legend()
   pl.xlabel(r'$\sigma_8(z=%.1lf)$' % peakz)
   pl.ylabel(r'$b_1(z=%.1lf)$'      % peakz)
-  
+
+  ##  pl.show()
   pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band, bbox_inches='tight')
   
   print("\n\nDone.\n\n")
