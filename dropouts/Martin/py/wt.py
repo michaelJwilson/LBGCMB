@@ -8,17 +8,24 @@ import  matplotlib.pyplot  as      plt
 from    utils              import  latexify
 
 
-def plot_wt():
+if __name__=="__main__":
+    print('\n\nWelcome to a (plotter) of the angular correlation fn.\n\n')
+
+    latexify(fig_width=None, fig_height=None, columns=2, equal=False, ratio=0.5, fontsize=10)
+
     '''
     Makes a 2 panel plot of w(theta) and b(r).
     '''
+    scale    = 2.
+
     tlo, thi = 30.0, 1000.0
     arcsec   = np.pi / 180. / 3600.
     
-    latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
-    
     ##  First plot w(theta) for z=3 and 4.    
     cc    = 'darkblue'
+    fig   = pl.gcf()
+
+    fig.add_subplot(1, 2, 1)
 
     ## fname = os.environ['LBGCMB'] + '/Hildebrandt09/wtheta/H09_udrop_r24.5.txt'
     fname = os.environ['LBGCMB'] + '/Hildebrandt09/wtheta/wtheta_udropouts_r23p0t24p5_Masim.dat'
@@ -26,11 +33,11 @@ def plot_wt():
     wt    = np.loadtxt(fname)
     ww    = np.nonzero(wt[:,0] * 60. > tlo)[0]
 
-    pl.errorbar(wt[ww,0] * 60., wt[ww,1], yerr=wt[ww,2], fmt='s', color=cc, label=r'$u$-drops (H09)', markersize=3)
+    pl.errorbar(wt[ww,0] * 60., scale * wt[ww,1], yerr= scale * wt[ww,2], fmt='s', color=cc, label=r'$u$-drops (H09)', markersize=3)
 
     ##  Model
     wt = np.loadtxt("../dat/summary_v2/drop_0.2500_12.33_0.40.wt")
-    pl.plot(wt[:,0] * 60., wt[:,1], c=cc, label='$z \simeq 3$ HOD', alpha=0.5)
+    pl.plot(wt[:,0] * 60., scale * wt[:,1], c=cc, label='$z \simeq 3$ HOD', alpha=0.5)
 
     cc    = 'g'
 
@@ -55,13 +62,19 @@ def plot_wt():
 
     pl.xlabel(r'$\theta$  [arcsec]')
     pl.ylabel(r'$w(\theta)$')
-    
-    plt.savefig("../plots/wt.pdf", bbox_inches='tight')
 
-def plot_bias():
+    ##  plt.tight_layout()
+
+    ##  bbox_inches='tight'
+    ##  plt.savefig("../plots/wt.pdf")
+
     ##  Now plot the bias.
-    latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
-    
+    fig.add_subplot(1, 2, 2)
+    ## pl.clf()
+
+    ## ax    = pl.gca()
+    ## ax.set_position([0.25, 0.25, 0.5, 0.5])
+
     ##  z = 3.  
     br = np.loadtxt('../dat/summary_v2/drop_0.2500_12.33_0.40.brr')
     pl.plot(br[:,0], br[:,1], 's', c='darkblue', label=r'$b_{gg}(z \simeq 3)$', markersize=4)
@@ -89,7 +102,10 @@ def plot_bias():
     pl.xlim(1.0, 40.)
     pl.ylim(3.7, 9.7)
     
-    plt.savefig("../plots/br.pdf", bbox_inches='tight')
+    plt.tight_layout()
+
+    ##  bbox_inches='tight'
+    plt.savefig("../plots/br.pdf")
 
 
 if __name__=="__main__":
@@ -100,3 +116,4 @@ if __name__=="__main__":
   ## plot_bias()
 
   print('\n\nDone.\n\n')
+

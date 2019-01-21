@@ -81,7 +81,7 @@ def colourtrack(dband = 'g'):
     ## print(tracks)                                                                                                                                         
 
     tracks  = tracks[tracks[:,0] < hsc[dband]['hiz']]
-    cax     = plt.scatter(tracks[:,1], tracks[:,2], c = reds(tracks[:,0] / tracks[:,0].max()), s=6, marker='s')
+    cax     = plt.scatter(tracks[:,1], tracks[:,2], c = reds(tracks[:,0] / tracks[:,0].max()), s=9, marker='s')
 
     ## LBG tracks;  Color ordering: ["u-g", "g-r", "r-i", "i-z"]
     tracks = []
@@ -104,7 +104,7 @@ def colourtrack(dband = 'g'):
     ## print(tracks)
 
     tracks  = tracks[tracks[:,0] < hsc[dband]['hiz']]
-    cax     = plt.scatter(tracks[:,1], tracks[:,2], c=tracks[:,0], s=6)
+    cax     = plt.scatter(tracks[:,1], tracks[:,2], c=tracks[:,0], s=9)
 
     plt.colorbar(cax, label=r'$z$', boundaries = np.linspace(0., 5., 24), format='%.2lf')
 
@@ -123,6 +123,6 @@ def colourtrack(dband = 'g'):
 if __name__ == "__main__":
   print('\n\nWelcome to tracks.\n\n')
     
-  colourtrack(dband = 'u')
+  colourtrack(dband = 'g')
 
   print('\n\nDone.\n\n')
