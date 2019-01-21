@@ -2,6 +2,7 @@ import  numpy  as  np
 
 
 def qso_bz(z):
+    ##  Table 2 of https://arxiv.org/pdf/1705.04718.pdf                                                                                                
     return 0.278 * ((1. + z)**2. - 6.565) + 2.393
 
 

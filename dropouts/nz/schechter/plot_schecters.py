@@ -70,11 +70,6 @@ def plot_schechters(magbias=False, nointerloper=False):
 
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
 
-      ##  Malkan u-dropouts contamination corrected. 
-      if (band == 'Malkan') & (nointerloper):
-          pl.semilogy(mlims, (1. - get_contamination(mlims, zee=3, depth='W')) * pnbars, '^', label=label + ' (corrected)', color=color,\
-                      alpha=0.5, markersize=2)
-
       if band == 'Malkan':
           ##  Only 0.5 sampling available. 
           for mlim in mlims[::2]:

@@ -1,4 +1,7 @@
-##  Linear bias parameters with z, m;  Goldrush Table 4 (https://arxiv.org/pdf/1704.06535.pdf) and Hildebrandt 2009 (https://arxiv.org/pdf/0903.3951.pdf).
+##  Linear bias parameters with z, m;  
+##  Goldrush Table 4 (https://arxiv.org/pdf/1704.06535.pdf) 
+##  and Hildebrandt 2009 (https://arxiv.org/pdf/0903.3951.pdf).
+## 
 ##  redshift  m=24.5	m=25.0   m=25.5
     3.0       3.3900 	2.4100	 2.0100
     4.0       5.2900    4.5400	 4.0200

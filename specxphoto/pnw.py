@@ -57,19 +57,19 @@ CAMBTK         = CAMBTK.transfer_data[6,:][:,0]
 CAMBTK        /= CAMBTK[0]
 
 '''
-- Transfer_kh              = 1 (k/h)
-- Transfer_cdm             = 2 (cdm)
-- Transfer_b               = 3 (baryons)
-- Transfer_g               = 4 (photons)
-- Transfer_r               = 5 (massless neutrinos)
-- Transfer_nu              = 6 (massive neutrinos)
-- Transfer_tot             = 7 (total matter)
-- Transfer_nonu            = 8 (total matter excluding neutrinos)
-- Transfer_tot_de          = 9 (total including dark energy perturbations)
-- Transfer_Weyl            = 10 (Weyl potential)
-- Transfer_Newt_vel_cdm    = 11 (Newtonian CDM velocity)
-- Transfer_Newt_vel_baryon = 12 (Newtonian baryon velocity)
-- Transfer_vel_baryon_cdm  = 13 (relative baryon-cdm velocity)
+- Transfer_kh              = 1  (k / h).
+- Transfer_cdm             = 2  (cdm).
+- Transfer_b               = 3  (baryons).
+- Transfer_g               = 4  (photons).
+- Transfer_r               = 5  (massless neutrinos).
+- Transfer_nu              = 6  (massive neutrinos).
+- Transfer_tot             = 7  (total matter).
+- Transfer_nonu            = 8  (total matter excluding neutrinos).
+- Transfer_tot_de          = 9  (total including dark energy perturbations).
+- Transfer_Weyl            = 10 (Weyl potential).
+- Transfer_Newt_vel_cdm    = 11 (Newtonian CDM velocity).
+- Transfer_Newt_vel_baryon = 12 (Newtonian baryon velocity).
+- Transfer_vel_baryon_cdm  = 13 (relative baryon-cdm velocity).
 '''
 
 interp_linpk = interp1d(k, linpk,          bounds_error=False, fill_value=0.0)
