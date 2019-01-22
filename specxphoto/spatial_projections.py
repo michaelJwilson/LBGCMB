@@ -5,7 +5,6 @@ import  matplotlib.pyplot  as      plt
 
 from    scipy.special      import  j0, spherical_jn
 from    params             import  params
-from    astropy.cosmology  import  FlatLambdaCDM
 from    Cgg                import  survey_pz, sliced_pz
 from    main               import  Pab
 from    cosmo              import  cosmo
@@ -13,7 +12,8 @@ from    cosmo              import  cosmo
 
 def projected_corrfn(Rs, nowiggle=False, alpha=1.0):
   '''
-  Projected correlation function.
+  Projected correlation function, w(R); R \simeq DA(zs) |Ts - Tp|.
+  Eqns. (2), (6) and (7) of https://arxiv.org/pdf/1302.6015.pdf
   '''
 
   dk            = 0.001
@@ -23,12 +23,14 @@ def projected_corrfn(Rs, nowiggle=False, alpha=1.0):
   gks, gRs      = np.meshgrid(ks, Rs)                                                               
   Cksp          = projected_crosspower(ks, "SDSS9", "CMASS", nowiggle=nowiggle, alpha=alpha)                                                          
   
-  ## Fast Bessel function of the first kind of order zero.                                                                                               
-  integrand     = j0(gks * gRs)  ##  spherical_jn(0, gks * gRs) 
-
+  ##  Fast Bessel function of the first kind of order zero.                                                                                               
+  ##  or spherical_jn(0, gks * gRs)
+  integrand     = j0(gks * gRs)
   integrand    *= ks * Cksp * dk / (2. * np.pi)
 
-  return  np.sum(integrand, axis=1)
+  wR            = np.sum(integrand, axis=1)
+
+  return  wR
 
 def projected_crosspower(ks, surveya, surveyb, nowiggle=False, alpha=1.0):
   dz         = 0.01
@@ -36,7 +38,7 @@ def projected_crosspower(ks, surveya, surveyb, nowiggle=False, alpha=1.0):
   
   gzs, gks   = np.meshgrid(zs, ks)
 
-  prefactor  = (cosmo.H(zs).value/const.c.to('km/s').value) 
+  prefactor  = (cosmo.H(zs).value / const.c.to('km/s').value) 
   prefactor *= sliced_pz(zs, 0.75, 1.00, surveya, normed = True) 
   prefactor *= sliced_pz(zs, 0.75, 0.15, surveyb, normed = True) * dz
   

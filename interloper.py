@@ -129,39 +129,35 @@ if __name__ == "__main__":
     nbar         =  stats[band]['nbar_nointerlopers']
     nbar_wint    =  stats[band]['nbar']
 
-    ##  With and without interlopers.
+    ##  With and without interlopers;  Sq. deg. to steradian.
     nbar        /=  (4. * np.pi / 41253.)
     nbar_wint   /=  (4. * np.pi / 41253.)
 
-    ##  Effectively overwrites hard z limits above.                                                                                                 
-    zee, pzee    =  get_gdropoutpz()
-    pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
-
-  elif band in ['u', 'Malkan']: 
+  elif band in ['u']: 
     ##  Malkan u-drops.
-    mlim         =    24.5
-    band         = 'Malkan'
+    mlim         =  24.5
 
     stats        =  usample_stats(mag=mlim)
-    peakz        =  stats[band]['z']
+    peakz        =  stats['Malkan']['z']
 
-    alpha        =  stats[band]['schechter']['alpha']
-    Mstar        =  stats[band]['schechter']['M_star']
-    phi_star     =  stats[band]['schechter']['phi_star']
+    alpha        =  stats['Malkan']['schechter']['alpha']
+    Mstar        =  stats['Malkan']['schechter']['M_star']
+    phi_star     =  stats['Malkan']['schechter']['phi_star']
     
     dzee         =  0.50             ##  0.61 / 2.
-    peakz        =  stats[band]['z']
+    peakz        =  stats['Malkan']['z']
 
     ##  Actual u-dropouts;  N per sq. deg. 
     nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, printit=True, completeness=None)
     nbar        /=  (4. * np.pi / 41253.)
 
     ##  With contamination. 
-    nbar_wint    =  stats[band]['nbar']    ##  per sq. deg.
+    nbar_wint    =  stats['Malkan']['nbar']    ##  per sq. deg.
     nbar_wint   /=  (4. * np.pi / 41253.)  ##  per steradian. 
 
   else:
     raise  ValueError('\n\nChosen sample is not available.\n\n')
+
 
   ##  Bias with z.
   drop_bz            =      get_dropoutbz(m=24.5) ## [24.5, 25.0, 25.5] 
@@ -170,8 +166,11 @@ if __name__ == "__main__":
   ##  LSST whitebook p(z).
   ##  pz             =  lambda z:  whitebook_pz(z, ilim = 25.30)
   
+  ##  GOLDRUSH g-dropouts.
+  ##  zee, pzee      =  get_gdropoutpz()
+  
   ##  Get Rafelski based estimates on p(z).                                                                                                               
-  midz, ps           =  Raf15_pz(droptype='u', field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
+  midz, ps           =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
   pz                 =  interp1d(midz, ps, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
   ##  Change in Ckg with p(z), b(z), nbar -> p'(z), b'(z) and nbar'.
@@ -179,7 +178,7 @@ if __name__ == "__main__":
   bzz                =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
 
   ##  pzz            =  lambda z:  whitebook_pz(z, ilim = 25.25)
-  midzz, pss         =  Raf15_pz(droptype='u', field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
+  midzz, pss         =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
   pzz                =  interp1d(midzz, pss, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
   ##  and the parameter Fisher matrix.                                                                                                                    
