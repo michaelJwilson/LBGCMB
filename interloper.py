@@ -80,7 +80,7 @@ if __name__ == "__main__":
   from    prep_Llls          import  prep_Llls
   from    Gaussian_pz        import  Gaussian_pz
   from    prep_camb          import  CAMB
-  ## from    completeness       import  get_dropoutpz       as  get_gdropoutpz
+  from    completeness       import  get_dropoutpz       as  get_gdropoutpz
   from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
   from    specs              import  samplestats         as  gsample_stats
   from    ilim               import  get_nbar_nocontam
@@ -114,45 +114,50 @@ if __name__ == "__main__":
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
 
   ##  Dropout selection.   
-  band  =     'u'
+  band  =     'g'
 
   zmin  =   0.01
   zmax  =  10.00
   
   if  band == 'g':
     stats        =  gsample_stats()
-    stats        =  get_nbar_nocontam(band, depth='W', printit=False)  ## Contamination corrected estimate. 
+    stats        =  get_nbar_nocontam(band, depth='W', printit=False)
   
-    nbar         =  stats[band]['nbar_nointerlopers']
     peakz        =  stats[band]['z']
 
-    ##  Effectively overwrites hard z limits above.                                                                                                 
-    zee, pzee    =  get_gdropoutpz()
-    pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
+    ##  Contamination corrected estimate.
+    nbar         =  stats[band]['nbar_nointerlopers']
+    nbar_wint    =  stats[band]['nbar']
 
-    detband      =  'i'                                                ## Detection band.
+    ##  With and without interlopers;  Sq. deg. to steradian.
+    nbar        /=  (4. * np.pi / 41253.)
+    nbar_wint   /=  (4. * np.pi / 41253.)
 
-  elif band in ['u', 'Malkan']: 
+  elif band in ['u']: 
     ##  Malkan u-drops.
-    mlim         =    24.5
-    band         = 'Malkan'
+    mlim         =  24.5
 
     stats        =  usample_stats(mag=mlim)
-    peakz        =  stats[band]['z']
+    peakz        =  stats['Malkan']['z']
 
-    alpha        =  stats[band]['schechter']['alpha']
-    Mstar        =  stats[band]['schechter']['M_star']
-    phi_star     =  stats[band]['schechter']['phi_star']
+    alpha        =  stats['Malkan']['schechter']['alpha']
+    Mstar        =  stats['Malkan']['schechter']['M_star']
+    phi_star     =  stats['Malkan']['schechter']['phi_star']
     
     dzee         =  0.50             ##  0.61 / 2.
-    peakz        =  stats[band]['z']
+    peakz        =  stats['Malkan']['z']
 
-    ##  Actual u-dropouts.
+    ##  Actual u-dropouts;  N per sq. deg. 
     nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, printit=True, completeness=None)
-    nbar_wint    =  stats[band]['nbar']
+    nbar        /=  (4. * np.pi / 41253.)
+
+    ##  With contamination. 
+    nbar_wint    =  stats['Malkan']['nbar']    ##  per sq. deg.
+    nbar_wint   /=  (4. * np.pi / 41253.)  ##  per steradian. 
 
   else:
     raise  ValueError('\n\nChosen sample is not available.\n\n')
+
 
   ##  Bias with z.
   drop_bz            =      get_dropoutbz(m=24.5) ## [24.5, 25.0, 25.5] 
@@ -161,16 +166,19 @@ if __name__ == "__main__":
   ##  LSST whitebook p(z).
   ##  pz             =  lambda z:  whitebook_pz(z, ilim = 25.30)
   
+  ##  GOLDRUSH g-dropouts.
+  ##  zee, pzee      =  get_gdropoutpz()
+  
   ##  Get Rafelski based estimates on p(z).                                                                                                               
-  midz, ps           =  Raf15_pz(droptype='u', field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
+  midz, ps           =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
   pz                 =  interp1d(midz, ps, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
-  ##  Change in Ckg with p(z), b(z) -> p'(z) and b'(z).
+  ##  Change in Ckg with p(z), b(z), nbar -> p'(z), b'(z) and nbar'.
   ##  We assume the z < 1 population of likely red galaxies has a bias of 2.04 at a mean z 0.87;
   bzz                =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
 
   ##  pzz            =  lambda z:  whitebook_pz(z, ilim = 25.25)
-  midzz, pss         =  Raf15_pz(droptype='u', field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
+  midzz, pss         =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
   pzz                =  interp1d(midzz, pss, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
   ##  and the parameter Fisher matrix.                                                                                                                    
@@ -183,13 +191,13 @@ if __name__ == "__main__":
   ##  print(Llls, cgg, ckg)
 
   ##  {'gg': cgg + ngg, 'kg': ckg, 'gk': ckg, 'kk': ckk + nkk}
-  Cls, Nls           =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz,   zeff=False, samplevar_lim=False)
+  Cls, Nls           =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz, zeff=False, samplevar_lim=False)
 
   ##  Distorted Cls, i.e. with differing p(z), b(z) and nbar. 
   xCls, xNls         =  get_allCls(Pk_interps, Llls, nbar_wint, fsky, zmin, zmax, pzz, bzz, zeff=False, samplevar_lim=False)
 
-  ## Lll max cut;  Zel'dovich.                                                                                                                             
-  LllMax             =  Lcutmax[peakz][0]
+  ##  Lll max cut;  Zel'dovich.                                                                                                                          
+  LllMax             =  Lcutmax[round(peakz)][0]
 
   if plotit:
     pl.clf()
@@ -199,7 +207,9 @@ if __name__ == "__main__":
     pl.axvline(LllMax, label='ZA limit.', c='k', alpha=0.5)
 
     pl.plot(Llls,       100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$dC_{gg}/C_{gg} [\%]$')
-    pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$') ## kg is linear, gg is quad. in dNdz.
+
+    ##  kg is linear, gg is quad. in dNdz.
+    pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$')
     
     pl.xlim(50., 4.e3)
     pl.ylim(-1.,  50.)
@@ -207,8 +217,8 @@ if __name__ == "__main__":
     pl.xlabel(r'$L$')
     pl.legend(ncol=2)
 
+    ##  pl.show()
     pl.savefig('plots/interloper_bias_cls_%s-drops.pdf' % band, bbox_inches='tight')  
-
 
   ##  The resulting parameter bias, (dsig8, db1).                                                                                                        
   nparam             =  2  
@@ -273,7 +283,6 @@ if __name__ == "__main__":
     for j, pparam in enumerate(['s8', 'b1']):
       dtheta[i] += iFisher[i,j] * interim[j]
       
-  ##
   biased_sig8 = fid_sig8 + dtheta[0]
   biased_b1   = fid_b1 + dtheta[1]
 
@@ -287,7 +296,7 @@ if __name__ == "__main__":
   latexify(columns=1, equal=True)
 
   fig    = plt.gcf()
-  ax     = plt.gca() ## fig.add_subplot(111)
+  ax     = plt.gca()
 
   for mass_level, color, alpha in zip([0.99, 0.95, 0.68], ['b', 'b', 'b'], [0.2, 0.4, 0.6]):
     plot_ellipse(x_cent = fid_sig8, y_cent = fid_b1, ax = ax, cov = iFisher, mass_level = mass_level,\
@@ -299,7 +308,8 @@ if __name__ == "__main__":
   pl.legend()
   pl.xlabel(r'$\sigma_8(z=%.1lf)$' % peakz)
   pl.ylabel(r'$b_1(z=%.1lf)$'      % peakz)
-  
+
+  ##  pl.show()
   pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band, bbox_inches='tight')
   
   print("\n\nDone.\n\n")
