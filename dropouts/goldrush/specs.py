@@ -18,6 +18,7 @@ def samplestats(printit = False):
   for band in ['g', 'r', 'i', 'z', 'y']:
     stats[band]        = OrderedDict()
 
+  ##  Representative redshift.    
   stats['g']['z']      = 3.8
   stats['r']['z']      = 4.9
   stats['i']['z']      = 5.9
@@ -35,7 +36,7 @@ def samplestats(printit = False):
     stats['Total area'][depth] = sum(stats['areas'][depth].values())  ## deg^2.
 
   ##  Counts in the Wide field.
-  stats['g']['counts'] = {'XMM': 113582, 'GAMA9': 44670, 'WIDE': 94544, 'GAMA15': 104224, 'HECTO': 30663, 'VVDS': 23677}   ## g-band dropout at z=4.
+  stats['g']['counts'] = {'XMM': 113582, 'GAMA9': 44670, 'WIDE': 94544, 'GAMA15': 104224, 'HECTO': 30663, 'VVDS': 23677}
   stats['r']['counts'] = {'XMM':   6371, 'GAMA9':  5989, 'WIDE':  5243, 'GAMA15':   6457, 'HECTO':  1082, 'VVDS':  1500}
   stats['i']['counts'] = {'XMM':     81, 'GAMA9':    98, 'WIDE':    36, 'GAMA15':     73, 'HECTO':    11, 'VVDS':    20}
   stats['z']['counts'] = {'XMM':      7, 'GAMA9':    16, 'WIDE':     8, 'GAMA15':     14, 'HECTO':     7, 'VVDS':    11}

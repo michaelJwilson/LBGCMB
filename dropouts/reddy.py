@@ -5,6 +5,8 @@ from  params       import  get_params
 import  numpy  as  np
 
 
+params = get_params()
+
 def load_tables(printit = False):
   import  os
   import  pandas as pd
@@ -63,8 +65,7 @@ def samplestats(mag=23., printit=False, h70=False):
     ##  [deg^2]
     stats[survey]['nbar']                = stats[survey]['N'] / stats[survey]['TotalArea [deg^2]']
 
-    ##  Are AGN already counted in interloper fraction?
-    stats[survey]['nbar_nointerlopers']  = (1. - stats[survey]['frac_interloper']) * stats[survey]['N'] / stats[survey]['TotalArea [deg^2]']
+    stats[survey]['nbar_noint']          = (1. - stats[survey]['frac_interloper']) * stats[survey]['N'] / stats[survey]['TotalArea [deg^2]']
     
   ##  Schechter fn. parameterisation of the z~3 Reddy luminosity fn., Table 7 of https://arxiv.org/pdf/0706.4091.pdf 
   stats['LBG']['schechter']['phi_star']  = 1.66e-3    ## [\phi*] = [h_70/Mpc]^3 per mag for M*_AB(1700 \AA).
@@ -88,11 +89,13 @@ def samplestats(mag=23., printit=False, h70=False):
     stats['LBG']['schechter']['phi_star'] *= (10. / 7.) ** 3.
     stats['BX']['schechter']['phi_star']  *= (10. / 7.) ** 3.
 
-    ##  Reddy (2008) Schechter fn. is in unit of h70.  MAB (1700A) - 5log10(h70) = MAB (1700A) - 5log10(h100) - 0.77                                       
+    ##  Reddy (2008) Schechter fn. is in unit of h70.  MAB (1700A) - 5log10(h70) = MAB (1700A) - 5log10(h100) - 0.77                                 
     ##  Schechter fn. of M depends only on LL = M-M*, implies M* + 0.77
-    stats['LBG']['schechter']['M_star']   -= 0.77
-    stats['BX']['schechter']['M_star']    -= 0.77
+    stats['LBG']['schechter']['M_star']   += 0.77
+    stats['BX']['schechter']['M_star']    += 0.77
 
+    stats['LBG']['schechter']['M_star']   += 5. * np.log10(params['h_100'])
+    stats['BX']['schechter']['M_star']    += 5. * np.log10(params['h_100'])
 
   for survey in ['BX', 'LBG']:
     if printit:
@@ -142,7 +145,7 @@ if __name__ == "__main__":
   print('\n\nWelcome to the Reddy (Schechter) calculator.\n\n')
 
   Ms    = np.arange(-23., -18., 0.1)
-  stats = samplestats(mag=22.0, printit=True, h70=True)
+  stats = samplestats(mag=23.0, printit=True, h70=True)
 
   pprint(stats)
 

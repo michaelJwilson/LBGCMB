@@ -23,7 +23,9 @@ def dropout_arealdensity(z, dz, band, stats, mlims):
       ##  stats[band]['schechter']['alpha'], mlim=mlim, printit = True, completeness=None)  
       
       ##  Included HSC completeness.
-      pnbar = projdensity(stats[band]['z'] - dz / 2., stats[band]['z'] + dz / 2., phi_star, Mstar, alpha, mlim=mlim, printit=True, completeness=interp_completeness)  
+      pnbar = projdensity(stats[band]['z'] - dz / 2., stats[band]['z'] + dz / 2., phi_star, Mstar, alpha, mlim=mlim,\
+                          printit=True, completeness=interp_completeness)  
+
       pnbars.append(pnbar)
 
   np.savetxt('dat/schechter_estimate_%s_dropouts.txt' % band, np.c_[mlims, np.array(pnbars)], fmt='%.6le')

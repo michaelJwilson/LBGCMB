@@ -9,105 +9,32 @@ from    cosmo              import  cosmo
 from    params             import  get_params
 from    scipy.interpolate  import  interp1d
 from    utils              import  latexify
+from    effective_depth    import  effective_depth
+from    galaxy_frac        import  galaxy_frac
+from    contamination      import  get_contamination
 
-
-latexify(fig_width=None, fig_height=None, columns=2, equal=False)
 
 params = get_params()
 
-def effective_depth(dropband='g', depth='W'):
-    ##  Table 1 of https://arxiv.org/pdf/1704.06004.pdf.     
-    ##  Note:  'Effective' depth in the dropout band. 
-    if  dropband == 'g' and depth == 'W':
-        return (26.43 + 26.35 + 26.38 + 26.39 + 26.47 + 26.31) / 6.0
-
-    elif dropband == 'g' and depth == 'D':
-        return (26.73 + 26.56 + 26.77 + 26.69) / 4.0
-
-    elif dropband == 'g' and depth == 'UD':
-        return (27.15 + 27.13) / 2.0
-
-    elif dropband == 'r' and depth == 'W':
-        return (25.93 + 25.88 + 25.95 + 25.96 + 26.04 + 25.87) / 6.0
-    
-    elif dropband == 'r' and depth == 'D':
-        return (26.30 + 26.19 + 26.13 + 26.25) / 4.0
-
-    else:
-        raise ValueError('\n\nCombination of %s and %s is not available.' % (dropband, depth))
-
-def get_contamination(m, zee=4, depth='W'):
-    '''
-    Get magnitude bins defined by GoldRush and corresponding contamination fraction.                                                         
-    '''
-    import  os
-    from    scipy.interpolate  import  interp1d
-
-    root          = os.environ['LBGCMB']
-
-    if zee == 3:
-      path        = root + '/dropouts/dat/yoshida08.dat'
-
-    elif zee in [4., 5., 6.]:
-      path        = root + '/dropouts/goldrush/cats/contamination/contamination_z%d%s.dat' % (zee, depth)
-
-    else:
-        raise  ValueError("\n\nContamination rate is not available for z = %.4lf.\n\n" % zee)
-
-    data           = np.loadtxt(path)
-
-    magbins        = data[:,0]
-    contamination  = data[:,1]
-
-    ## interp      = interp1d(magbins, contamination, kind='linear', axis=-1, fill_value=0.0, bounds_error = False)
-    interp         = interp1d(magbins, contamination, kind='linear', axis=-1, fill_value=(contamination[0], 0.0), bounds_error = False)
-
-    return  interp(m)
-
-def get_galaxyfraction(ms, dropband='g'):
-    from  specs  import  samplestats
-
-    if not dropband == 'g':
-        raise  ValueError('\n\nGalaxy fraction not available for dropband: %s' % dropband)
-
-    ##  Bottom panel of Fig. 7 top of https://arxiv.org/pdf/1704.06004.pdf;
-    ##  Galaxy fraction of GOLDRUSH g-dropouts.
-    fname = os.environ['LBGCMB'] + '/dropouts/goldrush/cats/galaxy_fraction.dat'
-    data  = np.loadtxt(fname)
-
-    frac  = interp1d(data[:,0], data[:,1], kind='linear', bounds_error=False, fill_value=(0.0, 1.0))
-
-    ##  Conversion from Ms to ms, e.g. eqn (13) of https://arxiv.org/pdf/1704.06004.pdf
-    specs = samplestats()
-
-    zeff  = specs[dropband]['z'] 
-    Ms    = ms + 2.5 * np.log10(1. + zeff) - 5. * np.log10(1.e6 * cosmo.luminosity_distance([zeff]).value / 10.)
-
-    return  frac(Ms)
-
 def get_nbar_nocontam(band, depth='W', printit=False):
-    '''                                                                                                                                                     
-    Get the number counts per magnitude bin, and the contamination corrected counts.                                                                  
+    '''                                                                                                                                                      
+    Get the number counts per magnitude bin, and the contamination corrected counts.                                                                        
     '''
-      
-    if band == 'g':
-      from  goldrush.specs  import  samplestats
+
+    from  goldrush.specs  import  samplestats
 
 
-      magbins, pnbar, counts  = get_nbarbymag(band, depth, printit=False)
+    magbins, pnbar, counts    = get_nbarbymag(band, depth, printit=False)
 
-      stats                   = samplestats(printit=printit)
-      zee                     = np.ceil(stats[band]['z'])     ## Round to the nearest integer.                                                                
+    stats                     = samplestats(printit=printit)
+    zee                       = np.ceil(stats[band]['z'])     ## Round to the nearest integer.                                                               
 
-      stats[band]['nbar_nointerlopers'] = sum(counts * (1. - get_contamination(magbins[:-1], zee=zee, depth=depth))) / stats['Total area'][depth]
+    stats[band]['nbar_noint'] = sum(counts * (1. - get_contamination(magbins[:-1], zee=zee, depth=depth))) / stats['Total area'][depth]
 
-      if printit:
-        print  sum(stats[band]['counts'].values()), counts.sum(), sum(counts * (1. - get_contamination(magbins[:-1], zee=zee, depth=depth)))
+    if printit:
+      print  sum(stats[band]['counts'].values()), counts.sum(), sum(counts * (1. - get_contamination(magbins[:-1], zee=zee, depth=depth)))
 
-      return  stats
-
-    else:
-        raise ValueError('\n\nnbar without contamination is not available for %s' % band)
+    return  stats
 
 def get_nbarbymag(dropband, depth, printit=False):
     '''    
@@ -198,7 +125,8 @@ def get_nbarbymag(dropband, depth, printit=False):
       pnbar       = cumulative / total_area  ##  Projected nbar.  
 
       ##  Check.                                                                                                                                                                                                                  
-      print("\n\nTotal  counts @ depth %s (%.2lf):  %.3lf \t %.3lf"  % (depth, effective_depth(dropband=dropband, depth=depth), cumulative[-1], specs[dropband]['total-%scounts' % {'W': '', 'D': 'deep', 'UD': 'udeep'}[depth]]))
+      print("\n\nTotal  counts @ depth %s (%.2lf):  %.3lf \t %.3lf"  % (depth, effective_depth(dropband=dropband, depth=depth), cumulative[-1],\
+                                                                        specs[dropband]['total-%scounts' % {'W': '', 'D': 'deep', 'UD': 'udeep'}[depth]]))
       print("Total     area:  %.3lf sq. deg. (%.3lf)"                % (total_area,     specs['Total area'][depth]))
       print("Effective nbar:  %.3lf per sq. deg."                    % (cumulative[-1] / total_area))
 
@@ -218,7 +146,7 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
     from    selection_box      import  detection_bands
 
 
-    plt.style.use('ggplot')
+    latexify(fig_width=None, fig_height=None, columns=2, equal=False)
     
     colors = ['b', 'r', 'indigo']
 
@@ -227,7 +155,6 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
     
     ##  Create figure.                                                                                                                                       
     fig, axarray    = plt.subplots(1, 1, sharey=False)
-
     fig.set_size_inches(6.5, 3.5)
 
     ##  Catch a one plot call. 
@@ -258,14 +185,14 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
           for year in np.arange(1, 6, 1):        
             axarray[k].axvline(depths['Y' + str(year)][detection_bands[dropband]], c='k', linestyle='-', label='', lw = 0.5)
 
-        if plot_hsc:
-            root = os.environ['LBGCMB']
-            data = np.loadtxt(root + "/dropouts/nz/schechter/dat/schechter_estimate_%s_dropouts.txt" % dropband)
+        root = os.environ['LBGCMB']
+        data = np.loadtxt(root + "/dropouts/nz/schechter/dat/schechter_estimate_%s_dropouts.txt" % dropband)
 
-            axarray[k].semilogy(data[:,0], 0.59 * data[:,1], 'k', label='Best-fit UV Schechter fn.', alpha=0.5)
+        ##  0.59 completeness frac.
+        axarray[k].semilogy(data[:,0], data[:,1], 'k', label='Best-fit UV Schechter fn.', alpha=0.5)
 
-            ##  Galaxies only. 
-            axarray[k].semilogy(data[:,0], 0.59 * get_galaxyfraction(data[:,0]) * data[:,1], 'k--', label='Best-fit galaxy UV Schechter fn.', dashes=[3,1])
+        ##  0.59 completeness frac.  Galaxies only. 
+        axarray[k].semilogy(data[:,0], galaxy_frac(data[:,0]) * data[:,1], 'k--', label='Best-fit galaxy UV Schechter fn.', dashes=[3,1])
         
         ymax = pnbar[magbins < 24.5].max()
         
@@ -288,14 +215,16 @@ if __name__ == "__main__":
 
     print('\n\nWelcome to the HSC dropout ilim calculator.')
 
-    '''
+    
     magbins, pnbar, counts = get_nbarbymag('r', 'D', printit=False)
 
     pl.semilogy(magbins[:-1], pnbar)
     pl.xlim(20., 27.0)
     pl.show()
-    '''
-        
+    
+    stats  = get_nbar_nocontam('r', depth='W', printit=False)                                                                                           
+    pprint(stats) 
+
     results = collections.OrderedDict()
 
     for k, dropband in enumerate(['g']):
@@ -306,7 +235,4 @@ if __name__ == "__main__":
 
     plot_ilims(results)
     
-    ##  stats  = get_nbar_nocontam('r', depth='W', printit=False)
-    ##  pprint(stats)
-
     print("\n\nDone.\n\n")

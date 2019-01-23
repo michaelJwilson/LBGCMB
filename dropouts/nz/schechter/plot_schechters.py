@@ -37,7 +37,6 @@ def plot_schechters(magbias=False, nointerloper=False):
     count        = 0
     pnbars       = []
 
-    '''
     ##  QSOs first. 
     for mlim in mlims:
         pnbar    = projdensity(2., 3., None, None, None, mlim=mlim, type='qso')
@@ -45,20 +44,19 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars  = np.array(pnbars)
     pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
-    '''
 
     ##  Now dropouts.
     samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
     bands        = ['BX', 'Malkan', 'g', 'r']
     labels       = ['BX-dropouts', r'$u$-dropouts', r'$g$-dropouts', r'$r$-dropouts']
-    colors       = ['y', 'b', 'r', 'indigo']
+    colors       = ['y', 'b', 'g', 'indigo']
 
     stop         =  2
 
     ## for stats, band, label, color in zip(samples[:stop], bands[:stop], labels[:stop], colors[:stop]):         
     for stats, band, label, color in zip(samples, bands, labels, colors):
       zee        = stats[band]['z']   
-      dzee       = 0.5
+      dzee       = 0.7
 
       alpha      = stats[band]['schechter']['alpha']
       Mstar      = stats[band]['schechter']['M_star']
@@ -68,10 +66,10 @@ def plot_schechters(magbias=False, nointerloper=False):
       pnbars     = []
       
       for mlim in mlims:
-        if band == 'g':    
+        if band in ['g', 'r']:    
           ##  Apply completeness correction to Schechter estimate.   
-          pnbar  = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, type='app', printit=True, completeness=interp_completeness)
-
+          pnbar  = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, type='app', printit=True,\
+                               completeness= lambda zz: interp_completeness(zz, drop=band))
         else:
          pnbar   = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, type='app', printit=True)   
 
@@ -83,10 +81,11 @@ def plot_schechters(magbias=False, nointerloper=False):
       
       if band == 'BX':                                                                                                                              
         for mlim in np.arange(22.5, 26.0, 0.5):                                                                                                                                                                                           
-          stats = reddy_stats(mlim)                                                                                                                                                                                                     
-          nbar  = stats['BX']['nbar']                                                                                                                                                                                                                                                                                                                                                                                                
-          pl.plot(mlim, nbar, 'y^', markersize=3)
-      '''    
+          stats = reddy_stats(mlim)                                                                                                          
+
+          pl.plot(mlim, stats['BX']['nbar'],       'y^', markersize=3)
+          pl.plot(mlim, stats['BX']['nbar_noint'], 'ys', markersize=3)
+          
       if band == 'Malkan':
         ##  Only 0.5 sampling available. 
         for mlim in mlims[::2]:
@@ -95,9 +94,9 @@ def plot_schechters(magbias=False, nointerloper=False):
 
           pl.plot(mlim, nbar, 'b^', markersize=3)
 
-      if band == 'g':
-        magbins, pnbar, counts = get_nbarbymag('g', 'D', printit=False)
-        pl.plot(magbins[:-1:5], pnbar[::5], 'g^', markersize=3)
+      if band in ['g', 'r']:
+        magbins, pnbar, counts = get_nbarbymag(band, 'D', printit=False)
+        pl.plot(magbins[:-1:50], pnbar[::50], color=color, marker='^', markersize=3, lw=0.)
 
       if magbias:
         ##  Gradient for magnification bias. 
@@ -111,17 +110,15 @@ def plot_schechters(magbias=False, nointerloper=False):
             A = pnbars[i] / mlims[i] ** n
           
             pl.semilogy(mlims, A * mlims ** n, '--', color='k', label='', alpha=0.5) 
-      '''
 
-    pl.xlim(22.5,  27.0)
+    pl.xlim(22.4,  27.1)
     pl.ylim(1.e0,  7.e4)
 
     pl.xlabel(r'$m_{5\sigma}$')
     pl.ylabel(r'$N(<m_{5\sigma})$ / deg$^2$')
 
-    pl.legend()
-
-    '''
+    pl.legend(loc=4, ncol=2)
+    
     ##  Line Schecter functions. 
     ax  = pl.gca()
     axx = ax.twiny()
@@ -137,11 +134,11 @@ def plot_schechters(magbias=False, nointerloper=False):
       pnbars.append(pnbar)                                                                                                                       
 
     pnbars   = np.array(pnbars)                                                                                                                        
-    axx.semilogy(logLmins, pnbars, '-', label=r'$2.2 < z < 3.5$ Ly-$\alpha$', color='m', alpha=0.5)
+    axx.semilogy(logLmins, pnbars, '-', label=r'$2.2 < z < 3.5$ Ly-$\alpha$', color='m', alpha=0.5, zorder=-1)
     axx.set_xlim(44., 41.)
 
-    pl.legend(loc=4, ncol=2)
-    '''
+    pl.legend(loc=2)
+    
     ##  And save. 
     pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 
