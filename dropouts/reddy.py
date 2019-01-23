@@ -16,7 +16,7 @@ def load_tables(printit = False):
 
   ##  Size in arcmin^2.
   ##  Notes:
-  ##         In Table 1, NXX are photometric candidates, not those spectroscopically confirmed.
+  ##         In Table 1, NXX are photometric candidates, not those spectroscopically confirmed.  See https://arxiv.org/pdf/0706.4091.pdf 
   ##         In Table 3, R is the lower limit on the mag bin (typically, 0.5 in width excepth for the first which is 1.0 in width.)
   ##         Mixture of columns from Table 2 and 3, which share common row definitions.
 
@@ -36,6 +36,7 @@ def load_tables(printit = False):
 def samplestats(mag=23., printit=False, h70=False):
   '''
   Load specifications of Reddy BX and LBG samples from tabular data and create a dictionary containing (interloper free) gals. per sq. deg. 
+  Note:  derived from https://arxiv.org/pdf/0706.4091.pdf 
   '''
 
   tab_one, tab_three = load_tables(printit=printit)  
@@ -60,12 +61,15 @@ def samplestats(mag=23., printit=False, h70=False):
     
     stats[survey]['N']                   = np.array(tab_three['N' + survey + '_phot'])[:(1 + index)].sum()             
     stats[survey]['TotalArea [deg^2]']   = tab_one['Size'][tab_one['N' + survey].notnull()].sum() / 60.**2.
-    stats[survey]['frac_interloper']     = np.array(tab_three['N' + survey + '_int'])[:(1 + index)].sum() / np.array(tab_three['N' + survey + '_spec'])[:(1 + index)].sum()
+
+    ##  Note:  spectroscopic followup is not a fair sample (brighter galaxies targeted -- TBC.)  Must multiply by app. magnitude. 
+    stats[survey]['_frac_interloper']    = np.array(tab_three['N' + survey + '_int']) / np.array(tab_three['N' + survey + '_spec'])
 
     ##  [deg^2]
     stats[survey]['nbar']                = stats[survey]['N'] / stats[survey]['TotalArea [deg^2]']
 
-    stats[survey]['nbar_noint']          = (1. - stats[survey]['frac_interloper']) * stats[survey]['N'] / stats[survey]['TotalArea [deg^2]']
+    stats[survey]['nbar_noint']          = (1. - stats[survey]['_frac_interloper']) * np.array(tab_three['N' + survey + '_phot'])
+    stats[survey]['nbar_noint']          = stats[survey]['nbar_noint'][:(1 + index)].sum() / stats[survey]['TotalArea [deg^2]']
     
   ##  Schechter fn. parameterisation of the z~3 Reddy luminosity fn., Table 7 of https://arxiv.org/pdf/0706.4091.pdf 
   stats['LBG']['schechter']['phi_star']  = 1.66e-3    ## [\phi*] = [h_70/Mpc]^3 per mag for M*_AB(1700 \AA).

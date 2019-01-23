@@ -36,7 +36,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     count        = 0
     pnbars       = []
-
+    
     ##  QSOs first. 
     for mlim in mlims:
         pnbar    = projdensity(2., 3., None, None, None, mlim=mlim, type='qso')
@@ -44,7 +44,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars  = np.array(pnbars)
     pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
-
+    
     ##  Now dropouts.
     samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
     bands        = ['BX', 'Malkan', 'g', 'r']
@@ -83,20 +83,40 @@ def plot_schechters(magbias=False, nointerloper=False):
         for mlim in np.arange(22.5, 26.0, 0.5):                                                                                                                                                                                           
           stats = reddy_stats(mlim)                                                                                                          
 
-          pl.plot(mlim, stats['BX']['nbar'],       'y^', markersize=3)
-          pl.plot(mlim, stats['BX']['nbar_noint'], 'ys', markersize=3)
+          pl.semilogy(mlim, stats['BX']['nbar'],       'y^', markersize=3)
+          pl.semilogy(mlim, stats['BX']['nbar_noint'], 'ys', markersize=3)
           
       if band == 'Malkan':
         ##  Only 0.5 sampling available. 
+        nbars  = []
+        crates = []
+
         for mlim in mlims[::2]:
           stats = malkan_stats(mlim)
           nbar  = stats['Malkan']['nbar'] 
 
-          pl.plot(mlim, nbar, 'b^', markersize=3)
+          nbars.append(nbar)
+          crates.append(get_contamination(mlim, round(stats['Malkan']['z']), depth='D'))
 
-      if band in ['g', 'r']:
-        magbins, pnbar, counts = get_nbarbymag(band, 'D', printit=False)
-        pl.plot(magbins[:-1:50], pnbar[::50], color=color, marker='^', markersize=3, lw=0.)
+        nbars = np.array(nbars)
+        pl.semilogy(mlims[::2], nbars, 'b^', markersize=3)
+          
+        crates = np.array(crates)
+        pl.semilogy(mlims[::2], nbars * (1. - crates), color=color, marker='s', markersize=3, lw=0.)
+
+      if band == 'g':
+        magbins, pnbar, counts = get_nbarbymag(band, depth='W', printit=False)
+        pl.semilogy(magbins[:-1:50], pnbar[::50], color=color, marker='^', markersize=3, lw=0.)
+
+        rate = get_contamination(magbins[:-1:50], round(stats[band]['z']), depth='W')
+        pl.semilogy(magbins[:-1:50], pnbar[::50] * (1. - rate), color=color, marker='s', markersize=3, lw=0.)
+
+      if band == 'r':
+        magbins, pnbar, counts = get_nbarbymag(band, depth='D', printit=False)
+        pl.semilogy(magbins[:-1:50], pnbar[::50], color=color, marker='^', markersize=3, lw=0.)
+
+        rate = get_contamination(magbins[:-1:50], round(stats[band]['z']), depth='D')
+        pl.semilogy(magbins[:-1:50], pnbar[::50] * (1. - rate), color=color, marker='s', markersize=3, lw=0.)
 
       if magbias:
         ##  Gradient for magnification bias. 
@@ -136,7 +156,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     pnbars   = np.array(pnbars)                                                                                                                        
     axx.semilogy(logLmins, pnbars, '-', label=r'$2.2 < z < 3.5$ Ly-$\alpha$', color='m', alpha=0.5, zorder=-1)
     axx.set_xlim(44., 41.)
-
+    
     pl.legend(loc=2)
     
     ##  And save. 
@@ -148,8 +168,6 @@ if __name__ == "__main__":
 
 
     print "\n\nWelcome to a Schechter fn. plotter.\n\n"
-
-    depths = ['W']    ## ['W', 'D', 'UD'].              
 
     plot_schechters()
 

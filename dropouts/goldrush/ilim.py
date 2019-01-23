@@ -169,7 +169,7 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
             axarray[k].semilogy(magbins[1:], pnbar, '-',  label=r'$g-$' + label, markersize=3, lw=1.)
 
         for contamination, color in zip(['D', 'W'], ['dodgerblue', 'indigo']):
-          rate = get_contamination(magbins[1:], round(stats[dropband]['z']), contamination)
+          rate = get_contamination(magbins[1:], round(stats[dropband]['z']), contamination, depth=ldepth)
 
           axarray[k].semilogy(magbins[1:], pnbar * (1. - rate), '--', label='Less %s' % contamination + r' ($\simeq$' + '%.2lf) interlopers' % effective_depth(dropband, contamination),\
                                                                       markersize=3, lw=1., c=color, dashes=[3, 1], alpha=0.4)
