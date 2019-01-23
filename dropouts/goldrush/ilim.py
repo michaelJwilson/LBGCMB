@@ -15,6 +15,27 @@ latexify(fig_width=None, fig_height=None, columns=2, equal=False)
 
 params = get_params()
 
+def effective_depth(dropband='g', depth='W'):
+    ##  Table 1 of https://arxiv.org/pdf/1704.06004.pdf.     
+    ##  Note:  'Effective' depth in the dropout band. 
+    if  dropband == 'g' and depth == 'W':
+        return (26.43 + 26.35 + 26.38 + 26.39 + 26.47 + 26.31) / 6.0
+
+    elif dropband == 'g' and depth == 'D':
+        return (26.73 + 26.56 + 26.77 + 26.69) / 4.0
+
+    elif dropband == 'g' and depth == 'UD':
+        return (27.15 + 27.13) / 2.0
+
+    elif dropband == 'r' and depth == 'W':
+        return (25.93 + 25.88 + 25.95 + 25.96 + 26.04 + 25.87) / 6.0
+    
+    elif dropband == 'r' and depth == 'D':
+        return (26.30 + 26.19 + 26.13 + 26.25) / 4.0
+
+    else:
+        raise ValueError('\n\nCombination of %s and %s is not available.' % (dropband, depth))
+
 def get_contamination(m, zee=4, depth='W'):
     '''
     Get magnitude bins defined by GoldRush and corresponding contamination fraction.                                                         
@@ -43,34 +64,20 @@ def get_contamination(m, zee=4, depth='W'):
 
     return  interp(m)
 
-def effective_depth(dropband='g', depth='W'):
-    ##  Table 1 of https://arxiv.org/pdf/1704.06004.pdf.
-    if  dropband == 'g' and depth == 'W':
-        return (26.43 + 26.35 + 26.38 + 26.39 + 26.47 + 26.31) / 6.0 
-    
-    elif dropband == 'g' and depth == 'D':
-        return (26.73 + 26.56 + 26.77 + 26.69) / 4.0
-
-    elif dropband == 'g' and depth == 'UD':
-        return (27.15 + 27.13) / 2.0
-
-    else:
-        raise ValueError('\n\nCombination of %s and %s is not available.' % (dropband, depth))
-
 def get_galaxyfraction(ms, dropband='g'):
-    from    specs            import  samplestats
+    from  specs  import  samplestats
 
     if not dropband == 'g':
-        raise ValueError('\n\nGalaxy fraction not available for dropband: %s' % dropband)
+        raise  ValueError('\n\nGalaxy fraction not available for dropband: %s' % dropband)
 
-    ## Bottom panel of Fig. 7 top of https://arxiv.org/pdf/1704.06004.pdf;
-    ## Galaxy fraction of GOLDRUSH g-dropouts.
+    ##  Bottom panel of Fig. 7 top of https://arxiv.org/pdf/1704.06004.pdf;
+    ##  Galaxy fraction of GOLDRUSH g-dropouts.
     fname = os.environ['LBGCMB'] + '/dropouts/goldrush/cats/galaxy_fraction.dat'
     data  = np.loadtxt(fname)
 
     frac  = interp1d(data[:,0], data[:,1], kind='linear', bounds_error=False, fill_value=(0.0, 1.0))
 
-    ## Conversion from Ms to ms, e.g. eqn (13) of https://arxiv.org/pdf/1704.06004.pdf
+    ##  Conversion from Ms to ms, e.g. eqn (13) of https://arxiv.org/pdf/1704.06004.pdf
     specs = samplestats()
 
     zeff  = specs[dropband]['z'] 
@@ -82,18 +89,8 @@ def get_nbar_nocontam(band, depth='W', printit=False):
     '''                                                                                                                                                     
     Get the number counts per magnitude bin, and the contamination corrected counts.                                                                  
     '''
-    if band == 'Malkan':
-      from    Malkan.specs       import  samplestats
       
-      stats = samplestats()
-
-      stats[band]['nbar_nointerlopers'] = stats[band]['nbar']
-
-      raise  UserWarning('\n\nAssuming zero contamination to u-dropouts.\n\n')
-
-      return  stats
-      
-    elif band == 'g':
+    if band == 'g':
       from  goldrush.specs  import  samplestats
 
 
@@ -114,7 +111,7 @@ def get_nbar_nocontam(band, depth='W', printit=False):
 
 def get_nbarbymag(dropband, depth, printit=False):
     '''    
-    For selection bands, e.g. gri, and depth type, [UD, D, W], 
+    For selection bands, e.g. gri, and depth, [UD, D, W], 
     calculate the total number of objects with a magnitude less 
     than a given limit and the area of that field type. 
     
@@ -130,10 +127,10 @@ def get_nbarbymag(dropband, depth, printit=False):
 
     root          = os.environ['LBGCMB']
     
-    ## Loads from (hsc) specs.py
+    ##  Loads from (hsc) specs.py
     specs         = samplestats()
 
-    ## Catalogues labelled by bands used in selection criteria. 
+    ##  Catalogues labelled by bands used in selection criteria. 
     band2cat      = {'g': 'gri', 'r': 'riz', 'i': 'izy', 'z': 'zY'}
 
     if band2cat[dropband]  == "zy":     
@@ -144,33 +141,33 @@ def get_nbarbymag(dropband, depth, printit=False):
         columns   =  pd.read_csv(root + "/dropouts/goldrush/cats/column.cat", header=None, names=["colname"], delim_whitespace=True)
         appradii  =  '15'
 
-    ## Define magnitude type to be retrieved. 
+    ##  Define magnitude type to be retrieved. 
     mags          = [x + appradii for x in ['gmag_aperture', 'rmag_aperture', 'imag_aperture', 'zmag_aperture', 'ymag_aperture']]
     
-    ## Columns to be retrieved from GoldRush catalogues. 
+    ##  Columns to be retrieved from GoldRush catalogues. 
     names         = ['object_id', 'ra', 'dec'] + mags
 
-    ## Get all the fields for given depth.  
+    ##  Get all the fields for given depth.  
     files         = glob.glob(root + "/dropouts/goldrush/cats/%s/%s/*" % (depth, band2cat[dropband]))
 
-    counts        = []
+    counts        =  []
     total_area    = 0.0
 
-    ## Loop over fields. 
+    ##  Loop over fields. 
     for file in files:                                                                                                              
         mid         = file.split(".")[-2]
         field       =  mid.split('_' + depth + '_')[-1]
         
-        ## Area [deg^2] of e.g. COSMOS 'D'
+        ##  Area [deg^2] of e.g. COSMOS 'D'
         area        = specs['areas'][depth][field]                                                                               
         total_area += area
 
-        ## Read and drop rows with undefined magnitudes. 
+        ##  Read and drop rows with undefined magnitudes. 
         input       = pd.read_csv(file, header=None, names=columns["colname"], delim_whitespace=True)
         input       = input.replace(99., np.nan)
         input       = input.dropna(axis=0, how='any', thresh=None, subset=[detection_bands[dropband] + 'mag_aperture' + appradii], inplace=False)
                 
-        ## Copy the necessary part of the dataframe. 
+        ##  Copy the necessary part of the dataframe. 
         data        = input[names].copy()
 
         if printit:
@@ -182,28 +179,28 @@ def get_nbarbymag(dropband, depth, printit=False):
                  (data[detection_bands[dropband] + 'mag_aperture' + appradii].min(), data[detection_bands[dropband] + 'mag_aperture' + appradii].max()))     
 
         if input.empty == False:
-           ## Bands in mag. for the detection band, to calculate Ng( < mag). 
+           ##  Bands in mag. for the detection band, to calculate Ng( < mag). 
            magbins      = np.arange(18., 26.5, 0.01)                 
 
-           ## Catch all bin for objects brighter than 22nd mag and fainter than 26.5.
+           ##  Catch all bin for objects brighter than 22nd mag and fainter than 26.5.
            magbins      = np.concatenate([np.array([0.]), magbins, np.array([30.])])
            
-           ## Defines the bin edges, including the rightmost edge, allowing for non-uniform bin widths.
+           ##  Defines the bin edges, including the rightmost edge, allowing for non-uniform bin widths.
            counts.append(np.histogram(data[detection_bands[dropband] + 'mag_aperture' + appradii], bins=magbins)[0])
 
     counts = np.array(counts)
 
-    ## Sum the binned histogram counts over all fields. 
+    ##  Sum the binned histogram counts over all fields. 
     counts = counts.sum(axis=0)
 
     if not (depth is 'UD' and band2cat[dropband] is 'zy'):
-      cumulative  = np.cumsum(counts)      ## Cumulative counts of all bins up to mag. limit;    
-      pnbar       = cumulative/total_area  ## Projected nbar. 
+      cumulative  = np.cumsum(counts)        ##  Cumulative counts of all bins up to mag. limit;    
+      pnbar       = cumulative / total_area  ##  Projected nbar.  
 
-      ## Check.                                                                                                                                                                                                                  
-      print("\n\nTotal  counts @ depth %s:  %.3lf \t %.3lf"  % (depth, cumulative[-1], specs[dropband]['total-%scounts' % {'W': '', 'D': 'deep', 'UD': 'udeep'}[depth]]))
-      print("Total     area:  %.3lf sq. deg. (%.3lf)"      % (total_area,     specs['Total area'][depth]))
-      print("Effective nbar:  %.3lf per sq. deg."          % (cumulative[-1] / total_area))
+      ##  Check.                                                                                                                                                                                                                  
+      print("\n\nTotal  counts @ depth %s (%.2lf):  %.3lf \t %.3lf"  % (depth, effective_depth(dropband=dropband, depth=depth), cumulative[-1], specs[dropband]['total-%scounts' % {'W': '', 'D': 'deep', 'UD': 'udeep'}[depth]]))
+      print("Total     area:  %.3lf sq. deg. (%.3lf)"                % (total_area,     specs['Total area'][depth]))
+      print("Effective nbar:  %.3lf per sq. deg."                    % (cumulative[-1] / total_area))
 
       return  magbins, pnbar, counts
 
@@ -225,40 +222,39 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
     
     colors = ['b', 'r', 'indigo']
 
-    ## Load Goldrush basic stats. 
+    ##  Load Goldrush basic stats. 
     stats  =  samplestats(printit=False)
     
-    ## Create figure.                                                                                                                                       
-    fig, axarray    = plt.subplots(1,                   1, sharey=False)
+    ##  Create figure.                                                                                                                                       
+    fig, axarray    = plt.subplots(1, 1, sharey=False)
 
     fig.set_size_inches(6.5, 3.5)
 
-    ## Catch for one plot. 
+    ##  Catch a one plot call. 
     if not isinstance(axarray, np.ndarray):
       axarray = np.array([axarray])
 
     for k, dropband in enumerate(results.keys()):        
-        ## for ldepth, label in zip(['UD', 'W', 'D'], ['GOLDRUSH UDeep', 'GOLDRUSH Wide', 'GOLDRUSH Deep']): 
         for ldepth, label in zip(['D'], ['GOLDRUSH Deep']):
             magbins, pnbar, counts = results[dropband][ldepth]
 
-            ## Plot ang_nbar against limiting mag. (rightmost edge).                                                                                                                                         
+            ##  Plot ang_nbar against limiting mag. (rightmost edge).                                                                                                                                         
             axarray[k].semilogy(magbins[1:], pnbar, '-',  label=r'$g-$' + label, markersize=3, lw=1.)
 
         for contamination, color in zip(['D', 'W'], ['dodgerblue', 'indigo']):
           rate = get_contamination(magbins[1:], round(stats[dropband]['z']), contamination)
 
-          axarray[k].semilogy(magbins[1:], pnbar * (1. - rate), '--',        label='Less %s' % contamination + r' ($\simeq$' + '%.2lf) interlopers' % effective_depth(dropband, contamination),\
-                                                                             markersize=3, lw=1., c=color, dashes=[3, 1], alpha=0.4)
+          axarray[k].semilogy(magbins[1:], pnbar * (1. - rate), '--', label='Less %s' % contamination + r' ($\simeq$' + '%.2lf) interlopers' % effective_depth(dropband, contamination),\
+                                                                      markersize=3, lw=1., c=color, dashes=[3, 1], alpha=0.4)
 
         if plot_des:
-          ## DES depths/yr estimate                                                                                                                    
+          ##  DES depths/yr estimate                                                                                                                    
           depths = des_depths()
 
-          ## Plot the magnitude limit of DES SV. 
+          ##  Plot the magnitude limit of DES SV. 
           axarray[k].axvline(depths['SV'][detection_bands[dropband]], c='k', linestyle='-', label='DES SV', lw = 0.5)
         
-          ## and the magnitude limits per year (estimated for year greater than one).
+          ##  and the magnitude limits per year (estimated for year greater than one).
           for year in np.arange(1, 6, 1):        
             axarray[k].axvline(depths['Y' + str(year)][detection_bands[dropband]], c='k', linestyle='-', label='', lw = 0.5)
 
@@ -268,7 +264,7 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
 
             axarray[k].semilogy(data[:,0], 0.59 * data[:,1], 'k', label='Best-fit UV Schechter fn.', alpha=0.5)
 
-            ## Galaxies only. 
+            ##  Galaxies only. 
             axarray[k].semilogy(data[:,0], 0.59 * get_galaxyfraction(data[:,0]) * data[:,1], 'k--', label='Best-fit galaxy UV Schechter fn.', dashes=[3,1])
         
         ymax = pnbar[magbins < 24.5].max()
@@ -288,20 +284,29 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
 
 if __name__ == "__main__":
     import  collections
+    import  pylab as pl
 
+    print('\n\nWelcome to the HSC dropout ilim calculator.')
 
-    print "\n\nWelcome to the HSC dropout ilim calculator."
-    
+    '''
+    magbins, pnbar, counts = get_nbarbymag('r', 'D', printit=False)
+
+    pl.semilogy(magbins[:-1], pnbar)
+    pl.xlim(20., 27.0)
+    pl.show()
+    '''
+        
     results = collections.OrderedDict()
 
     for k, dropband in enumerate(['g']):
-      results[dropband] = {'D': get_nbarbymag(dropband, 'D', printit=False), 'W':  get_nbarbymag(dropband, 'W', printit=False), 'UD':  get_nbarbymag(dropband, 'UD', printit=False)}
+      ##  'UD':  get_nbarbymag(dropband, 'UD', printit=False)
+      results[dropband] = {'W': get_nbarbymag(dropband, 'W', printit=False), 'D':  get_nbarbymag(dropband, 'D', printit=False)}
 
     print('')
 
     plot_ilims(results)
     
-    ## stats  = get_nbar_nocontam('r', depth='W', printit=False)
-    ## pprint(stats)
+    ##  stats  = get_nbar_nocontam('r', depth='W', printit=False)
+    ##  pprint(stats)
 
     print("\n\nDone.\n\n")

@@ -2,14 +2,12 @@
 export  LBGCMB=/Users/M.J.Wilson/work/LBGCMB/
 
 export  PYTHONPATH=$LBGCMB:$LBGCMB/dropouts/:$LBGCMB/dropouts/goldrush/:$PYTHONPATH
-export  PYTHONPATH=$LBGCMB/dropouts/goldrush/cats/nz/py/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/desi/py:$PYTHONPATH
-export  PYTHONPATH=$LBGCMB/dropouts/goldrush/cats/nz/py:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/cmb/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/Hildebrandt09/py:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/massfn/py/:$PYTHONPATH
-export  PYTHONPATH=$LBGCMB/dropouts/goldrush/cats/nz/py:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/dropouts/nz/schechter/:$PYTHONPATH
+export  PYTHONPATH=$LBGCMB/dropouts/goldrush/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/dropouts/cori/Rafelski15/py/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/desihub/redrock/py/redrock:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/qso/kcorr/NPD:$PYTHONPATH

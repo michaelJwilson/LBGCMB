@@ -9,14 +9,13 @@ from    elg_nz             import  elg_pz
 
 
 def interp_completeness(zee, drop='g'):
-  stats          = samplestats(printit = False)
+  stats          =  samplestats(printit=False)
 
-  root           = os.environ['LBGCMB']
-  path           = root + '/dropouts/goldrush/cats/completeness/completeness_z%d.dat' % round(stats[drop]['z'])
+  root           =  os.environ['LBGCMB']
+  path           =  root + '/dropouts/goldrush/cats/completeness/completeness_z%d.dat' % round(stats[drop]['z'])
 
-  completeness   = np.loadtxt(path)
-
-  interp         = interp1d(completeness[:,0], completeness[:,1], kind='linear', assume_sorted=False, bounds_error=False, fill_value=0.0)
+  completeness   =  np.loadtxt(path)
+  interp         =  interp1d(completeness[:,0], completeness[:,1], kind='linear', assume_sorted=False, bounds_error=False, fill_value=0.0)
 
   return  interp(zee)
 
@@ -30,12 +29,14 @@ def plot_completeness():
   pl.ylabel(r'Completeness')
 
   pl.title(r'HSC Goldrush')
+  pl.legend(loc=2, ncol=1)  
 
-  pl.legend(loc=2, ncol=1)
-  
-  pl.savefig('../plots/completeness.pdf')
+  pl.show()
+  ##  pl.savefig('../plots/completeness.pdf')
 
 def get_dropoutpz(drop='g'):
+  ##  Note:  returns normalised completeness curve. 
+  ##         requires LF and volume factors to be added. 
   stats          = samplestats(printit = False)
 
   root           = os.environ['LBGCMB']
@@ -67,19 +68,12 @@ if __name__ == "__main__":
   print("\n\nWelcome to completeness.\n\n")
 
   
-  zs  = np.arange(0.0, 4.0, 0.05)
+  plot_completeness()
 
-  ## pz  = get_pz(zs, "QSO")
-  ## pz  = elg_pz(zs)
-
-  ## calc_moments(zs, pz)
-
-  
-  ## plot_completeness()
-
+  '''
   for band in ['g', 'r']:
     z, pz = get_dropoutpz(band)
 
     calc_moments(z, pz)
-  
+  '''
   print("\n\nDone.\n\n")
