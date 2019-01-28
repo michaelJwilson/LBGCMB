@@ -149,7 +149,7 @@ def cmb_map(cmbexp = 'Planck', nside=512, pure_noise = True, plot_Cls = False, p
 def prep_masks(surveys):
   import  os
 
-  root       =  os.environ['LBGCMB'] + '/mask/'
+  root       =  os.environ['LBGCMB'] + '/mask/dat/'
   
   fpaths     =  {'Planck': 'Planck_MaskInt_UT78_256.fits', 'SPT': 'SPT_150_hits_hpx.fits', 'AdvACT': 'ACT_148_equ_hits_hpx.fits', 'SO': 'mask_40pc.fits',\
                     'QSO': 'BOSS_dr12_qso.fits', 'LSST': 'opsim_nvisits_g.fits', 'HSC': 'hsc_256.txt', 'AdvACT-SOU': 'ACT_148_south_hits_hpx.fits'}
