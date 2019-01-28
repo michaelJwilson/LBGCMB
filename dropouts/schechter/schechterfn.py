@@ -15,9 +15,10 @@ def SchechterMfn(M, phi_star, M_star, alpha):
   '''                                                                                                                                                       
   Schechter funtion in absolute magnitude.                                                                                                                  
   '''
-  LL  = 10.**(-0.4*(M - M_star))                                      ## LL = L/L_star                                                                        
 
-  return  np.log(10.)*phi_star*np.exp(-LL)*LL**(1. + alpha)/2.5       ## Phi(M_UV) dM_UV, [Phi_star] per mag;
+  LL    = 10.**(-0.4*(M - M_star))                                              ## LL = L/L_star                                                        
+  
+  return  np.log(10.) * phi_star * np.exp(-LL) * LL ** (1. + alpha) / 2.5       ## Phi(M_UV) dM_UV, [Phi_star] per mag;
 
 
 if __name__ == "__main__":

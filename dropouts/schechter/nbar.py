@@ -35,9 +35,8 @@ def  mlimitedM(z, mlim, M_standard=None, kcorr=True):
   aa    = 1. / (1. + z)                                            ## scale factor at z.                                                                
   chi   = comoving_distance(z)                                     ## [Mpc/h]                                                                            
 
-  dmod  = 25. + 5.*np.log10(chi/aa/params['h_100'])                ## \mu = 5.*log_10(D_L/10pc) = 25. + 5 log_10(D_L) for [D_L] = Mpc.                 
+  dmod  = 25. + 5. * np.log10(chi / aa / params['h_100'])          ## \mu = 5.*log_10(D_L/10pc) = 25. + 5 log_10(D_L) for [D_L] = Mpc.                 
                                                                    ## D_L = (1. + z)*chi.                                                                 
-
   if kcorr:
     kcorr =  -2.5 * np.log10(1.0 / aa)                             ## Eq. (14) of Reddy++ and preceding text; assumes flat Fv.                        
 
@@ -52,18 +51,13 @@ def  mlimitedM(z, mlim, M_standard=None, kcorr=True):
     return  Mlim
 
   else:
-    Llim  = 10.0**(-0.4 * (Mlim - M_standard))                     ## Units are luminosity equivalent of 'M_standard'; e.g. M_* gives [L_*].        
+    Llim  = 10.0 ** (-0.4 * (Mlim - M_standard))                   ## Units are luminosity equivalent of 'M_standard'; e.g. M_* gives [L_*].        
                                                                    ## Lv dv = 4 pi D_L^2 F_obs dv_obs 10**(-m/2.5); similary for L* and m*.              
                                                                    ## Gives (Lv/L) = 10**-0.4(m - m*) = 10**-0.4(M - M*) 
-    ## Rest absolute magnitude.
+    ##  Rest absolute magnitude.
     return  Mlim, Llim
 
-def MM2LL(MM, M_star):
-  LL  = 10.**(-0.4*(MM - M_star))                                  ## [L_*].
-  
-  return LL
-
-def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', printit=True, qso=False):
+def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', printit=True):
   ''' 
   Given a redshift, Schecter fn. parameters and a selection function type, 
   e.g. apparent mag. limited or Goldrush selection, return the expected 
@@ -81,10 +75,25 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     nbar   = get_ns(Ms, zee=z)
     nbar   = np.log10(nbar)
 
-    ##  Cut to maglim.                                                                                                                                                                                                                     
+    ##  Cut to maglim.                                                                                                                                                                                     
     nbar   = nbar[gs <= mlim][-1]
 
     return  nbar
+  
+  elif type == 'lya':
+    from  sobral  import  lya_nbar
+
+    ##  Treat mlim as logLmin limit. i.e. Set lower limit 
+    ##  on luminosity integral of L* if logLmin == None. 
+    ##  Else logLmin.  Return:  ##  [(Mpc / h)^-3]
+
+    result = lya_nbar(z, logLmin=mlim, printit=False)
+    result = np.log10(result)
+
+    if printit:
+      print(mlim, result)
+
+    return  result
 
   else:
     ##  Derived from a Schechter fn.
@@ -148,15 +157,14 @@ def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit =
   zs       =  np.linspace(zmin, zmax, 1500)
   zs, dVs  =  dVols(zs, cosmo, params)
 
-
-  pnbar = 0.0
+  pnbar    =  0.0
 
   for i, zee in enumerate(zs):
     '''
     Get expected number density for app. mag. (dropout colour) selected expected sample at this redshift slice. 
     Note:  Neglects evolution in luminosity fn., but includes change in app. mag with z.
     '''
-    nbar   = comovdensity(zee, phi_star, M_star, alpha, type=type, mlim = mlim, printit=False)  
+    nbar   = comovdensity(zee, phi_star, M_star, alpha, type=type, mlim=mlim, printit=False)  
     nbar   = 10. ** nbar             ## [(h_100/Mpc)^3]
 
     if completeness is not None:
@@ -166,10 +174,10 @@ def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit =
       pnbar += dVs[i] * nbar         ## Aggregate number of each slice.   
 
   pnbar   /= 4.*np.pi                ## Galaxies per steradian.                          
-  pnbar   /= (180./np.pi)**2.        ## Galaxies per sq. degree.
+  pnbar   /= (180. / np.pi)**2.      ## Galaxies per sq. degree.
 
   if printit:
-    print "mlim:  %3.3lf \t z:  %.1lf \t %6.6le g/deg^2 \t\t Vol.:  %6.3le (Mpc/h)^3" % (mlim, (zmin + zmax) / 2., pnbar, dVs.sum())
+    print('mlim:  %3.3lf \t z:  %.1lf \t %6.6le g/deg^2 \t\t Vol.:  %6.3le (Mpc/h)^3' % (mlim, (zmin + zmax) / 2., pnbar, dVs.sum()))
   
   return  pnbar                                                                                                                      
 

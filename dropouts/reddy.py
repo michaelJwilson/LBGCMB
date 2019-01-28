@@ -1,8 +1,11 @@
-from __future__  import division
-from schechterfn import SchechterMfn
+from  __future__   import  division
+from  schechterfn  import  SchechterMfn 
+from  params       import  get_params
 
-import numpy as np
+import  numpy  as  np
 
+
+params = get_params()
 
 def load_tables(printit = False):
   import  os
@@ -11,9 +14,9 @@ def load_tables(printit = False):
   root      = os.environ['LBGCMB']
   root     += '/dropouts/dat/reddy/'
 
-  ## Size in arcmin^2.
-  ## Notes:
-  ##         In Table 1, NXX are photometric candidates, not those spectroscopically confirmed.
+  ##  Size in arcmin^2.
+  ##  Notes:
+  ##         In Table 1, NXX are photometric candidates, not those spectroscopically confirmed.  See https://arxiv.org/pdf/0706.4091.pdf 
   ##         In Table 3, R is the lower limit on the mag bin (typically, 0.5 in width excepth for the first which is 1.0 in width.)
   ##         Mixture of columns from Table 2 and 3, which share common row definitions.
 
@@ -33,6 +36,7 @@ def load_tables(printit = False):
 def samplestats(mag=23., printit=False, h70=False):
   '''
   Load specifications of Reddy BX and LBG samples from tabular data and create a dictionary containing (interloper free) gals. per sq. deg. 
+  Note:  derived from https://arxiv.org/pdf/0706.4091.pdf 
   '''
 
   tab_one, tab_three = load_tables(printit=printit)  
@@ -40,29 +44,32 @@ def samplestats(mag=23., printit=False, h70=False):
   
   for survey in ['BX', 'LBG']:      
     if mag < 19.0:
-      raise ValueError('Brightest characteristics available for Reddy are R > 19.0')
+      raise  ValueError('Brightest characteristics available for Reddy are R > 19.0')
 
-    elif mag < 22.:  
-      index                              = 0  ## First bin is 19.0 < 22.0
+    elif mag <= 22.:  
+      ##  First bin is 19.0 < 22.0
+      index                              = 0
+      stats[survey]['Rlim']              = 22.0
 
     elif mag <= 25.9:
-      ##  Upper limit to the bin is tab_three['R'] + 0.5;
+      ##  Upper limit to the bin is tab_three['R'] + 0.5;  Index where upper limit on bin is closest to provided depth. 
       index                              = np.where(np.abs(np.array(tab_three['R']) + 0.5 - mag).min() == np.abs(np.array(tab_three['R']) + 0.5 - mag))[0][0]
+      stats[survey]['Rlim']              = np.array(tab_three['R'])[index] + 0.5
 
     else:
       raise  ValueError('Faintest characteristics available for Reddy are R < 26.0')
-
-    stats[survey]['Rlim']                = np.array(tab_three['R'])[index] + 0.5
     
     stats[survey]['N']                   = np.array(tab_three['N' + survey + '_phot'])[:(1 + index)].sum()             
     stats[survey]['TotalArea [deg^2]']   = tab_one['Size'][tab_one['N' + survey].notnull()].sum() / 60.**2.
-    stats[survey]['frac_interloper']     = np.array(tab_three['N' + survey + '_int'])[:(1 + index)].sum() / np.array(tab_three['N' + survey + '_spec'])[:(1 + index)].sum()
 
-    ## [deg^2]
+    ##  Note:  spectroscopic followup is not a fair sample (brighter galaxies targeted -- TBC.)  Must multiply by app. magnitude. 
+    stats[survey]['_frac_interloper']    = np.array(tab_three['N' + survey + '_int']) / np.array(tab_three['N' + survey + '_spec'])
+
+    ##  [deg^2]
     stats[survey]['nbar']                = stats[survey]['N'] / stats[survey]['TotalArea [deg^2]']
 
-    ##  Are AGN already counted in interloper fraction?
-    stats[survey]['nbar_nointerlopers']  = (1. - stats[survey]['frac_interloper']) * stats[survey]['N'] / stats[survey]['TotalArea [deg^2]']
+    stats[survey]['nbar_noint']          = (1. - stats[survey]['_frac_interloper']) * np.array(tab_three['N' + survey + '_phot'])
+    stats[survey]['nbar_noint']          = stats[survey]['nbar_noint'][:(1 + index)].sum() / stats[survey]['TotalArea [deg^2]']
     
   ##  Schechter fn. parameterisation of the z~3 Reddy luminosity fn., Table 7 of https://arxiv.org/pdf/0706.4091.pdf 
   stats['LBG']['schechter']['phi_star']  = 1.66e-3    ## [\phi*] = [h_70/Mpc]^3 per mag for M*_AB(1700 \AA).
@@ -70,18 +77,33 @@ def samplestats(mag=23., printit=False, h70=False):
   stats['LBG']['schechter']['alpha']     =   -1.57
 
   ##  Schechter fn. parameterisation of the z~2 Reddy luminosity fn., Table 7 of https://arxiv.org/pdf/0706.4091.pdf                                                                                                                   
-  stats['BX']['schechter']['phi_star']   = 1.74e-3     ## [\phi*] = [h_70/Mpc]^3 per mag for M*_AB(1700 \AA).                                                                                                                           
-  stats['BX']['schechter']['M_star']     =  -20.97
-  stats['BX']['schechter']['alpha']      =   -1.84
+  '''
+  stats['BX']['schechter']['phi_star']     = 1.74e-3     ## [\phi*] = [h_70/Mpc]^3 per mag for M*_AB(1700 \AA).                                         
+  stats['BX']['schechter']['M_star']       =  -20.97
+  stats['BX']['schechter']['alpha']        =   -1.84
+  '''
+
+  stats['BX']['schechter']['phi_star']     = 3.31e-3     ## [\phi*] = [h_70/Mpc]^3 per mag for M*_AB(1700 \AA).                                    
+  stats['BX']['schechter']['M_star']       =  -20.60
+  stats['BX']['schechter']['alpha']        =   -1.60
+
 
   if not h70:
     ##  Convert phi_star to (h_100 / Mpc)^3 per mag.
     stats['LBG']['schechter']['phi_star'] *= (10. / 7.) ** 3.
     stats['BX']['schechter']['phi_star']  *= (10. / 7.) ** 3.
-  
+
+    ##  Reddy (2008) Schechter fn. is in unit of h70.  MAB (1700A) - 5log10(h70) = MAB (1700A) - 5log10(h100) - 0.77                                 
+    ##  Schechter fn. of M depends only on LL = M-M*, implies M* + 0.77
+    stats['LBG']['schechter']['M_star']   += 0.77
+    stats['BX']['schechter']['M_star']    += 0.77
+
+    stats['LBG']['schechter']['M_star']   += 5. * np.log10(params['h_100'])
+    stats['BX']['schechter']['M_star']    += 5. * np.log10(params['h_100'])
+
   for survey in ['BX', 'LBG']:
     if printit:
-      print "\n\n%s Survey Specifications:\n" % survey
+      print "\n\n%s Survey Specifications (at depth R=%.3lf):\n" % (survey, mag)
 
       for k, v in stats[survey].iteritems():
         print "%s \t\t %s" % (k.ljust(20), v)
@@ -90,14 +112,14 @@ def samplestats(mag=23., printit=False, h70=False):
 
 def Reddy_colourcut(zs, luv, u, g, r, i, z, y, type='BX', nocolourcut = False):
     if type == 'BM':
-        ## 1.5 < z < 2.0                                                                                                                                   
+        ##  1.5 < z < 2.0                                                                                                                                   
         crit  = (g - r) >= -0.2
         crit &= (u - g) >= (g - r)     - 0.1
         crit &= (g - r) <= 0.2*(u - g) + 0.4
         crit &= (u - g) <= (g - r)     + 0.2
 
     elif type == 'BX':
-        ## 2.0 < z < 2.5                                                                                                                                   
+        ##  2.0 < z < 2.5                                                                                                                                   
         crit  = (g - r) >= -0.2
         crit &= (u - g) >= (g - r)     + 0.2
         crit &= (g - r) <= 0.2*(u - g) + 0.4
@@ -106,37 +128,43 @@ def Reddy_colourcut(zs, luv, u, g, r, i, z, y, type='BX', nocolourcut = False):
     else:
         raise ValueError("Specified Reddy colour selection is not available.")
 
-def get_pEBV():
+def get_pEBV(printit=False):
   names       = ['loEBV', 'hiEBV', 'p(z=2)', 'p(z=3)']
 
   data        = pd.read_csv("dat/reddy_tabfive.dat", sep='\s+', skiprows=0, names=names)
-
   data['EBV'] = 0.5 * (data['loEBV'].values + data['hiEBV'].values)
 
-  ## for i, x in enumerate(data['EBV'].values):                                                                                                            
-  ##  print x, data['p(z=3)'].values[i]                                                                                                                     
+  if printit:
+    for i, x in enumerate(data['EBV'].values):                                                                                                            
+      print x, data['p(z=3)'].values[i]                                                                                                                     
 
   return data
 
 
 if __name__ == "__main__":
-  import pylab as pl
+  import  pylab  as     pl
+  from    utils  import pprint
+  
 
   print('\n\nWelcome to the Reddy (Schechter) calculator.\n\n')
 
   Ms    = np.arange(-23., -18., 0.1)
-  stats = samplestats(mag=22.5, printit = False, h70=True)
+  stats = samplestats(mag=23.0, printit=True, h70=True)
 
+  pprint(stats)
+
+  '''
   ##  Fig. 12 of https://arxiv.org/pdf/0706.4091.pdf
   for survey in stats:
     Phis = SchechterMfn(Ms, stats[survey]['schechter']['phi_star'], stats[survey]['schechter']['M_star'], stats[survey]['schechter']['alpha'])
     pl.semilogy(Ms, Phis, label=survey)
 
-  pl.xlabel(r'$M_{AB}(1700\AA)$')
+  pl.xlabel(r'$M_{AB}(1700\AA) - 5\rm{log}_{10}(h_{70})$')
   pl.ylabel(r'$N/mag/h_{70}^{-3}\rm{Mpc}^3$')
 
   pl.legend()
   pl.show()
+  '''
 
   print('\n\nDone.\n\n')
 
