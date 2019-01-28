@@ -2,14 +2,18 @@ import   numpy                 as      np
 import   pandas                as      pd
 import   matplotlib            as      mpl
 import   matplotlib.pyplot     as      plt
+import   astropy.units         as      u
 
 from     utils                 import  pprint
 from     nbar                  import  comovdensity, projdensity
 from     ilim                  import  get_contamination
+from     utils                 import  comoving_distance
+from     cosmo                 import  cosmo
 
 from     goldrush.specs        import  samplestats  as goldrush_stats
 from     Malkan.specs          import  samplestats  as malkan_stats
 from     reddy                 import  samplestats  as reddy_stats
+
 from     goldrush.ilim         import  get_nbarbymag
 from     goldrush.completeness import  interp_completeness
 
@@ -36,7 +40,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     count        = 0
     pnbars       = []
-    
+    '''
     ##  QSOs first. 
     for mlim in mlims:
         pnbar    = projdensity(2., 3., None, None, None, mlim=mlim, type='qso')
@@ -44,7 +48,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars  = np.array(pnbars)
     pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
-    
+    '''
     ##  Now dropouts.
     samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
     bands        = ['BX', 'Malkan', 'g', 'r']
@@ -64,7 +68,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
       
       pnbars     = []
-      
+      '''
       for mlim in mlims:
         if band in ['g', 'r']:    
           ##  Apply completeness correction to Schechter estimate.   
@@ -78,7 +82,8 @@ def plot_schechters(magbias=False, nointerloper=False):
       pnbars  = np.array(pnbars)
 
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
-      
+      '''
+      '''
       if band == 'BX':                                                                                                                              
         for mlim in np.arange(22.5, 26.0, 0.5):                                                                                                                                                                                           
           stats = reddy_stats(mlim)                                                                                                          
@@ -117,7 +122,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
         rate = get_contamination(magbins[:-1:50], round(stats[band]['z']), depth='D')
         pl.semilogy(magbins[:-1:50], pnbar[::50] * (1. - rate), color=color, marker='s', markersize=3, lw=0.)
-
+      '''
       if magbias:
         ##  Gradient for magnification bias. 
         grads   = np.gradient(pnbars, dm)
@@ -130,7 +135,7 @@ def plot_schechters(magbias=False, nointerloper=False):
             A = pnbars[i] / mlims[i] ** n
           
             pl.semilogy(mlims, A * mlims ** n, '--', color='k', label='', alpha=0.5) 
-
+    
     pl.xlim(22.4,  27.1)
     pl.ylim(1.e0,  7.e4)
 
@@ -143,24 +148,42 @@ def plot_schechters(magbias=False, nointerloper=False):
     ax  = pl.gca()
     axx = ax.twiny()
 
-    axx.set_xlabel(r'log$_{10}$\{$L_{\rm{min}} / $(ergs$/s$)\}')
+    ##  axx.set_xlabel(r'log$_{10}$\{$L_{\rm{min}} / $(ergs$/s$)\}')
 
+    '''
+    ##  Lyman-alpha. 
     ##  Lower limits on LF integral.
-    logLmins = np.arange(41.0, 44.0, 0.1)
+    logLmins = np.arange(40.0, 44.0, 0.1)
+
     pnbars   = []
 
     for logLmin in logLmins:                                                                                 
-      pnbar  = projdensity(2.2, 3.5, None, None, None, mlim=logLmin, type='lya', printit=True)                                                                     
+      pnbar  = projdensity(2.2, 3.5, None, None, None, mlim=logLmin, type='lya', printit=True)                                                                    
       pnbars.append(pnbar)                                                                                                                       
 
     pnbars   = np.array(pnbars)                                                                                                                        
     axx.semilogy(logLmins, pnbars, '-', label=r'$2.2 < z < 3.5$ Ly-$\alpha$', color='m', alpha=0.5, zorder=-1)
-    axx.set_xlim(44., 41.)
+    '''
+    ##  ... and Comparat OII.
+    print('\n\nSolving for Comparat OII.\n\n')
+
+    logSmins  = np.arange(-21., -14.0, 0.1)[::-1]
+    pnbars    = []
+
+    for logSmin in logSmins:
+      pnbar   = projdensity(0.6, 1.6, None, None, None, mlim=logSmin, type='oii', printit=False, app_linelim=True)
+      pnbars.append(pnbar)
+
+    pnbars    = np.array(pnbars)
+
+    axx.semilogy(logSmins, pnbars, '-', label=r'$0.6 < z < 1.6$ OII', color='c', alpha=0.5, zorder=-1)
+
+    ##  axx.set_xlim(44., 39.)
     
     pl.legend(loc=2)
-    
-    ##  And save. 
-    pl.savefig('plots/schechters.pdf', bbox_inches='tight')
+
+    pl.show()
+    ##  pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 
 
 if __name__ == "__main__":

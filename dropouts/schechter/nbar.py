@@ -1,4 +1,5 @@
 import  numpy                    as      np
+import  astropy.units            as      u
 
 from    cosmo                    import  cosmo
 from    params                   import  get_params
@@ -95,6 +96,18 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
 
     return  result
 
+  elif type == 'oii':
+    ##  Treat mlim as logLmin [ergs/s] limit.
+    from  comparat  import  oii_nbar
+
+    result = oii_nbar(z, logLmin=mlim, printit=False)
+    result = np.log10(result)
+
+    if printit:
+      print(mlim, result)
+
+    return  result
+
   else:
     ##  Derived from a Schechter fn.
     import  astropy.constants  as      const
@@ -137,25 +150,31 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     
     return  nbar
 
-def dVols(zs, cosmo, params):
+def dVols(zs, cosmo, params, tvol=False):
   Vs    = cosmo.comoving_volume(zs).value                                           ##  Get volume to each redshift slice.                               
+  Vs   *= params['h_100']**3.                                                       ##  [h^-1 Mpc]^3 
 
   dVs   = Vs - np.roll(Vs, 1)
-  dVs  *= params['h_100']**3.                                                       ##  [h^-1 Mpc]^3                                                        
 
+  ##  Lower z limit on each slice.
   zs    = zs[:-1]
   dVs   = dVs[1:]
 
-  return  zs, dVs
+  if tvol:
+    ##  Total volume of the slice. 
+    return  zs, dVs, Vs[-1] - Vs[0]
 
-def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None):
+  else:
+    return  zs, dVs
+
+def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False):
   ''' 
   Integrate (e.g. app. mag. selected) \bar n(z) over a redshift slice of 
   width dz to get expected galaxies per sq. degree.  
   '''
   
   zs       =  np.linspace(zmin, zmax, 1500)
-  zs, dVs  =  dVols(zs, cosmo, params)
+  zs, dVs  =       dVols(zs, cosmo, params)
 
   pnbar    =  0.0
 
@@ -164,17 +183,30 @@ def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit =
     Get expected number density for app. mag. (dropout colour) selected expected sample at this redshift slice. 
     Note:  Neglects evolution in luminosity fn., but includes change in app. mag with z.
     '''
-    nbar   = comovdensity(zee, phi_star, M_star, alpha, type=type, mlim=mlim, printit=False)  
-    nbar   = 10. ** nbar             ## [(h_100/Mpc)^3]
+    if app_linelim:
+      ##  mlim interpreted as a line flux density limit in ergs/s/cm2.
+      ##  Note:  lack of h!  Matches DESI science report (on ELGs.)
+      ##  eqn. (3.89) of Cosmological Phyiscs: line-flux emission.                                                                                          
+      lumdist  = (1. + zee) * cosmo.comoving_distance(zee).value       ##  [Mpc]                                                                        
+      lumdist *= 1.e6 * u.parsec.to('cm')                              ##   [cm]                                                                         
+
+      limit    = mlim + np.log10(4. * np.pi) + 2. * np.log10(lumdist)
+
+      nbar     = comovdensity(zee, phi_star, M_star, alpha, type=type, mlim=limit, printit=False)
+
+    else:
+      nbar     = comovdensity(zee, phi_star, M_star, alpha, type=type, mlim=mlim, printit=False)  
+
+    nbar = 10. ** nbar               ##  [(h_100/Mpc)^3]
 
     if completeness is not None:
       pnbar += dVs[i] * nbar * completeness(zee)
 
     else:
-      pnbar += dVs[i] * nbar         ## Aggregate number of each slice.   
+      pnbar += dVs[i] * nbar         ##  Aggregate number of each slice.   
 
-  pnbar   /= 4.*np.pi                ## Galaxies per steradian.                          
-  pnbar   /= (180. / np.pi)**2.      ## Galaxies per sq. degree.
+  pnbar   /= 4.*np.pi                ##  Galaxies per steradian.                          
+  pnbar   /= (180. / np.pi)**2.      ##  Galaxies per sq. degree.
 
   if printit:
     print('mlim:  %3.3lf \t z:  %.1lf \t %6.6le g/deg^2 \t\t Vol.:  %6.3le (Mpc/h)^3' % (mlim, (zmin + zmax) / 2., pnbar, dVs.sum()))
@@ -187,7 +219,7 @@ if __name__ == "__main__":
 
 
   print("\n\nWelcome to a Schechter fn. calculator for the projected density of LBG dropouts.\n\n")
-
+  '''
   stats          =  samplestats(printit = True)    ## Luminosity fn. of * all star forming galaxies *. 
                                                    ## Note:  [\phi*] = [h_70/Mpc]^3 per mag, for M*_AB(1700 \AA).
 
@@ -208,5 +240,11 @@ if __name__ == "__main__":
   ## nbar        =  comovdensity(loz, phi_star, M_star, alpha, type='app', mlim=mlim, printit=True)
   
   pnbar          =   projdensity(loz, hiz, phi_star, M_star, alpha, mlim, printit = True)
+  '''
+
+  zs            = np.arange(0.6, 1.61, 0.01)
+  zs, dVs, tVol =   dVols(zs, cosmo, params, tvol=True)  
+
+  print(tVol * 0.00398107170553 / 41252.96) 
 
   print("\n\nDone.\n\n")

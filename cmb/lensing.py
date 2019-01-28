@@ -38,7 +38,7 @@ def Ckk(Pk_interps, Llls, pickle=False, zmax=params['zscatter']):
  prefactor   = (const.c.to('km/s').value / cosmo.H(z).value)*(lensing_kernel(z) / chis)**2.
 
  integrand   =  prefactor[:, None] * result
- integrand  /=  params['h_100']**3.           ## account for [h^-1 Mpc]^3 of Pmm.                                                                             
+ integrand  /=  params['h_100']**3.           ## account for [h^-1 Mpc]^3 of Pmm.                                                                         
 
  result      =  simps(integrand, dx = z[1] - z[0], axis=0)
 

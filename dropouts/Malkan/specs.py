@@ -30,14 +30,43 @@ def samplestats(mag=25.5):
   
   return  stats
 
+def get_pz(interp=False):
+  ##  Strictly, this is the normalised completeness.
+  ##  Neglects change in volume. 
+  from scipy.interpolate import interp1d
+  
+
+  zs, cs = np.loadtxt(os.environ['LBGCMB'] + '/dropouts/Malkan/dat/pz.dat', unpack=True)
+  
+  dz     = zs[1] - zs[0]
+  cs    /= cs.sum()
+  cs    /= dz
+
+  print(np.sum(dz * cs.sum()))
+  
+  if interp:
+    return interp1d(zs, cs, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
+
+  else:
+    return zs, cs
+
 
 if __name__ == '__main__':
-    print("\n\nWelcome.\n\n")
+    import pylab as pl
 
+
+    print("\n\nWelcome.\n\n")
+    '''
     stats = samplestats()
     
     for key in stats:
       for skey in stats[key]:
         print key, skey, stats[key][skey]
-    
+    '''
+
+    zs, ps  = get_pz()
+
+    pl.plot(zs, ps)
+    pl.show()
+         
     print("\n\nDone.\n\n")

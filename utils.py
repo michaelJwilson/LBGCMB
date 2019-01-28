@@ -150,14 +150,15 @@ def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     https://stackoverflow.com/questions/18311909/how-do-i-annotate-with-power-of-ten-formatting
     '''
     if not exponent:
-        exponent = int(floor(log10(abs(num))))
+        exponent = np.int(np.floor(np.log10(np.abs(num))))
 
-    coeff = round(num / float(10**exponent), decimal_digits)
+    coeff = np.round(num / np.float(10.**exponent), decimal_digits)
 
     if not precision:
         precision = decimal_digits
 
-    return r"${0:.{2}f}\cdot10^{{{1:d}}}$".format(coeff, exponent, precision)
+    ##  \cdot    
+    return r"${0:.{2}f} \times 10^{{{1:d}}}$".format(coeff, exponent, precision)
 
 
 if __name__ == "__main__":

@@ -49,8 +49,8 @@ ckk                                =  Ckk(Pk_interps, Llls, pickle=False)
 nkk                                =  Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
                                           thetab=thetab, DeltaT=DeltaT, iterative=iterative, pickleit=True)
 
-ckk                                = ckk[::5]
-nkk                                = nkk[::5]
+ckk                                =  ckk[::5]
+nkk                                =  nkk[::5]
 
 pl.loglog(Llls[::5], Llls[::5] * ckk,      label=r'$L \cdot C_{\kappa \kappa}$')
 pl.loglog(Llls[::5], Llls[::5] * nkk, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5, dashes=[3,1])
