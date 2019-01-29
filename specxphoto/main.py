@@ -49,7 +49,9 @@ def pz_photo(z, sigma, z0, zlo, zhi):
 
   return  pzp(z, z0=0.4) * pz_zp(z, sigma, zlo, zhi)
 
-def Cpp():
+def Cpp(z0, sigma, zlo, zhi, b1, b2, alpha=1.0, disp = 4.0, nowiggle=False, nobroadband=True, noks=False):
+  ps = lambda z:  1. / (zhi - zlo) 
+
   return  None
 
 def Css(zlo, zhi, b1, noks=False):
