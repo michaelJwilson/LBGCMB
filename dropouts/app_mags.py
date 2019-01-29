@@ -16,10 +16,10 @@ from    add_desinoise       import  add_desinoise
 
 
 def load_sed(fname="../quickspectra/spectra/spec-ABmag22.0.dat", flux_unit=1.e-17):
-  """                                                                                                                                                     
+  '''                                                                                                                                                  
   Load ls, Fl of AB magnitude source of constant Fv;                                                                                                  
   Default is 22 mag, corresponding to Fv of 5.75 micro Jy.                                                                                               
-  """
+  '''
 
   spectra   = np.loadtxt(fname)
 
@@ -30,10 +30,10 @@ def load_sed(fname="../quickspectra/spectra/spec-ABmag22.0.dat", flux_unit=1.e-1
 
 
 def get_appmags(vs, Fv, filters, printit=False): 
-  """
+  '''
   Given a list of filters, rest wavelengths ls and F_\lambda at those wavelengths, 
   return the apparent magnitude in each filter band.
-  """
+  '''
   
   import  collections
 
@@ -41,9 +41,16 @@ def get_appmags(vs, Fv, filters, printit=False):
   
   mags           = collections.OrderedDict()
 
+  ##  Check vs is monotonically increasing.                                                                                                                
+  assert  np.all(np.diff(vs) >= 0.)
+
   ## Implement eqn. (7) of ./GALAXEV/doc/bc03.pdf 
   for i, band in enumerate(filters.keys()):                                         
     filter       = filters[band]
+    
+    ##  Assume filter vs are derived from ls and are monotonically decreasing,                                                                             
+    ##  in which case they need reversed.                                                                                                                    
+    assert np.all(np.diff(filter['vs']) <= 0.)
 
     ## Filters are defined in wavelength; calculate normalisation by eqn. (8) denominator.
     norm         = np.trapz(filter['Ts'] / filter['vs'], filter['vs'])
