@@ -4,7 +4,6 @@ import  pylab              as      pl
 import  matplotlib         as      mpl
 import  matplotlib.pyplot  as      plt 
 
-from    nbar               import  mlimitedM, dVols
 from    params             import  get_params
 from    qso_kcorr          import  get_qsokcorr
 from    cosmo              import  cosmo
@@ -78,7 +77,7 @@ def kcorr(zee):
 
 def gmag(Mg, zee, restM=False, printit=False):
     ##  Observationally, this is the galactic extinction corrected g band mag. 
-    ##  i.e. gdered of NPD++.
+    ##  i.e. g_dered of NPD++.
     ##  Mg is the z=2 absolute mag. in the g-band. 
     ##  eqn. (4) of https://arxiv.org/pdf/1509.05607.pdf
 

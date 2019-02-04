@@ -29,7 +29,7 @@ def integrand(z, mu, y, Pk_interps, fsky):
     a    = 1. / (1. + z) 
     beta = growth_rate(a) / linb(z)
 
-    ## FKP volume weighting
+    ##  FKP volume weighting
     nP   = Gauss_nz(z) * Kaiser(Pk_interps, beta, z, mu, k)
     fkp  = nP / (1. + nP)
     
