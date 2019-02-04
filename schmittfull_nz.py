@@ -31,9 +31,7 @@ def load_samples():
     return  pd.read_csv("dat/ss17_tracers.dat", names = ['zmin', 'zmax', 'N', 'Surveys'], sep = '\s+')
 
 def get_ss17_samples(nolsst=False):
-    ##  Call:  ns, ps, bs = get_ss17_samples()
-
-    ## -- non-LSST -- ##                                                                                                                         
+    ## -- non-LSST -- ##                                                                                                                   
     dframe    =  load_samples()
     surveys   =  list(dframe['Surveys'].values)
 

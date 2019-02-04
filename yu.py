@@ -35,6 +35,7 @@ NLlls, Llls, nmodes                =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5
 fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                       bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
+##  <\bar n>, p(z), b(z).
 ns, ps, bs, ss                     =  get_ss17_samples(nolsst=False)
 
 samples                            =  zip(bs, ps, ns)
