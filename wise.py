@@ -6,7 +6,7 @@ from    scipy.integrate    import  simps
 from    scipy.interpolate  import  interp1d
 
 
-def get_wisesn():
+def get_wise_shot():
     return  1.2e-10
 
 def get_wisepz():

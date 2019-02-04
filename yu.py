@@ -23,7 +23,7 @@ from    schmittfull_nz     import  get_ss17_samples
 latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 
 cmbexp                             = 'CMBS4'
-plotit                             =  True
+plotit                             =   True
 
 cambx                              =  CAMB()
 Pk_interps                         =  get_PkInterps(cambx)
@@ -39,6 +39,10 @@ ns, ps, bs, ss                     =  get_ss17_samples(nolsst=False)
 
 samples                            =  zip(bs, ps, ns)
 samples                            =  samples[2:4]
+
+print(samples)
+
+exit(1)
 
 result                             =  []
 
@@ -85,13 +89,6 @@ for ii, L in enumerate(Llls):
     for j in np.arange(len(kg)):
       interim   += kg[i] * irho[i, j] * kg[j] 
       
-  ## print  kg
-  ## print  gg
-  ## print  diag
-  ## print  rho
-  ## print  irho
-  ## print  L, np.sqrt(result)
-
   result.append([L, np.sqrt(interim)])
   
 
