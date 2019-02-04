@@ -23,8 +23,8 @@ specxphoto/sdss9/
 starburst99/data.tar
 specxphoto/sdss9/
 specxphoto/cmass/
-mask/COM_Mask_Lensing_2048_R2.00.fits
-mask/
+mask/dat/
+mask/desi/
 sdss9/
 cmass/
 fsps/
@@ -284,15 +284,6 @@ desihub/desitutorials/redrock/redrock/templates
 ./cmass/galaxy_DR12v5_CMASS_North.fits
 ./cmass/galaxy_DR12v5_CMASS_South.fits
 ./hirata/.git/objects/pack/pack-9d7c92fec6733d9c66bfb756efba511607e74ddc.pack
-./mask/ACT_148_south_hits_hpx.fits
-./mask/hsc_256.txt
-./mask/desi_256.dat
-./mask/COM_Mask_Lensing_2048_R2.00.fits
-./mask/ACT_148_equ_hits_hpx.fits
-./mask/mask_40pc.fits
-./mask/wmap_temperature_kq85_analysis_mask_r9_9yr_v5.fits
-./mask/desi_footprint_imap.dat
-./mask/opsim_nvisits_g.fits
 ./dropouts/SED/GAL/EZGAL/models/bc03_ssp_z_0.02_salp.model
 ./dropouts/SED/GAL/EZGAL/models/bc03_const_1.0_tV_5.0_z_0.05_salp.model
 ./dropouts/SED/GAL/EZGAL/models/cb07_const_1.0_tV_5.0_z_0.02_chab.model
