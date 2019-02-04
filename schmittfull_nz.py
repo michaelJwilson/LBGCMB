@@ -58,7 +58,7 @@ def get_ss17_samples(nolsst=False):
       bs       += [lambda z:  (1. + z)]
       surveys  += ['LSST']
 
-    print('\n\nAvailable surveys: ' + ''.join('  %s;' % s for s in surveys))
+    print('\n\nAvailable surveys: ' + ''.join('  %s;' % s for s in surveys) + '\n\n')
 
     return  ns, ps, bs, surveys
 

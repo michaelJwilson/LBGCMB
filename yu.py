@@ -22,7 +22,7 @@ from    schmittfull_nz     import  get_ss17_samples
 
 latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 
-cmbexp                             = 'CMBS4'
+Test                               =   True 
 plotit                             =   True
 
 cambx                              =  CAMB()
@@ -32,46 +32,52 @@ Pk_interps                         =  get_PkInterps(cambx)
 
 NLlls, Llls, nmodes                =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5000., log10=True)
 
+cmbexp                             = 'CMBS4'
 fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                       bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
 ##  <\bar n>, p(z), b(z).
 ns, ps, bs, ss                     =  get_ss17_samples(nolsst=False)
 
+if Test:
+  nsurvey =            1
+  
+  bs      = bs[:nsurvey]
+  ps      = ps[:nsurvey]
+  ns      = ns[:nsurvey]
+
 samples                            =  zip(bs, ps, ns)
-samples                            =  samples[2:4]
-
-print(samples)
-
-exit(1)
-
 result                             =  []
 
-## Ckk
+##  Ckk
 ckk                                =  Ckk(Pk_interps, Llls, pickle=False)
 nkk                                =  Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
                                           thetab=thetab, DeltaT=DeltaT, iterative=iterative, pickleit=True)
 
+##  Sub-divide Llls.
 Llls                               =  Llls[::5]
 ckk                                =   ckk[::5]
 nkk                                =   nkk[::5]
 
-zmin                               =   0.01
-zmax                               =  10.00
+zmin                               =       0.01
+zmax                               =      10.00
 
 for ii, L in enumerate(Llls):
+  print('Solving for %d of %d' % (L, Llls.max()))
+  
   L              =  np.array([L])
-  kk             =  ckk[ii]
+  kk             =        ckk[ii]
   
-  kg             = [ Ckg(Pk_interps, L, zmin, zmax, p, b, zeff = False)                           for [b, p, n] in samples]
+  kg             = [Ckg(Pk_interps, L, zmin, zmax, p, b, zeff = False)                            for [b,  p,  n]  in samples]
   
-  ## Shotnoise to be added?
-  gg             = [[Cgg(Pk_interps, L, zmin, zmax, p, b, bz2  = b2, survey_pz2 = p2, zeff=False) for [b, p, n] in samples] for [b2, p2, n2] in samples]
+  gg             = [[Cgg(Pk_interps, L, zmin, zmax, p, b, bz2  = b2, survey_pz2 = p2, zeff=False) for [b,  p,  n]  in samples]\
+                                                                                                  for [b2, p2, n2] in samples]
   
   kg             =  np.array(kg)
   gg             =  np.array(gg)[:,:,0]
 
   for i, [b, p, n] in enumerate(samples):
+    ##  Add shotnoise.
     gg[i,i]     +=  Ngg(L, zmin, zmax, p, n)
 
   diag           =  np.diag(gg)
@@ -91,7 +97,6 @@ for ii, L in enumerate(Llls):
       interim   += kg[i] * irho[i, j] * kg[j] 
       
   result.append([L, np.sqrt(interim)])
-  
 
 result  = np.array(result)[:,:,0]
 rho     = interp1d(result[:,0], result[:,1], kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
@@ -114,6 +119,8 @@ pl.xlabel(r'$L$')
 
 pl.xlim(50.,    4.e3)
 pl.ylim(1.e-6, 3.e-5)
+
+pl.yscale('linear')
 
 pl.legend(ncol=2, handlelength=.5, loc=3, handletextpad=0.5)
 
