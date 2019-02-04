@@ -48,7 +48,7 @@ def nWCIB(z, nu = 353., zc=2., sigmaz=2.):
     return  WCIB(z, nu, zc, sigmaz) / norm
 
 def cib_effshot():
-    ##  353GHz CIB
+    ##  353 GHz CIB
     return  2.1e-13
 
 
