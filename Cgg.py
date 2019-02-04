@@ -168,11 +168,11 @@ if __name__ == "__main__":
 
   print("\n\nWelcome to Cgg.\n\n")
 
-  ## Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                     
+  ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                     
   cambx                              =  CAMB()
   Pk_interps                         =  get_PkInterps(cambx)
 
-  ## No Detector noise -- this should be handled by Clxy of prep_camb.                                                                                  
+  ##  No Detector noise -- this should be handled by Clxy of prep_camb.                                                                                  
   (lensCl_interps, nolensCl_interps) =  cambx.get_Cls()
 
   NLlls, Llls, nmodes                =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5000., log10=True)

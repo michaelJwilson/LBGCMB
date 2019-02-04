@@ -1,242 +1,306 @@
 import  pickle
 import  numpy              as      np
 import  pylab              as      pl
-import  astropy.constants  as      const
+import  matplotlib.pyplot  as      plt
 
 from    numpy.linalg       import  inv
 from    scipy.interpolate  import  interp1d
-from    params             import  params
-from    astropy.cosmology  import  FlatLambdaCDM
-from    utils              import  prefactor, comoving_distance
-from    Cgg                import  sliced_pz, Ngg
-from    scipy.integrate    import  simps
-from    scipy.misc         import  derivative
-from    dplus              import  growth_factor
-from    qso_bz             import  qso_bz
+from    params             import  get_params
 from    cosmo              import  cosmo
+from    utils              import  prefactor, comoving_distance
+from    Cgg                import  Ngg
+from    scipy.misc         import  derivative
+from    growth_rate        import  growth_factor
+from    pmh                import  linz_bz
+from    qso_bz             import  qso_bz
+from    Gaussian_pz        import  Gaussian_pz
+from    scipy.special      import  erf
+from    prep_pk            import  prep_pk
+from    pnw                import  pnw
+from    fisher_contour     import  plot_ellipse
+from    utils              import  latexify, sci_notation
 
 
-wiggle           = np.loadtxt('wiggle.dat')
-nowiggle         = np.loadtxt('nowiggle.dat')
-
-diff             = wiggle - nowiggle
-diff[:,0]        = wiggle[:,0]
-
-diff_interp      = interp1d(    diff[:,0],     diff[:,1], bounds_error=False, fill_value=0.0)
-wiggle_interp    = interp1d(  wiggle[:,0],   wiggle[:,1], bounds_error=False, fill_value=0.0)
-nowiggle_interp  = interp1d(nowiggle[:,0], nowiggle[:,1], bounds_error=False, fill_value=0.0) 
-
-##  Assumed width in dz.
-survey_dzs       = {"LSST": 2.0, "SDSS9": 2.0, "CMASS": 0.15, "QSO": 0.15}
-
-def lsst_bz(z):
-    return  1.0 + z
-
-def bzs(z, survey):
-    if survey == "CMASS":
-        return  2.0
-
-    elif survey == "QSO":
-        return  qso_bz(z)
-
-    elif survey == "LSST":
-        return  lsst_bz(z)
-
-    elif survey == "SDSS9":
-        return  lsst_bz(z)
-
-    else:
-        raise  ValueError("Erroneous input to bzs:  ", z, survey)
-
-def Pab(k, ba, bb, alpha = 1.0, sigma = 2., nowiggle=False):
-  if nowiggle == False:
-    ##  Include wiggles.
-    interim = ba * bb * (nowiggle_interp(k / alpha) + diff_interp(k / alpha) * np.exp( - k * k * sigma * sigma / 2.))
-        
-    return  interim * alpha**2.
-
-  elif nowiggle == True:
-    interim = ba * bb *  nowiggle_interp(k / alpha)
-        
-    return  interim * alpha**2.
-
-  else:
-    raise  ValueError("Erroneous input to Pab.")
-
-def nPab(k, ba, bb, alpha = 1.0, sigma = 2., Aps = 1.0, Am3=0.0, Am2=0.0, Am1=0.0, Ap0=0.0, Ap2=0.0, nowiggle=False):
-    ##  Pps with additional nuisance parameters to mitigate information emanating from the broad-band power shape.
-    result   =  Pab(k, ba, bb, alpha, sigma, nowiggle=nowiggle)
-    result  *=  Aps
-    
-    result  +=  Am3 * k **-3.
-    result  +=  Am2 * k **-2.
-    result  +=  Am1 * k **-1.
-    result  +=  Ap0 * k **+0.
-    result  +=  Ap2 * k **+2.
-
-    return  result
-
-def Cab(Llls, spec_z, surveya = 'LSST', surveyb = 'QSO', alpha = 1.0, sigma = 2., zeff=True, nowiggle=False):
-  '''
-  Angular correlation function: i.e. C_sp(L, z).
-  '''
-
-  z           = np.arange(0.01, 5.0, 0.01)
-  chis        = comoving_distance(z)
-
-  ba          = bzs(spec_z, surveya)
-  bb          = bzs(spec_z, surveyb)
+def Psp(z, b1, b2):
+  ks, Ps = prep_pk(z)
   
-  if zeff == True:
-    '''                                                                                                                                                    
-    Compute Cgg in the z_eff and first-order Limber approximations for a slice of galaxies at spec_z of width dz.                                        
-    eqn. (5) of https://arxiv.org/pdf/1511.04457.pdf                                                                                                      
-    '''
-    ks        = (Llls + 0.5)/comoving_distance(spec_z)                                              ## For the Phh evaluation in the integral, we take a zeff approx.
-                                                                                                    ## i.e. \int dz .... Phh(zeff).                              
-    result    = np.broadcast_to(Pab(ks, ba, bb, alpha, sigma, nowiggle), (len(z), len(Llls)))       ## Broadcast to each redshift.                                     
+  return  ks, b1(z) * b2(z) * Ps
+
+def pz_zp(z, sigma, zlo, zhi):
+  ##  prob(z | zp) for zp \in [zlo, zhi] defined by spec. slice
+  ##  See eqn. (11) of 1302.6015
+  sigma *= (1. + np.mean([zlo, zhi]))
+
+  xhi    = (zhi - z) / np.sqrt(2.) / sigma
+  xlo    = (zlo - z) / np.sqrt(2.) / sigma
+
+  return  0.5 * (erf(xhi) - erf(xlo))
+
+@np.vectorize
+def pzp(z, z0=0.4):
+  ##  prob(zp)
+  ##  See eqn. (12) of 1302.6015   
+  return  z * z / 2. / z0 / z0 / z0 * np.exp(-z / z0)
+
+@np.vectorize
+def pz_photo(z, sigma, z0, zlo, zhi):
+  dzp  = 0.01
+  zp   = np.arange(0.0, 5.0, dzp)
+
+  return  pzp(z, z0=0.4) * pz_zp(z, sigma, zlo, zhi)
+
+def Cpp(z0, sigma, zlo, zhi, b1, b2, alpha=1.0, disp = 4.0, nowiggle=False, nobroadband=True, noks=False):
+  ps = lambda z:  1. / (zhi - zlo) 
+
+  return  None
+
+def Css(zlo, zhi, b1, noks=False):
+  ##  In the zeff approx.
+  lochi    = comoving_distance(zlo)
+  hichi    = comoving_distance(zhi)
+
+  midz     = np.mean([zlo, zhi])
+  ks, Ps   = Psp(midz, b1, b1)
+
+  ##  Fraction of spectroscopic galaxies that reside in the 
+  ##  bin is unity by definition. 
+  Cs       = Ps / (hichi - lochi) 
+
+  if noks:
+    return Ps
+  
   else:
-    result    = np.zeros((len(spec_z), len(Llls)))
+    return ks, Ps 
 
-    for i, j in enumerate(z):
-      ks      = (Llls + 0.5)/chis[i]                                                                ## Evaluate Phh for each z and k(ell, z).               
-                                                                                                    ## Given L mixes at range of k -- washes out BAO.  
+@np.vectorize
+def Csp(z0, sigma, zlo, zhi, b1, b2, alpha=1.0, disp = 4.0, nowiggle=False, nobroadband=True, noks=False):
+  ##  In the zeff approx.
+  lochi    = comoving_distance(zlo)
+  hichi    = comoving_distance(zhi)
 
-      ## accounts for spatial to angular mapping as function of z, i.e. k = (l + 0.5)/chi(z) but neglects redshift evolution of Pps(k).
-      result[i,:] = Pab(ks, ba, bb, alpha, sigma, nowiggle)                                         
+  midz     = np.mean([zlo, zhi])
+  
+  if nowiggle == 'damped':
+    ##  BAO work.
+    ks, Ps = Psp(midz, b1, b2)
+    ks, Ns = pnw(midz, b1, b2)
 
-  prefactor   = (cosmo.H(z).value/const.c.to('km/s').value)*(sliced_pz(z, spec_z, survey_dzs[surveya], surveya, True)/chis) \
-                                                           *(sliced_pz(z, spec_z, survey_dzs[surveyb], surveyb, True)/chis)
+    Ps     = interp1d(ks, Ps, kind='linear', copy=True, bounds_error=False, fill_value=0.0)
+    Ns     = interp1d(ks, Ns, kind='linear', copy=True, bounds_error=False, fill_value=0.0)
 
-  integrand   =  prefactor[:, None]*result
-  integrand  /=  params['h_100']                                                                    ## account for [h^-1 Mpc]^3 of P(k) and h^-1 Mpc of chi_g.
- 
-  return  simps(integrand, dx = z[1] - z[0], axis=0)                                                ## integral over z. 
+    kp     = np.copy(ks)  ##  Wavenumber in fiducial cosmology.
+    ks     = alpha * kp   ##  Wavenumber in true cosmology, kp = (k / alpha).
 
-def _aCab(alpha, Llls, spec_z, surveya="LSST", surveyb="QSO", sigma=2., zeff=True, nowiggle=True):
-    ##  wrapper with alpha as leading argument for derivative calc.
-    return  Cab(Llls, spec_z, surveya, surveyb, alpha, sigma, zeff=True, nowiggle=nowiggle)
-
-def _sCab(sigma, Llls, spec_z, surveya="LSST", surveyb="QSO", alpha=1., zeff=True, nowiggle=True):
-    ##  wrapper with sigma as leading argument for derivative calc.                                                                                      
-    return  Cab(Llls, spec_z, surveya, surveyb, alpha, sigma, zeff=True, nowiggle=nowiggle)
-
-def get_errors(Fisher, nowiggle=False, print_it=True):
-    iFisher   = inv(Fisher)
-    nowiggle  = str(nowiggle)
-
-    if  Fisher[0][0] > 0.0:
-        CondErr  = 1./np.sqrt(Fisher[0][0])
-
+    if nobroadband:
+      Ps     = (Ps(kp) - Ns(kp)) * np.exp(- ks * ks * disp * disp / 2.) + Ns(ks)
+      
     else:
-        CondErr  = np.NaN 
+      ##  Argument change to broadband term. 
+      Ps     = (Ps(kp) - Ns(kp)) * np.exp(- ks * ks * disp * disp / 2.) + Ns(kp)
 
-    if iFisher[0][0] > 0.0:
-        MargErr  = np.sqrt(iFisher[0][0])
+    ##  Rename to match rest of script.
+    ks     = kp
 
-    else:
-        MargErr  = np.NaN 
+  elif nowiggle:
+    ks, Ps = pnw(midz, b1, b2) 
 
-    if print_it == True:
-        print "\n\nFisher matrix for no_wiggle = %s:  " % nowiggle
-        print  Fisher
+  else:
+    ##  Full wiggle.
+    ks, Ps = Psp(midz, b1, b2)
 
-        print "\nInverse Fisher:"
-        print  iFisher
-        
-        print "\nConditional error on alpha: %.6lf" % CondErr
-        print "Marginal    error on alpha: %.6lf"   % MargErr
+  dz      = 0.01
+  zs      = np.arange(0.0, 10.0, dz)
 
-    return  iFisher, CondErr, MargErr
+  nbar    = dz * np.sum(pz_photo(zs, sigma, z0, zlo, zhi))
+  
+  zs      = np.arange(zlo, zhi + dz, dz)
+  frac    = dz * np.sum(pz_photo(zs, sigma, z0, zlo, zhi))
+
+  Cs      = frac * Ps / (hichi - lochi)
+
+  if noks:
+    return  Cs
+
+  else:
+    return  ks, Cs
+
+def deriv_Csp(param, z0, sigma, zlo, zhi, b1, b2, alpha=1.0, disp=4.0, nowiggle=False, nobroadband=True):
+  ##  Derivative of Csp wrt alpha or displacement (Sigma).
+  if param == 'alpha':
+    fz   = lambda z:  Csp(z0, sigma, zlo, zhi, b1, b2, alpha=z, disp = disp, nowiggle='damped', nobroadband=nobroadband, noks=True)
+    dfdz = derivative(fz, alpha, dx=0.001, n=1, order=3)
+
+  elif param == 'disp':
+    fz   = lambda z:  Csp(z0, sigma, zlo, zhi, b1, b2, alpha=alpha, disp = z, nowiggle='damped', nobroadband=nobroadband, noks=True)
+    dfdz = derivative(fz, disp, dx=0.1, n=1, order=3)
+
+  else:
+    raise UserWarning('\n\nRequested derivative is not available.\n\n')
+
+  return dfdz
+
+def cov_Csp(z0, sigma, zlo, zhi, b1, b2, ns):
+  ##  Currently assume dominated by cross-correlation term.
+  ##  See eqn. (14) of 1302.6015
+  ks, Cxy =  Csp(z0, sigma, zlo, zhi, b1, b2, nowiggle=True)
+
+  ks, Cxx =  Css(zlo, zhi, b1, noks=False)
+  Cyy     =  np.zeros_like(Cxx)
+
+  lochi   =  comoving_distance(zlo)
+  hichi   =  comoving_distance(zhi)
+  
+  pdist   =  hichi - lochi
+  ns     *=  pdist
+
+  ##  \bar n_p e zs;  See eqn.(14).
+  dz      = 0.01
+  zs      = np.arange(0.0, 10.0, dz)
+
+  _np     = dz * np.sum(pz_photo(zs, sigma, z0, zlo, zhi))
+
+  return  Cxy ** 2. + (Cxx + 1. / ns) * (Cyy + 1. / _np) 
+
+def nmodes2D(ks, dk, zlo, fsky):
+  return  2. * fsky * ks * dk * (1. + zlo) ** 2. * comoving_distance(zlo) ** 2. 
+
+def TDdChi2(V, zspec, kmax, nbar, b1, dk=0.01):
+  ks, Ps    =  Psp(zspec, b1, b2)
+  ks, PNs   =  pnw(zspec, b1, b2)
+
+  Ps        =  Ps[ks <= kmax]
+  PNs       = PNs[ks <= kmax]
+  ks        =  ks[ks <= kmax]
+
+  result    = (1. / (2. * np.pi) ** 2.) * ks * ks * dk * ((Ps - PNs) / (Ps + 1. / nbar)) ** 2.
+  result    = np.sum(result)
+  result   *= V               ##  eqn. (18) of 1302.6015 has wrong V factor for mode counting?
+
+  return  result
 
 
 if __name__ == '__main__':
-    surveys  = 'CMASS'
-    surveyp  = 'SDSS9'
+  print("\n\nWelcome to Nishizwa.\n\n")
 
-    spec_z   = 0.75
-    fsky     = 0.23                                                    ##  Assumes CMASS is the limiting area.   
-                                                                       ##  QSOs are slightly smaller, but same ball park.
-    alpha    = 1.0
+  fsky    =  0.1
+  
+  zspec   =  0.8
+ 
+  zlo     =  0.6
+  zhi     =  1.0
 
-    sigma_z0 = 7.0                                                     ##  [Mpc/h] at z=0 for LCDM models (close to what we now believe).
-    sigma    = sigma_z0 * growth_factor(1./(1. + spec_z))              ##  Scales as D(z).
+  b1      = qso_bz
+  b2      = linz_bz
 
-    ells     = np.arange(2., 1500., 1.)
+  z0      =  0.4
+  sigma   =  1.0
+  
+  '''
+  ks, Ps  = Psp(zspec, b1, b2)
+  '''
+  '''
+  result  = []
+  kmaxs   = np.arange(0.1, 0.5, 0.05)
 
-    results  = {'False': {}, 'True': {}, 'Diff.': {}} 
+  for kmax in kmaxs:
+    dChi2 = TDdChi2(1.e9, zspec, kmax=kmax, nbar=1.e-3, b1=b1)
 
-    pl.clf()
+    print('%.2lf \t %.2lf' % (kmax, dChi2))
 
-    print "\nPerpendicular displacement at z = %.3lf:  %.4lf [Mpc/h]\n" % (spec_z, sigma)
+    result.append(dChi2)
 
-    ## types = [False]
-    types = [False, True]
+  result  = np.array(result)  
 
-    for nowiggle in types:
-        Css      = Cab(ells, spec_z, surveys, surveys, alpha, sigma, zeff=True, nowiggle = nowiggle)
-        Cps      = Cab(ells, spec_z, surveyp, surveys, alpha, sigma, zeff=True, nowiggle = nowiggle)
-        Cpp      = Cab(ells, spec_z, surveyp, surveyp, alpha, sigma, zeff=True, nowiggle = nowiggle)
+  pl.plot(kmaxs, result)
+  pl.show()
+  '''
+  '''
+  p1      = lambda z:  pp(z, sigma, 1.0, 1.8) 
+  p2      = lambda z:  Gaussian_pz(z, z0 = 2.96, sigma = 0.24)
 
-        Nss      = Ngg(ells, spec_z, survey_dzs[surveys], surveys)
-        Npp      = Ngg(ells, spec_z, survey_dzs[surveyp], surveyp)           ## Read in dz from surveys dict. 
+  zs      = np.arange(0.0, 5.0, 0.01)
 
-        var      = ((Cpp + Npp) * (Css + Nss) + Cps**2.) / (2. * ells + 1.)  
-        ## var   = ( Cpp        *  Css        + Cps**2.) / (2. * ells + 1.)  ## Sample variance limited. 
+  pl.plot(zs, pzp(zs, z0=z0), 'k-', label=r'$Prob(z_p)$')
 
-        var     /= fsky
+  for [x,y] in [[0.6, 1.0],[1.0, 1.8],[1.8, 3.2]]:
+    pl.plot(zs, pz_photo(zs, sigma, z0, x, y), label='1')
+    pl.plot(zs, pz_photo(zs, sigma, z0, x, y), label='2')
+    pl.plot(zs, pz_photo(zs, sigma, z0, x, y), label='3')
 
-        err      = np.sqrt(var)
+  pl.legend()
+  pl.show()
+  '''
+  '''
+  ks, Cs  = Csp(z0, sigma, zlo, zhi, b1, b2)
+  ls      = ks * comoving_distance(1.4)
 
-        if nowiggle == False:
-            pl.semilogy(ells, prefactor(ells) * Css, 'k-',  label=r'$C_{ss}$')
-            pl.semilogy(ells, prefactor(ells) * Cpp, 'r-',  label=r'$C_{pp}$') 
-            pl.semilogy(ells, prefactor(ells) * Cps, 'b-',  label=r'$C_{ps}$')
+  pl.loglog(ls, prefactor(ls, n=2) * Cs)
+  pl.show()
+  '''
+  '''
+  result = []
+  sigmas = [100., 0.1]
 
-            pl.semilogy(ells, prefactor(ells) * Nss, 'k--', label=r'$N_{ss}$')
-            pl.semilogy(ells, prefactor(ells) * Npp, 'r--', label=r'$N_{pp}$')
+  for sigma in sigmas:
+    ks, Cs  = Csp(z0, sigma, zlo, zhi, b1, b2, nowiggle=False)
+    ks, Ns  = Csp(z0, sigma, zlo, zhi, b1, b2, nowiggle=True)
 
-            pl.semilogy(ells, prefactor(ells) * err, 'b--', label=r'$\sigma_{ps}$')
-        
-            pl.xlabel(r'$L$')
-            pl.ylabel(r'$(2L+1) \ C_{\rm{ps}} (L) \ / \ 4 \pi$')
-    
-            pl.legend(loc=4, ncol=2)
-            
-            pl.title("%s x %s @ z = %.2lf" % (surveyp, surveys, spec_z))
-        
-            pl.savefig('Cps.pdf')
+    dChi2   = np.sum(nmodes2D(ks, 0.01, zlo, fsky) * (Cs - Ns) ** 2. / cov_Csp(z0, sigma, zlo, zhi, b1, b2))
 
-        ## ** Fisher matrix calculation. **
-        ## n:   order of derivative; order: e.g. 5-point derivative, must be odd.                                                      
-        ## see: https://docs.scipy.org/doc/scipy-0.19.1/reference/generated/scipy.misc.derivative.html
-        dCldA   = derivative(_aCab, alpha, dx=1e-6, n=1, order=5, args=(ells, spec_z, surveyp, surveys, sigma, True, nowiggle))
-        dCldS   = derivative(_sCab, sigma, dx=1e-6, n=1, order=5, args=(ells, spec_z, surveyp, surveys, alpha, True, nowiggle))
-    
-        FAA     = np.sum(dCldA * dCldA / var)
-        FAS     = np.sum(dCldA * dCldS / var)
-        FSS     = np.sum(dCldS * dCldS / var)
-        
-        Fisher  = np.array([[FAA, FAS], [FAS, FSS]])
+    pl.plot(ks, nmodes2D(ks, 0.01, zlo, fsky) * (Cs - Ns) ** 2. / cov_Csp(z0, sigma, zlo, zhi, b1, b2), label=r'$%.1lf, \ %.1lf$' % (sigma, dChi2))
 
-        ## Patej & Eisenstein prior:  0.8 < \alpha < 1.25
-        prior_width = 0.2
-        
-        ## In this case, if \sigma is the width of the prior pdf, simply add 1/\sigma^2 to 
-        ## the on-diagonal element corresponding to that variable (https://arxiv.org/pdf/0906.4123.pdf).
-        Fisher[0][0]              += 1./prior_width**2.
+    result.append(dChi2)
 
-        iFisher, CondErr, MargErr  = get_errors(Fisher, nowiggle)
-     
-        results[str(nowiggle)]     = {'Fisher': Fisher, 'iFisher': iFisher, 'CondErr': CondErr, 'MargErr': MargErr}
+  pl.legend()
+  pl.show()
 
-    results['Diff.']['Fisher']     = results['False']['Fisher']
-    results['Diff.']['Fisher']    -= results['True']['Fisher']
+  result = np.array(result)
+  '''
+  ##  pl.plot(sigmas, result)
+  ##  pl.show()
 
-    get_errors(results['Diff.']['Fisher'], "Diff.")
+  Fish   = np.zeros(4).reshape(2,2)
 
-    print "\n\n***  Patej and Eisenstein  ***"
-    print "D_M(z = 0.64) = (2418 \pm 73 Mpc) (rs / rs, fid)"
-    print "\nD_M frac. err.: %.6lf" % (73./2418.)
+  for i, x in enumerate(['alpha', 'disp']):
+    for j, y in enumerate(['alpha', 'disp']):
+      d1          = deriv_Csp(x, z0, sigma, zlo, zhi, b1, b2, alpha=1.0, disp=4.0, nowiggle='damped', nobroadband=True)
+      d2          = deriv_Csp(y, z0, sigma, zlo, zhi, b1, b2, alpha=1.0, disp=4.0, nowiggle='damped', nobroadband=True)
 
-    print "\nDone\n"
+      ##  Contribution of one redshift slice; ns = comoving number density of spec. z galaxies. 
+      Fish[i,j]   = np.sum(d1 * d2 / cov_Csp(z0, sigma, zlo, zhi, b1, b2, ns=1.e-4))  
+
+  iFish     = inv(Fish)
+
+  sig_alpha = np.sqrt(iFish[0,0])
+  sig_disp  = np.sqrt(iFish[1,1])
+
+  print('\n\nSolved for: sig. alpha:  %.4le \t sig. disp.:  %.4le.\n\n' % (sig_alpha, sig_disp))
+
+  ##  And plot contour ...                                                                                                                                 
+  pl.clf()
+
+  ##  latexify(columns=1, equal=True)
+
+  fig    = plt.gcf()
+  ax     = plt.gca()
+
+  for mass_level, color, alpha in zip([0.99, 0.95, 0.68], ['b', 'b', 'b'], [0.2, 0.4, 0.6]):
+    plot_ellipse(x_cent = 1.0, y_cent = 4.0, ax = ax, cov = iFish, mass_level = mass_level,\
+                 fill=True, fill_kwargs={'alpha': alpha, 'c': color}, plot_kwargs={'c': color, 'alpha': 0.0})
+
+  str    = sci_notation(sig_alpha, decimal_digits=2, precision=None, exponent=None)
+
+  pl.plot(1.0, 4.0, 'k*', markersize=5, label=r'$(\sigma_\alpha, \sigma_\Sigma)=$' + '(%.3lf, ' % sig_alpha + '%.0lf)' % sig_disp)
+
+  pl.xlabel(r'$\alpha$')
+  pl.ylabel(r'$\Sigma \ [(h^{-1} \rm{Mpc})]$')
+
+  pl.ylim(-400., 400.)
+
+  pl.legend(loc=3)
+
+  plt.tight_layout()
+
+  pl.savefig('plots/nishikawa.pdf')
+  
+  print("\n\nDone\n\n")

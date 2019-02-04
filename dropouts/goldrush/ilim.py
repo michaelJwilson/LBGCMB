@@ -196,7 +196,7 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
         
         ymax = pnbar[magbins < 24.5].max()
         
-        axarray[k].set_xlim(23.0,       26.5)  ## [magbins[1], magbins[-2]] 
+        axarray[k].set_xlim(23.0,  26.5)  ## [magbins[1], magbins[-2]] 
         axarray[k].set_ylim([10., 8.e3])
 
         axarray[k].set_xlabel(r'$%s_{\rm{AB}}$'     %  detection_bands[dropband])

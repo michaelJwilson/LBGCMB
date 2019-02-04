@@ -1,7 +1,9 @@
-from  __future__   import  division
-from  schechterfn  import  SchechterMfn 
-from  params       import  get_params
+from  __future__         import  division
+from  schechterfn        import  SchechterMfn 
+from  params             import  get_params
+from  scipy.interpolate  import  interp1d
 
+import  os
 import  numpy  as  np
 
 
@@ -140,6 +142,25 @@ def get_pEBV(printit=False):
 
   return data
 
+def get_pz(interp = True):
+  zs, ns    =  np.loadtxt(os.environ['LBGCMB'] + '/dropouts/dat/reddy/pz.dat', unpack=True)
+  
+  ngal      =  ns.sum()
+  
+  dz        =  zs[1] - zs[0]
+
+  ##  Fraction of galaxies in that bin.
+  ps        =  ns / ngal
+  
+  ##  Probability density. 
+  ps       /=  dz
+  
+  if interp:
+    return interp1d(zs, ps, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
+  
+  else:
+    return zs, ps
+  
 
 if __name__ == "__main__":
   import  pylab  as     pl
@@ -149,9 +170,9 @@ if __name__ == "__main__":
   print('\n\nWelcome to the Reddy (Schechter) calculator.\n\n')
 
   Ms    = np.arange(-23., -18., 0.1)
-  stats = samplestats(mag=23.0, printit=True, h70=True)
+  stats = samplestats(mag=23.0, printit=False, h70=True)
 
-  pprint(stats)
+  ##  pprint(stats)
 
   '''
   ##  Fig. 12 of https://arxiv.org/pdf/0706.4091.pdf
@@ -166,5 +187,10 @@ if __name__ == "__main__":
   pl.show()
   '''
 
+  zs, ps = get_pz(interp=False)
+
+  pl.plot(zs, ps)
+  pl.show()
+  
   print('\n\nDone.\n\n')
 

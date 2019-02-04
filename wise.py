@@ -6,6 +6,9 @@ from    scipy.integrate    import  simps
 from    scipy.interpolate  import  interp1d
 
 
+def get_wisesn():
+    return  1.2e-10
+
 def get_wisepz():
     root = os.environ['LBGCMB']
 
@@ -16,7 +19,7 @@ def get_wisepz():
 
     pz   = data[:,1]
 
-    norm = np.sum(dz * pz)
+    norm = dz * np.sum(pz)
     pz  /= norm
 
     pz   = interp1d(z, pz, kind='linear', copy=True, fill_value=0.0, assume_sorted=False, bounds_error=False)

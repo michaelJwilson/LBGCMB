@@ -25,6 +25,9 @@ specxphoto/sdss9/
 specxphoto/cmass/
 mask/dat/
 mask/desi/
+mask/dat
+mask/desi
+mask/mp4
 sdss9/
 cmass/
 fsps/

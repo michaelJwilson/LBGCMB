@@ -43,9 +43,13 @@ def nWCIB(z, nu = 353., zc=2., sigmaz=2.):
     zs      = np.arange(0.0, 10., dz)
 
     Ws      = WCIB(zs, nu, zc, sigmaz)
-    norm    = np.sum(dz * Ws)
+    norm    = dz * np.sum(Ws)
 
     return  WCIB(z, nu, zc, sigmaz) / norm
+
+def cib_effshot():
+    ##  353 GHz CIB
+    return  2.1e-13
 
 
 if __name__ == '__main__':
