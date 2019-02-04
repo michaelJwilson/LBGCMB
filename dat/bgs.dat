@@ -1,0 +1,10 @@
+## Bright Galaxies from Daniel Eisenstein
+## https://desi.lbl.gov/svn/code/desimodel/trunk/data/targets/nz_BG.dat
+##
+## zmin   zmax   g/deg2
+##
+    0.0    0.1	     97
+    0.1    0.2      256
+    0.2    0.3      159
+    0.3    0.4       61
+    0.4    0.5       10
