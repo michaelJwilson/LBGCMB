@@ -28,7 +28,7 @@ def ss_pz():
     return  pz, 3600. * norm
 
 def load_samples():
-    return  pd.read_csv("dat/ss17_tracers.dat", names = ['zmin', 'zmax', 'N', 'Surveys'], sep = '\s+')
+    return  pd.read_csv("dat/ss17_tracers.dat", names = ['zmin', 'zmax', 'N', 'Surveys'], sep = '\s+', comment='#')
 
 def get_ss17_samples(nolsst=False):
     ## -- non-LSST -- ##                                                                                                                   

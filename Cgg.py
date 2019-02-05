@@ -91,14 +91,14 @@ def var_Cgg(Llls, zmin, zmax, survey_pz, bz, nbar, fsky, cgg = None, Pk_interps=
 
 def Ngg(Llls, zmin, zmax, survey_pz, nbar):  
   '''                                                                                                                                            
-  Poisson noise on Cgg equal to (1. / angular number density) [1. / str].                                                                             
+  Poisson noise on Cgg equal to (1. / angular number density).                                                                   
   '''   
-  from    pz2nbar  import  pz_slice, nbar_convert
+  from  pz2nbar  import  pz_slice, nbar_convert
 
 
   spz   = pz_slice(zmin, zmax, survey_pz)
 
-  ##  Assumes input nbar is 1 / deg2 (the default unit). 
+  ##  Assumes input nbar is 1 / deg2 (the default unit) Converts to  per steradian. 
   nbar  = nbar_convert(nbar, unit='str')
 
   return  np.ones_like(Llls) / (nbar * spz)

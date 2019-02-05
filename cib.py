@@ -9,7 +9,7 @@ from    utils              import  comoving_distance, latexify
 
 def fv(nu, beta = 2., T=34., nup=4955, alpha=2.0):
     '''
-    eqn. (13) of https://arxiv.org/pdf/1705.02332.pdf
+    Eqn. (13) of https://arxiv.org/pdf/1705.02332.pdf
     
     Input:
         nu in GHz.
