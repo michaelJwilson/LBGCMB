@@ -18,13 +18,13 @@ from    bz                 import  get_dropoutbz
 
 def Ng(ilim, deg=True):
     ## McQuinn and White, below eqn. (3).
-    result  = 1.7 * 10. ** (5. + 0.31 * (ilim - 25.))  ## [deg2]   
+    result  = 1.7 * 10. ** (5. + 0.31 * (ilim - 25.))    ##  [deg2]   
     
     if deg:
       return  result
 
     else:
-      return  nbar_convert(result, unit='str')         ## [steradians2]
+      return  nbar_convert(result, unit='str')           ##  [steradians2]
     
 def Cij(Pk_interps, Llls, zmin, zmax): 
     zee       = (zmin + zmax) / 2.
@@ -33,8 +33,8 @@ def Cij(Pk_interps, Llls, zmin, zmax):
     dchi      = comoving_distance(zmax) - comoving_distance(zmin)
 
     ## Extended Limber approximation.
-    ks        = (Llls + 0.5) / chi               ## For the Phh evaluation in the integral, we take a zeff approx.      
-                                                 ## i.e. \int dz .... Phh(zeff).                                                
+    ks        = (Llls + 0.5) / chi                       ##  For the Phh evaluation in the integral, we take a zeff approx.      
+                                                         ##  i.e. \int dz .... Phh(zeff).                                                
     
     ## Effectively measures the non-linear matter power spectrum, but normalised down (by flux factor).   
     return  Pmm(Pk_interps, ks, zee, 'nlinear') / chi ** 2. / dchi
@@ -182,31 +182,22 @@ if __name__ == '__main__':
 
   print('\n\nWelcome to a McQuinn and White clustering redshift forecaster.')
   
-  fsky         =  0.1
-  fover        =  0.00
+  fsky         =    0.10
+  fover        =    0.00
 
-  band         =  'g' 
-  evaluate     =   False
-
-  print('\n\nFor the %s-dropout band.' % band)
+  band         =      'g' 
+  evaluate     =    True
     
-  ##  S tends to infinite if Ns = Np in the shot noise limit.
-  Nsz        =  np.logspace(1.0, 4.0,  8, base=10.)  
-
-  intlp_zs   =  [0.5]
-
-  print('\nEvaluating for nspec: ' + ''.join('%.le;  ' % x for x in Nsz))
-
   ##  Get dropout Schechter counts for given band. 
-  root       =  os.environ['LBGCMB']
-  data       =  np.loadtxt(root + "/dropouts/nz/schechter/dat/schechter_estimate_%s_dropouts.txt" % band)
+  root         =  os.environ['LBGCMB']
+  data         =  np.loadtxt(root + "/dropouts/schechter/dat/schechter_estimate_%s_dropouts.txt" % band)
 
-  ms         =  data[:,0][::-1]
-  Npz        =  data[:,1][::-1]
+  ms           =  data[:,0][::-1]
+  Npz          =  data[:,1][::-1]
 
   ##  Get dropout stats.
   if  band == 'g':                                                                                               
-      ## Constrain dN/dz in steps dz between zmin < z < zmax.                                                                                             
+      ##  Constrain dN/dz in steps dz between zmin < z < zmax.                                                                                             
       dz         =  0.1
       zmin       =  3.0
       zmax       =  4.5
@@ -220,7 +211,7 @@ if __name__ == '__main__':
       bz         =  lambda z:  ibz(stats[band]['z'])
     
   elif  band == 'Malkan':
-      ## Constrain dN/dz in steps dz between zmin < z < zmax.                                                                                               
+      ##  Constrain dN/dz in steps dz between zmin < z < zmax.                                                                                               
       dz         =  0.1
       zmin       =  2.0
       zmax       =  3.8
@@ -234,36 +225,44 @@ if __name__ == '__main__':
 
   else:
       raise ValueError('\n\nRequested band is not available.\n\n')
+  
+  ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                                                                                                            
+  Nsz        =  np.logspace(1.0, 4.0,  8, base=10.)
+  intlp_zs   =  [0.5]
 
-  ## Get the percentiles for this p(z).
-  percentiles = percentiles(pz)
-
-  print('\n\nPercentiles:  ' + ''.join('  %.3lf, ' % x for x in percentiles))
+  print('\nEvaluating for nspec: ' + ''.join('%.2lf;  ' % x for x in Nsz))
 
   ##  Cut to half mags. above 24.0
   valid      =  (ms % 0.5 == 0) & (ms >= 24.0) & (ms < 26.0)
 
-  ms         =   ms[valid]
+  ms         =    ms[valid]
   Npz        =   Npz[valid]
 
+  print('\nEvaluating for %s-dropout nphot:' % band)
+
+  for i, m in enumerate(ms):
+      print('%.2lf \t %.2lf' % (m, Npz[i]))
+
+  print
+
+  ##  Get the percentiles for this p(z).                                                                                                                                                                                                 
+  percentiles = percentiles(pz)
+
+  print('\nPercentiles of p(z):  ' + ''.join('  %.3lf, ' % x for x in percentiles) + '\n\n')
+
   if evaluate:
-    print('\nEvaluating for nphot:\n')
-
-    for i, m in enumerate(ms):
-        print('%.2lf \t %.4le' % (m, Npz[i]))
-
-    ## Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                   
+    ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                   
     cambx        =  CAMB()
     Pk_interps   =  get_PkInterps(cambx)
 
-    ## Input NLlls is ignored in the log10=False case.                                                                                                
+    ##  Input NLlls is ignored in the log10=False case.                                                                                                
     NLlls, Llls, nmodes =  prep_Llls(NLlls = 60, Lmin = 60., Lmax = 5000., log10=False)
 
     results    =  []
      
     for Ns in Nsz:
       for ii, Np in enumerate(Npz):
-          print("\nFor:  Ns: %.4le \t\t mm:  %.2lf \t\t Np: %.4le\n" % (Ns, ms[ii], Np))
+          print("Solving for:  Ns: %.2lf \t mlim:  %.2lf \t Np: %.2lf" % (Ns, ms[ii], Np))
 
           result = Fisher(Pk_interps, Llls, Ns, Np, pz, bz, dz=dz, fsky=fsky, zmin=zmin, zmax=zmax, fover=fover, percentiles=percentiles, intlp_zs=[0.5])
           results.append([Ns, ms[ii], Np] + result)
@@ -272,7 +271,7 @@ if __name__ == '__main__':
 
     np.savetxt("dat/mqw_result_%sdrops.txt" % band, results, fmt='%.4le', delimiter='\t')
     
-  ## And plot ...
+  ##  And plot ...
   data = np.loadtxt("dat/mqw_result_%sdrops.txt" % band)
     
   Nsz  = np.unique(data[:,0])
@@ -288,7 +287,6 @@ if __name__ == '__main__':
    dat  = data[data[:,2] == Np]
  
    for kk, percentile in enumerate(percentiles):
-     ## pl.semilogx(dat[:,0], dat[:,2], '--', c=color, dashes=[3,1], alpha=0.6)
      if kk == 2:
          label =  "%s" % (sci_notation(Np, decimal_digits=0, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]
 
@@ -306,8 +304,8 @@ if __name__ == '__main__':
   for ax in axs:
     ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='indigo', alpha=0.3)
       
-    title  = r'$%.1lf < z < %.1lf$' % (zmin, zmax) + ' for ' + r'$f_{\rm{sky}} = %.2lf$, ' % fsky + 'd$z$=%.1lf' % dz 
-    title +=  ' and ' + r'$f_{\rm{over}} = %.1lf$' % fover
+    ##  title  = r'$%.1lf < z < %.1lf$' % (zmin, zmax) + ' for ' + r'$f_{\rm{sky}} = %.2lf$, ' % fsky + 'd$z$=%.1lf' % dz 
+    ##  title +=  ' and ' + r'$f_{\rm{over}} = %.1lf$' % fover
       
     ax.set_xlabel(r'$N_s \ [10^3]$')
     ax.set_xscale('linear')
@@ -316,7 +314,6 @@ if __name__ == '__main__':
     ax.set_ylim(0.0,  8.000)
 
   axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$')
-
   axs[0].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % intlp_zs[0], handlelength=.5, fontsize=8)
 
   pl.savefig('plots/mqw_%sdrops.pdf' % band, bbox_inches='tight')

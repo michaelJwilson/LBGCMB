@@ -1,21 +1,23 @@
-import  numpy             as      np
-import  pylab             as      pl
-import  matplotlib.pyplot as      plt
-import  astropy.units     as      u 
-import  astropy.constants as      const
-
-from    bz                import  get_dropoutbz
-from    prep_camb         import  CAMB
-from    pmh               import  Pmm, get_PkInterps
-from    params            import  get_params
-from    cosmo             import  cosmo
-from    scipy.integrate   import  nquad
-from    growth_rate       import  growth_rate 
-from    utils             import  latexify
-from    goldrush.specs    import  samplestats  as goldrush_stats
-from    Malkan.specs      import  samplestats  as malkan_stats
-from    reddy             import  samplestats  as reddy_stats
-from    schechter.nbar    import  comovdensity
+import  numpy              as      np
+import  pylab              as      pl
+import  matplotlib.pyplot  as      plt
+import  astropy.units      as      u 
+import  astropy.constants  as      const
+ 
+from    bz                 import  get_dropoutbz
+from    prep_camb          import  CAMB
+from    pmh                import  Pmm, get_PkInterps
+from    params             import  get_params
+from    cosmo              import  cosmo
+from    scipy.integrate    import  nquad
+from    growth_rate        import  growth_rate 
+from    utils              import  latexify
+from    goldrush.specs     import  samplestats  as goldrush_stats
+from    Malkan.specs       import  samplestats  as malkan_stats
+from    reddy              import  samplestats  as reddy_stats
+from    schechter.nbar     import  comovdensity
+from    scipy.interpolate  import  interp1d
+from    completeness       import  get_dropoutpz
 
 
 params = get_params()
@@ -135,7 +137,22 @@ if __name__ == '__main__':
         phi_star    =  stats[band]['schechter']['phi_star']
 
         ##  drop_nz =  lambda z: const_nz(z, ngal)
-        drop_nz     =  lambda z: 10. ** comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=25.0, band=band, printit=False)  ##  [(h_100/Mpc)^3]
+        drop_nz     =  lambda z: get_dropoutpz(drop='g') 10. ** comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=25.0, band=band, printit=False)  ##  [(h_100/Mpc)^3]
+        
+
+
+        for z in np.arange(3., 5., 0.01):
+          pl.plot(z, drop_nz(z), 'r^', markersize=2)
+        
+        zs          =  np.arange(3., 5., 0.1)
+        drop_nz     =  np.array([drop_nz(z) for z in zs])
+    
+        drop_nz     =  interp1d(zs, drop_nz, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
+
+        pl.plot(np.arange(3., 5., 0.01), drop_nz(np.arange(3., 5., 0.01)), 'k-')
+        pl.show()
+
+        exit(1)
 
         for kmax in kmaxs:
             ##  y = np.log(k)
