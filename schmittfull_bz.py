@@ -8,7 +8,7 @@ from    collections        import  OrderedDict
 from    scipy.interpolate  import  interp1d
 
 
-def sdss(zee):
+def sdss(zee, force=True):
     zee     = np.asarray(zee)
     result  = 1.0 + (zee - 0.1)
 
@@ -88,21 +88,21 @@ def desi_eff(zee):
 
 def get_allbz():
     '''
-    0.0   0.5        22917     SDSS1
-    0.5   0.8        22917     SDSS2
-    0.0   0.5        685       DESIBGS
-    0.0   0.9        139       BOSSLRGs
-    0.6   1.2        279       DESILRGs
-    0.6   0.8        250       DESIELGs1
-    0.8   1.2        929       DESIELGs2
-    0.6   1.9        100       DESIQSOs
+    SDSS1       0.0  0.5  22917
+    SDSS2       0.5  0.8  22917
+    DESIBGS     0.0  0.5  685
+    BOSSLRGs    0.0  0.9  139
+    DESILRGs    0.6  1.2  279
+    DESIELGs1   0.6  0.8  250
+    DESIELGs2   0.8  1.2  929
+    DESIQSOs    0.6  1.9  100
     '''
 
     result               = OrderedDict()
 
     ##  FIX:  Cheap Hack. 
-    result['SDSS1']      = lambda z: sdss(z, force=True)
-    result['SDSS2']      = lambda z: sdss(z, force=True)
+    result['SDSS1']      = lambda z:     sdss(z, force=True)
+    result['SDSS2']      = lambda z:     sdss(z, force=True)
     result['DESIBGS']    = lambda z: desi_bgs(z, force=True)
     result['BOSSLRGs']   = lambda z: boss_lrg(z, force=True)
     result['DESILRGs']   = lambda z: desi_lrg(z, force=True)

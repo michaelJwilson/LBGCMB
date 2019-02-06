@@ -10,10 +10,8 @@ from    params             import  get_params
 from    Cgg                import  Cgg, Ngg
 from    Nkk                import  Nkk
 from    sliced_pz          import  sliced_pz
+from    utils              import  latexify
 
-
-plt.style.use('ggplot')
-mpl.rc('text', usetex = True)
 
 params = get_params()
 
@@ -28,7 +26,7 @@ def Ckg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = True):
 
   if zeff:
     ##  Calculate the mean redshift.
-    zg      = np.sum(ps * zs) * dz / np.sum(dz * survey_pz(zs))
+    zg      = np.sum(ps * zs) * dz / np.sum(dz * ps)
 
     chi_g   = comoving_distance(zg)
 
@@ -36,12 +34,13 @@ def Ckg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = True):
 
     ##  Limber and thin slice approximation.                                                                                                               
     result  = Pmm(Pk_interps, k, zg) * bz(zg) * lensing_kernel(zg) / chi_g**2.
-    result /= params['h_100']**2.  ## Account for [h^-1 Mpc]^3 of Pmm and h^-1 Mpc of chi_g.                                                                
+    result /= params['h_100']**2.          ##  Account for [h^-1 Mpc]^3 of Pmm 
+                                           ##  and h^-1 Mpc of chi_g.                                                                
 
-    return  result                 ## Dimensionless.                                                                                                        
+    return  result                         ##  Dimensionless.                                                                                             
 
   else:                            
-     ## Assumes integral over dz slice.                                                                                       
+     ##  Assumes integral over dz slice.                                                                                       
      chis        = comoving_distance(zs)
      result      = np.zeros((len(zs), len(Llls)))
 
@@ -102,6 +101,8 @@ if __name__ == "__main__":
 
 
   print("\n\nWelcome to Ckg.\n\n")
+
+  latexify(fig_width=None, fig_height=None, columns=1, equal=False, fontsize=10, ratio=None, ggplot=True, usetex=True)
 
   cmbexp                          =  'Planck'
   fsky, thetab, DeltaT, iterative =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\

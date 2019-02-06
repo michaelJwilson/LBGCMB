@@ -28,12 +28,10 @@ def ss_pz():
     return  pz, 3600. * norm
 
 def load_samples():
-    return  pd.read_csv("dat/ss17_tracers.dat", names = ['zmin', 'zmax', 'N', 'Surveys'], sep = '\s+')
+    return  pd.read_csv("dat/ss17_tracers.dat", names = ['zmin', 'zmax', 'N', 'Surveys'], sep = '\s+', comment='#')
 
 def get_ss17_samples(nolsst=False):
-    ##  Call:  ns, ps, bs = get_ss17_samples()
-
-    ## -- non-LSST -- ##                                                                                                                         
+    ## -- non-LSST -- ##                                                                                                                   
     dframe    =  load_samples()
     surveys   =  list(dframe['Surveys'].values)
 
@@ -60,7 +58,7 @@ def get_ss17_samples(nolsst=False):
       bs       += [lambda z:  (1. + z)]
       surveys  += ['LSST']
 
-    print('\n\nAvailable surveys: ' + ''.join('  %s;' % s for s in surveys))
+    print('\n\nAvailable surveys: ' + ''.join('  %s;' % s for s in surveys) + '\n\n')
 
     return  ns, ps, bs, surveys
 

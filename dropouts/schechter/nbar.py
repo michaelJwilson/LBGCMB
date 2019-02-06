@@ -69,6 +69,7 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     from  luminosity_fn  import  gmag
     from  luminosity_fn  import  get_ns
 
+
     dM     = 0.05
     Ms     = np.arange(-32.,   -15., dM)
     gs     = gmag(Ms + dM, z, restM=False, printit=False)
@@ -141,7 +142,7 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
         PhiMUV[i]      *= np.maximum(hsc_selection((z, Lv[i])), 0.0)        ## interpolation does not enforce positive definite selection.
     '''
 
-    ## Calculate expected number density (integral dM). 
+    ##  Calculate expected number density (integral dM). 
     nbar     = np.trapz(PhiMUV, MM)                    ## log_10(nbar [(h_100/Mpc)^3]) 
     nbar     = np.log10(nbar)
     
