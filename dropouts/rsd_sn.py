@@ -109,7 +109,7 @@ def check_vol(fsky=0.5, fkp_weighted=False, nbar=1.e-3, P0=5.e3):
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
     
-    compute  = True
+    compute = True
 
     if compute:
         print('Loading CAMB module.')
@@ -117,9 +117,10 @@ if __name__ == '__main__':
         cambx       =  CAMB()
         Pk_interps  =  get_PkInterps(cambx)
 
-        fsky        =  24. / 41253.
+        fsky        =  14000. / 41253.
 
-        ngal        =  1.e-4  ##  [(h^-1 Mpc)^-3].
+        ngal        =  1.e-4    ##  [(h^-1 Mpc)^-3].
+
         zmin        =  2.0
         zmax        =  3.0
 
@@ -129,18 +130,19 @@ if __name__ == '__main__':
         ##  plot_vipers(ngal=5.e3)
         ##  check_vol()
 
-        band        =  'r'
+        band        =               'r'
         stats       =  goldrush_stats()
 
         alpha       =  stats[band]['schechter']['alpha']
         Mstar       =  stats[band]['schechter']['M_star']
         phi_star    =  stats[band]['schechter']['phi_star']
 
+        zee, pzee   =  get_dropoutpz(drop='g')
+        pz          =  interp1d(zee, pzee, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
+
         ##  drop_nz =  lambda z: const_nz(z, ngal)
-        drop_nz     =  lambda z: get_dropoutpz(drop='g') 10. ** comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=25.0, band=band, printit=False)  ##  [(h_100/Mpc)^3]
+        drop_nz     =  lambda z: pz(z) * (10. ** comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=25.0, band=band, printit=False))  ##  [(h_100/Mpc)^3]
         
-
-
         for z in np.arange(3., 5., 0.01):
           pl.plot(z, drop_nz(z), 'r^', markersize=2)
         
@@ -149,7 +151,12 @@ if __name__ == '__main__':
     
         drop_nz     =  interp1d(zs, drop_nz, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
 
-        pl.plot(np.arange(3., 5., 0.01), drop_nz(np.arange(3., 5., 0.01)), 'k-')
+        pl.plot(np.arange(0., 10., 0.01), drop_nz(np.arange(0., 10., 0.01)), 'k-')
+
+        pl.xlabel(r'$z$')
+        pl.ylabel(r'$\bar n(z)$')
+
+        plt.tight_layout()
         pl.show()
 
         exit(1)
@@ -165,7 +172,7 @@ if __name__ == '__main__':
 
             print('Solving for integral with kmax = %.3lf.' % kmax)
     
-            result      = nquad(integrand, ranges, args=args, full_output=True)
+            result      = nquad(integrand, ranges, args=args, full_output=False)
             results.append(result[0])
 
             print('Solution for integral:', result)
