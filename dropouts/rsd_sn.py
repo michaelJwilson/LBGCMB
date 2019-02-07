@@ -146,7 +146,7 @@ if __name__ == '__main__':
         zmin        =  1.2
         zmax        =  1.6
 
-        kmaxs       =  np.arange(0.1, 0.3, 0.05)
+        kmaxs       =  np.arange(0.1, 0.25, 0.05)
         results     =  []
     
         ##  plot_vipers(ngal=5.e3)
