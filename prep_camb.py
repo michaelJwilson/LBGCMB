@@ -12,7 +12,7 @@ params          =  get_params()
 
 class CAMB:
   def __init__(self, halofit_ver = 'takahashi'):
-    camb.set_halofit_version(halofit_ver)
+    ##  camb.set_halofit_version(halofit_ver)
 
     self.pars = camb.CAMBparams()   ## Set up a new set of parameters for CAMB                                                                              
 
@@ -101,7 +101,7 @@ class CAMB:
 
   def get_background(self, z = 0.0):
     self.backresults = camb.get_background(self.pars)
-    self.chistar     = self.backresults.conformal_time(0) - model.tau_maxvis.value
+    ##  self.chistar = self.backresults.conformal_time(0) - model.tau_maxvis.value
     self.zstar       = self.backresults.get_derived_params()['zstar']
 
     ## print 'Derived parameter dictionary: \n'

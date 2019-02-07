@@ -4,7 +4,6 @@ import  pylab              as      pl
 
 from    scipy.interpolate  import  interp1d 
 from    goldrush.specs     import  samplestats
-from    specxphoto.get_pz  import  get_pz
 from    elg_nz             import  elg_pz
 
 

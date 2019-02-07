@@ -1,3 +1,6 @@
+import  os
+import  vegas
+import  pickle
 import  numpy              as      np
 import  pylab              as      pl
 import  matplotlib.pyplot  as      plt
@@ -57,6 +60,13 @@ def vol_integrand(z, fsky=0.5, fkp_weighted=False, nbar=1.e-3, P0=5.e3):
     else:
       return  dVdz
 
+def _vvol_integrand(x, args):
+    ##  Vegas wrapper of vol_integrand; input args as a list.                                                                                         
+    z                              = x[0]
+    (fsky, fkp_weighted, nbar, P0) = args
+
+    return  vol_integrand(z, fsky, fkp_weighted, nbar, P0)
+
 def Kaiser(Pk_interps, beta, z, mu, ks):
     return  (1. + beta * mu * mu)**2. * linb(z) * linb(z) * Pmm(Pk_interps, ks, z)
 
@@ -87,6 +97,14 @@ def integrand(z, mu, y, Pk_interps, fsky, nz):
 
     return  result
 
+def _vintegrand(x, args):
+    ##  Vegas wrapper of integrand; input args as a list. 
+    z, mu, y               = x[0], x[1], x[2]
+    (Pk_interps, fsky, nz) = args 
+
+    return  integrand(z, mu, y, Pk_interps, fsky, nz)
+
+
 def plot_vipers(ngal=5.e3):
     ##  Test VIPERS N(z)
     zs   = np.arange(0.0, 1.3, 0.01)
@@ -116,6 +134,20 @@ def check_vol(fsky=0.5, fkp_weighted=False, nbar=1.e-3, P0=5.e3):
     print('Vol: %.4lf [(h^-1 Gpc)^3], FKP Vol:  %.4lf [(h^-1 Gpc)^3], compared to Astropy: %.4lf [(h^-1 Gpc)^3]' % (result[0] / 1.e9, fkp_wt[0] / 1.e9,\
                                                                                                                     fsky * (cosmo.comoving_volume(zmax).value - cosmo.comoving_volume(zmin).value) * params['h_100'] ** 3. / 1.e9))  
 
+def _vcheck_vol(fsky=0.5, fkp_weighted=True, nbar=1.e-3, P0=5.e3):
+    zmin    =  0.6
+    zmax    =  1.2 
+
+    zranges =  [[zmin, zmax]]
+
+    integ   =  vegas.Integrator(zranges)
+    args    = (fsky, fkp_weighted, nbar, P0)
+    
+    result  =  integ(lambda x: _vvol_integrand(x, args), nitn=10, neval=10000)
+
+    print(result)
+    print('\n\nAstropy: %.4lf [(h^-1 Gpc)^3]' % (fsky * (cosmo.comoving_volume(zmax).value - cosmo.comoving_volume(zmin).value) * params['h_100'] ** 3.))
+
 def check_nP(Pk_interps, fsky=0.5, nz=const_nz):
     zs = np.arange(1.5, 6.0, 0.5)
     ks = np.logspace(-2,  0,  20)
@@ -129,6 +161,17 @@ def check_nP(Pk_interps, fsky=0.5, nz=const_nz):
     pl.legend()
     pl.show()
 
+def check_dropnz(nz):
+    zs = np.arange(0., 10., 0.01)
+
+    pl.plot(zs, drop_nz(zs), 'k-')                                                                            
+                                                                                                                                                           
+    pl.xlabel(r'$z$')                                                                                                                                     
+    pl.ylabel(r'$\bar n(z)$')                                                                                                                             
+                                                                                                                                                          
+    plt.tight_layout()                                                                                                                                    
+    pl.show() 
+        
 
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
@@ -141,16 +184,18 @@ if __name__ == '__main__':
         cambx       =  CAMB()
         Pk_interps  =  get_PkInterps(cambx)
 
-        fsky        =  14000. / 41253.
+        fsky        =  1000. / 41253.
 
         zmin        =  3.0
         zmax        =  4.0
 
-        kmaxs       =  np.arange(0.1, 0.25, 0.1)
+        kmaxs       =  np.arange(0.1, 0.3, 0.1)
         results     =  []
     
         ##  plot_vipers(ngal=5.e3)
+
         ##  check_vol()
+        ##  _vcheck_vol(fsky=fsky, fkp_weighted=False, nbar=1.e-3, P0=5.e3)
 
         band        =               'r'
         stats       =  goldrush_stats()
@@ -160,31 +205,22 @@ if __name__ == '__main__':
         phi_star    =  stats[band]['schechter']['phi_star']
 
         
-        drop_nz     =  lambda z: const_nz(z, ngal = 1.e-2)  ##  [(h^-1 Mpc)^-3]. 
+        ##  drop_nz =  lambda z: const_nz(z, ngal = 1.e-4)  ##  [(h^-1 Mpc)^-3]. 
 
-        ##  zee, pzee =  get_dropoutpz(drop='g')
-        ##  pz        =  interp1d(zee, pzee, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
+        zee, pzee   =  get_dropoutpz(drop='g')
+        pz          =  interp1d(zee, pzee, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
 
-        ##  drop_nz   =  lambda z: pz(z) * (10. ** comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=25.0, band=band, printit=False))  ##  [(h_100/Mpc)^3]
+        drop_nz     =  lambda z:  pz(z) * (10. ** comovdensity(z, phi_star, Mstar, alpha, type='app',\
+                                                               mlim=24.5, band=band, printit=False))  ##  [(h_100/Mpc)^3]
         
-        ## for z in np.arange(zmin, zmax, 0.01):
-        ##   pl.plot(z, drop_nz(z), 'r^', markersize=2)
-        '''
-        zs          =  np.arange(zmin, zmax, 0.01)
-        drop_nz     =  np.array([drop_nz(z) for z in zs])
-    
-        drop_nz     =  interp1d(zs, drop_nz, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
-        
-        pl.plot(np.arange(0., 10., 0.01), drop_nz(np.arange(0., 10., 0.01)), 'k-')
+        zs          =  np.arange(zmin, zmax, 0.01)                                                                                                         
+        drop_nz     =  np.array([drop_nz(z) for z in zs]) 
 
-        pl.xlabel(r'$z$')
-        pl.ylabel(r'$\bar n(z)$')
+        drop_nz     =  interp1d(zs, drop_nz, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False) 
 
-        plt.tight_layout()
-        pl.show()
-        '''
+        check_dropnz(drop_nz)
 
-        ##  check_nP(Pk_interps, fsky=0.5, nz=drop_nz)
+        check_nP(Pk_interps, fsky=fsky, nz=drop_nz)
 
         for kmax in kmaxs:
             ##  y = np.log(k)
@@ -196,14 +232,35 @@ if __name__ == '__main__':
             args        = (Pk_interps, fsky, drop_nz)
 
             print('\nSolving for integral with kmax = %.3lf.' % kmax)
-    
-            result      = nquad(integrand, ranges, args=args, full_output=True)
-            results.append(result[0])
+            
+            ##  result  = nquad(integrand, ranges, args=args, full_output=True)
 
-            print('Solution:  %.6le' % result[0])
+            try:
+              integ     = pickle.load(os.environ['LBGCMB'] + '/dropouts/pickle/rsd_sninteg_zmin_%.2lf_zmax_%.2lf_kmax_%.2lf.dat' % (zmin, zmax, kmax))
+              print('\n\nSuccessfully loaded vegas integrator with tailored latent space.')
 
-        results         = np.array(results)
-        results         = np.sqrt(results)
+            except:
+              integ     = vegas.Integrator(ranges)
+              print('\n\nCreating new vegas integrator.')
+
+            ##  And integrate ...
+            result = integ(lambda x: _vintegrand(x, args), nitn=10, neval=1000)
+
+            with open(os.environ['LBGCMB'] + '/dropouts/pickle/rsd_sninteg_zmin_%.2lf_zmax_%.2lf_kmax_%.2lf.dat' % (zmin, zmax, kmax), 'wb') as ofile:
+                pickle.dump(integ, ofile)
+            
+            ##  print('Solution:  %.6le' % result[0])
+            ##  print('Solution:  %.6le' % result['result'])
+
+            print(result.summary())
+
+            print('Solution:  %.6le +- %.6le' % (result.mean, result.sdev))
+
+            ##  results.append(result[0])      
+            results.append(result.mean)      
+
+        results = np.array(results)
+        results = np.sqrt(results)
 
         np.savetxt('dat/rsd.txt', np.c_[kmaxs, results], fmt='%.6lf \t %.6le')
 
