@@ -27,11 +27,11 @@ def load_tables(printit = False):
                                                                                   'NBX_fint', 'NLBG_phot', 'NLBG_spec', 'NLBG_int',\
                                                                                   'NLBG_fAGN', 'NLBG_fint'], engine='python')
   if printit:
-    print "\n\nReddy Table one:"
-    print tab_one
+    print("\n\nReddy Table one:")
+    print(tab_one)
     
-    print "\n\nReddy Table three:"
-    print tab_three
+    print("\n\nReddy Table three:")
+    print(tab_three)
 
   return tab_one, tab_three
 
@@ -105,10 +105,10 @@ def samplestats(mag=23., printit=False, h70=False):
 
   for survey in ['BX', 'LBG']:
     if printit:
-      print "\n\n%s Survey Specifications (at depth R=%.3lf):\n" % (survey, mag)
+      print("\n\n%s Survey Specifications (at depth R=%.3lf):\n" % (survey, mag))
 
       for k, v in stats[survey].iteritems():
-        print "%s \t\t %s" % (k.ljust(20), v)
+        print("%s \t\t %s" % (k.ljust(20), v))
   
   return  stats
 
@@ -138,7 +138,7 @@ def get_pEBV(printit=False):
 
   if printit:
     for i, x in enumerate(data['EBV'].values):                                                                                                            
-      print x, data['p(z=3)'].values[i]                                                                                                                     
+      print(x, data['p(z=3)'].values[i])                                                                                                                     
 
   return data
 

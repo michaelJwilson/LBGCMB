@@ -24,3 +24,5 @@ export  DESI_BASIS_TEMPLATES=$LBGCMB/desihub/basis_templates/v2.5/
 export  REDROCK=$LBGCMB/desihub/redrock/py/redrock/
 export  DESIMODEL=$LBGCMB/desihub/desimodel/
 export  RR_TEMPLATE_DIR=$LBGCMB/redrock/templates/ext_wave/
+
+source env/bin/activate

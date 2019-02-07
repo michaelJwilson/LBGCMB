@@ -32,7 +32,7 @@ if __name__ == "__main__":
   from    prep_camb  import  CAMB
 
 
-  print "\n\nWelcome."
+  print("\n\nWelcome.")
 
   cambx        = CAMB()                                  
 

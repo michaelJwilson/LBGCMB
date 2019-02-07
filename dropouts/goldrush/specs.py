@@ -84,8 +84,8 @@ def samplestats(printit = False):
 
 
 if __name__ == "__main__":
-  print "\n*** HSC Wide survey ***"
-  print "*** Total area:     %.1lf deg^2;  Limiting mag.: ~26. ***\n" % 82.6
+  print("\n*** HSC Wide survey ***")
+  print("*** Total area:     %.1lf deg^2;  Limiting mag.: ~26. ***\n" % 82.6)
   
   specs = samplestats()
 

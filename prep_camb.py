@@ -122,7 +122,7 @@ class CAMB:
     return self.backresults.redshift_at_comoving_radial_distance(chis, nz_step=150, zmax=10000) ## [Mpc]. 
     
   def print_pars(self):
-    print self.pars
+    print(self.pars)
 
 ## Wrapper for CAMB and CLASS Cls to add detector noise. 
 def Clxy(Cl_interps, ell, alpha='TT', thetab=1., DeltaT=1.): # u.arcmin                                                 
@@ -138,13 +138,13 @@ def Clxy(Cl_interps, ell, alpha='TT', thetab=1., DeltaT=1.): # u.arcmin
 
 
 if __name__ == "__main__":
-  print "\n\nWelcome."
+  print("\n\nWelcome.")
 
-  print "\n\nCreating a class instance of CAMB."
+  print("\n\nCreating a class instance of CAMB.")
 
   cambx = CAMB()
 
   (lensCl_interps, nolensCl_interps) = cambx.get_Cls()  ## CAMB; CLASS:  prep_classCls().                                                               
   
-  print '\n\nDone.\n\n'
+  print('\n\nDone.\n\n')
   

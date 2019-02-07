@@ -143,10 +143,10 @@ if __name__ == '__main__':
 
         fsky        =  14000. / 41253.
 
-        zmin        =  1.2
-        zmax        =  1.6
+        zmin        =  3.0
+        zmax        =  4.0
 
-        kmaxs       =  np.arange(0.1, 0.25, 0.05)
+        kmaxs       =  np.arange(0.1, 0.25, 0.1)
         results     =  []
     
         ##  plot_vipers(ngal=5.e3)

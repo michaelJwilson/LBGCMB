@@ -1,3 +1,4 @@
+env/
 *.pyc
 dropouts/behroozi/dat/*
 desihub/desimodel/.DS_Store

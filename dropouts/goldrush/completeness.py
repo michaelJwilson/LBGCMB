@@ -61,7 +61,7 @@ def calc_moments(zee, pz):
   var_zee        = np.sum(zee * zee * pz * dz) - mean_zee ** 2.
   std_zee        = np.sqrt(var_zee)
 
-  print  mean_zee, 2. * std_zee, 2. * np.sqrt( 2. * np.log(2.) ) * std_zee
+  print(mean_zee, 2. * std_zee, 2. * np.sqrt( 2. * np.log(2.) ) * std_zee)
   
 
 if __name__ == "__main__":

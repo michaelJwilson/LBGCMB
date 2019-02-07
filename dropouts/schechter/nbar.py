@@ -3,7 +3,7 @@ import  astropy.units            as      u
 
 from    cosmo                    import  cosmo
 from    params                   import  get_params
-from    schechter_fn             import  LSchechter, MSchechter
+from    schechterfn              import  SchechterLfn, SchechterMfn
 
 
 params = get_params()
@@ -147,7 +147,7 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     nbar     = np.log10(nbar)
     
     if printit:
-      print  "mlim:  %3.3f \t Mlim:  %3.3f \t Llim:  %3.3f \t log10|<n>|:  %3.3f" % (mlim, Mlim, Llim, nbar)
+      print("mlim:  %3.3f \t Mlim:  %3.3f \t Llim:  %3.3f \t log10|<n>|:  %3.3f" % (mlim, Mlim, Llim, nbar))
     
     return  nbar
 
