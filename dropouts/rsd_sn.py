@@ -45,7 +45,7 @@ def vol_integrand(z, fsky=0.5, fkp_weighted=False, nbar=1.e-3, P0=5.e3):
     ##  dV / dz [(h^{-1} Mpc)^3];  Differential comoving volume per redshift per steradian.                                                                                                                              
     ## 
     ##  Note:  cosmo.differential_comoving_volume(z) = (const.c.to('km/s') / cosmo.H(z)) * cosmo.comoving_distance(z) ** 2. = dV/dz [d\Omega] = chi^2 dChi/dz [d\Omega]. 
-    dVdz  = fsky * 4. * np.pi * cosmo.differential_comoving_volume(z).value * params['h_100'] ** 3.
+    dVdz = fsky * 4. * np.pi * cosmo.differential_comoving_volume(z).value * params['h_100'] ** 3.
 
     if fkp_weighted:
       ##  FKP volume weighting.                                                                                                                                                                                           
@@ -60,21 +60,32 @@ def vol_integrand(z, fsky=0.5, fkp_weighted=False, nbar=1.e-3, P0=5.e3):
 def Kaiser(Pk_interps, beta, z, mu, ks):
     return  (1. + beta * mu * mu)**2. * linb(z) * linb(z) * Pmm(Pk_interps, ks, z)
 
+def nP(z, mu, k, Pk_interps, fsky, nz):
+    a      = 1. / (1. + z)
+    beta   = growth_rate(a) / linb(z)
+
+    nP     = nz(z) * Kaiser(Pk_interps, beta, z, mu, k)
+
+    return  nP / (1. + nP)
+
 def integrand(z, mu, y, Pk_interps, fsky, nz):
-    k    = np.exp(y)
+    k      = np.exp(y)
     
     ##  dV / dz [(h^{-1} Mpc)^3];  Differential comoving volume per redshift per steradian.
-    dVdz = cosmo.differential_comoving_volume(z).value * params['h_100'] ** 3.
+    ##  Note:  cosmo.differential_comoving_volume(z) = (const.c.to('km/s') / cosmo.H(z)) * cosmo.comoving_distance(z) ** 2. = dV/dz [d\Omega] = chi^2 dChi/dz [d\Omega].  
+    dVdz   = cosmo.differential_comoving_volume(z).value * params['h_100'] ** 3.
 
-    a    = 1. / (1. + z) 
-    beta = growth_rate(a) / linb(z)
+    a      = 1. / (1. + z) 
+    beta   = growth_rate(a) / linb(z)
 
     ##  FKP volume weighting.
-    nP   = nz(z) * Kaiser(Pk_interps, beta, z, mu, k)
-    fkp  = nP / (1. + nP)
+    nP     = nz(z) * Kaiser(Pk_interps, beta, z, mu, k)
+    fkp    = nP / (1. + nP)
     
     ##  Effecive (S / N).
-    return  fsky * np.exp(3. * y) * dVdz * fkp * fkp / np.pi
+    result = fsky * np.exp(3. * y) * dVdz * fkp * fkp / np.pi
+
+    return  result
 
 def plot_vipers(ngal=5.e3):
     ##  Test VIPERS N(z)
@@ -105,6 +116,19 @@ def check_vol(fsky=0.5, fkp_weighted=False, nbar=1.e-3, P0=5.e3):
     print('Vol: %.4lf [(h^-1 Gpc)^3], FKP Vol:  %.4lf [(h^-1 Gpc)^3], compared to Astropy: %.4lf [(h^-1 Gpc)^3]' % (result[0] / 1.e9, fkp_wt[0] / 1.e9,\
                                                                                                                     fsky * (cosmo.comoving_volume(zmax).value - cosmo.comoving_volume(zmin).value) * params['h_100'] ** 3. / 1.e9))  
 
+def check_nP(Pk_interps, fsky=0.5, nz=const_nz):
+    zs = np.arange(1.5, 6.0, 0.5)
+    ks = np.logspace(-2,  0,  20)
+  
+    for z in zs:
+      pl.semilogx(ks, nP(z, 0.0, ks, Pk_interps, fsky=fsky, nz=nz), label=str(z))
+
+    pl.xlabel(r'$k$')
+    pl.ylabel(r'$nP/(1 + nP)$')
+
+    pl.legend()
+    pl.show()
+
 
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
@@ -119,10 +143,8 @@ if __name__ == '__main__':
 
         fsky        =  14000. / 41253.
 
-        ngal        =  1.e-4    ##  [(h^-1 Mpc)^-3].
-
-        zmin        =  2.0
-        zmax        =  3.0
+        zmin        =  1.2
+        zmax        =  1.6
 
         kmaxs       =  np.arange(0.1, 0.3, 0.05)
         results     =  []
@@ -137,20 +159,22 @@ if __name__ == '__main__':
         Mstar       =  stats[band]['schechter']['M_star']
         phi_star    =  stats[band]['schechter']['phi_star']
 
-        zee, pzee   =  get_dropoutpz(drop='g')
-        pz          =  interp1d(zee, pzee, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
+        
+        drop_nz     =  lambda z: const_nz(z, ngal = 1.e-2)  ##  [(h^-1 Mpc)^-3]. 
 
-        ##  drop_nz =  lambda z: const_nz(z, ngal)
-        drop_nz     =  lambda z: pz(z) * (10. ** comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=25.0, band=band, printit=False))  ##  [(h_100/Mpc)^3]
+        ##  zee, pzee =  get_dropoutpz(drop='g')
+        ##  pz        =  interp1d(zee, pzee, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
+
+        ##  drop_nz   =  lambda z: pz(z) * (10. ** comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=25.0, band=band, printit=False))  ##  [(h_100/Mpc)^3]
         
-        for z in np.arange(3., 5., 0.01):
-          pl.plot(z, drop_nz(z), 'r^', markersize=2)
-        
-        zs          =  np.arange(3., 5., 0.1)
+        ## for z in np.arange(zmin, zmax, 0.01):
+        ##   pl.plot(z, drop_nz(z), 'r^', markersize=2)
+        '''
+        zs          =  np.arange(zmin, zmax, 0.01)
         drop_nz     =  np.array([drop_nz(z) for z in zs])
     
         drop_nz     =  interp1d(zs, drop_nz, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
-
+        
         pl.plot(np.arange(0., 10., 0.01), drop_nz(np.arange(0., 10., 0.01)), 'k-')
 
         pl.xlabel(r'$z$')
@@ -158,8 +182,9 @@ if __name__ == '__main__':
 
         plt.tight_layout()
         pl.show()
+        '''
 
-        exit(1)
+        ##  check_nP(Pk_interps, fsky=0.5, nz=drop_nz)
 
         for kmax in kmaxs:
             ##  y = np.log(k)
@@ -170,12 +195,12 @@ if __name__ == '__main__':
             ranges      = [[zmin, zmax], [0., 1.], [ymin, ymax]]
             args        = (Pk_interps, fsky, drop_nz)
 
-            print('Solving for integral with kmax = %.3lf.' % kmax)
+            print('\nSolving for integral with kmax = %.3lf.' % kmax)
     
-            result      = nquad(integrand, ranges, args=args, full_output=False)
+            result      = nquad(integrand, ranges, args=args, full_output=True)
             results.append(result[0])
 
-            print('Solution for integral:', result)
+            print('Solution:  %.6le' % result[0])
 
         results         = np.array(results)
         results         = np.sqrt(results)

@@ -16,11 +16,11 @@ def growth_rate(a):
 
   om_ma = params['om_m'] * (cosmo.H(0) / cosmo.H(z))**2. * a**-3.
 
-  return om_ma.value**gamma
+  return  om_ma.value**gamma
 
 def _growth_factor(aa):  
   avals     =  np.arange(0.001, 1., 0.001)
-  integrand = (growth_rate(avals) - 1.)/avals
+  integrand = (growth_rate(avals) - 1.) / avals
 
   norm      =    np.exp(np.trapz(integrand,              avals))
   result    = aa*np.exp(np.trapz(integrand[avals <= aa], avals[avals <= aa]))

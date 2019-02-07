@@ -1,8 +1,14 @@
 https://www.peterbehroozi.com/data.html
-http://behroozi.users.hpc.arizona.edu/UniverseMachine/EDR/umachine-edr.tar.gz
+
+##  
+wget  http://behroozi.users.hpc.arizona.edu/UniverseMachine/EDR/umachine-edr.tar.gz
+tar -xzvf umachine-edr.tar.gz
+
 
 ##  Data compilation
-https://www.peterbehroozi.com/uploads/6/5/4/8/6548418/observational-data.tar.gz
+wget https://www.peterbehroozi.com/uploads/6/5/4/8/6548418/observational-data.tar.gz
+tar -xzvf observational-data.tar.gz
+mv behroozi-2013-data-compilation data-compilation
 
 --  Dirs:  --
 data-compilation/  

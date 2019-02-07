@@ -33,8 +33,9 @@ Ps = np.array([[-1.57, -1.77, -2.00, -2.22, -2.52, -2.91, -3.37,  -4.00,  -4.54]
                [-1.47, -1.81, -2.26, -2.65, -3.14, -3.69, -4.27, np.NaN, np.NaN]])
 
 for kk, x in enumerate(Ps):
-  pl.loglog(10. ** Ms, 10. ** x, '^', label=zs[kk], markersize=2)
+  pl.loglog(10. ** Ms, 10. ** x, '^', label='S16, ' + str(zs[kk]), markersize=2)
 
+'''
 ##  Table 1 of https://arxiv.org/pdf/1303.4409.pdf
 ##  Schechter fn. form of the Luminosity type.
 ##  [z, log(M^*_star), Phi^* [1e-4 Mpc^{-3}], alpha, logMlim_star]
@@ -50,17 +51,21 @@ def MuzzinSchechter(StellarMass, PhiStar, Mstar, alpha):
 
 StellarMass = np.logspace(Muzzin[1,4], 12, 50)
 pl.loglog(StellarMass, MuzzinSchechter(StellarMass, Muzzin[1,2], Muzzin[1,1], Muzzin[1,3]), 'c-', label='Muzzin')
+'''
 
-pl.ylim(1.e-5, 1.e-1)
+pl.ylim(1.e-5, 1.4e-1)
 
 pl.xlabel(r'$M_{*} \ [M_\odot]$')
 pl.ylabel(r'$\Phi \ [(\rm{Mpc})^{-3} \rm{dex}^{-1}]$')
  
-pl.legend(loc=3, ncol=2)
+pl.legend(loc=1, ncol=2, handlelength=1, columnspacing=.2)
+
 plt.tight_layout()
 pl.savefig('plots/StellarMass_Schechter.pdf')
 
 pl.clf()
+
+exit(1)
 
 ##  Cumulative \bar n.
 dx = 0.1
@@ -89,5 +94,6 @@ pl.xlabel(r'$M_* \ [M_\odot]$')
 pl.ylabel(r'$\bar n \ [(\rm{Mpc})^{-3}]$')
 
 pl.legend()
+
 plt.tight_layout()
 pl.savefig('plots/StellarMass_nbar.pdf')
