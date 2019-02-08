@@ -17,7 +17,7 @@ from    bz                 import  get_dropoutbz
 
 
 def Ng(ilim, deg=True):
-    ## McQuinn and White, below eqn. (3).
+    ##  McQuinn and White, below eqn. (3).
     result  = 1.7 * 10. ** (5. + 0.31 * (ilim - 25.))    ##  [deg2]   
     
     if deg:
@@ -40,7 +40,7 @@ def Cij(Pk_interps, Llls, zmin, zmax):
     return  Pmm(Pk_interps, ks, zee, 'nlinear') / chi ** 2. / dchi
 
 def densespec_lim(Llls, zee, result, fsky=1.e-3, ellim=1.e3):
-    ## eqn. (1) of McQuinn and White;  Fractional error on Np for bin i. 
+    ##  Eqn. (1) of McQuinn and White;  Fractional error on Np for bin i. 
     result    = result[zee]['beta'][Llls < ellim]
     Llls      =                Llls[Llls < ellim]
 
@@ -50,7 +50,7 @@ def densespec_lim(Llls, zee, result, fsky=1.e-3, ellim=1.e3):
     return  np.sum((2. * Llls + 1.) * result) / norm
 
 def sparsespec_lim(Llls, zee, result, Nspec = 1.3, ellim=1.e3):
-    ## eqn. (2) of McQuinn and White;  Fractional error on Np for bin i.
+    ##  Eqn. (2) of McQuinn and White;  Fractional error on Np for bin i.
     result    = result[zee]['beta'][Llls < ellim]
     Llls      =                Llls[Llls < ellim]
     
@@ -60,29 +60,27 @@ def sparsespec_lim(Llls, zee, result, Nspec = 1.3, ellim=1.e3):
     return  (Nspec / 1.e3)** -0.5 * (result / 0.1)**-0.5 
     
 def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsky=0.1, fover=0.0, percentiles = [], intlp_zs = [], printit=False):
-    '''    
-    Returns the variance on \hat Np = F^{-1}_ii.
-    '''
+    ##  Returns the variance on \hat Np = F^{-1}_ii.
     
     zs                  =  np.arange(zmin + dz / 2., zmax + dz / 2., dz)
     result              =  OrderedDict()
     
     for i, zee in enumerate(zs):
-      ## Returns linear bias of spectroscopic galaxies at each redshift. 
+      ##  Returns linear bias of spectroscopic galaxies at each redshift. 
       bs    =  bz(zee)
 
-      ## Returns linear bias of photometric galaxies at each redshift.                                                                                    
+      ##  Returns linear bias of photometric galaxies at each redshift.                                                                                    
       bp    =  bz(zee)
 
-      ## Returns number of spectroscopic redshifts in each shell.
+      ##  Returns number of spectroscopic redshifts in each shell given nbar in per sq. deg.
       Ns    =  nbar_convert(tNs, unit='str') * pz(zee) 
       Ns   *=  dz
 
-      ## Returns number of photometric redshifts in each shell.
+      ##  Returns number of photometric redshifts in each shell.
       Np   =   nbar_convert(tNp, unit='str') * pz(zee)
       Np  *=   dz
       
-      ## Returns shot noise: wp = Np for fsat = 0.0; eqn. (11) of MQW16. 
+      ##  Returns shot noise: wp = Np for fsat = 0.0;  Eqn. (11) of MQW16. 
       wp   =   Np
       ws   =   Ns
 
