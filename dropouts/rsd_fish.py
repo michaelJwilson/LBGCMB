@@ -77,17 +77,22 @@ def _vvol_integrand(x, args):
     return  vol_integrand(z, fsky, fkp_weighted, nbar, P0)
 
 def Kaiser(Pk_interps, beta, z, mu, ks, type='linear', fog=False, sig=20):
-    if fog:
-      sig2 = sig * sig  ## [(h^{-1} Mpc)^2].
+    bz = euclid_bz      ##  [linb, euclid_bz]
 
-      return  (1. + beta * mu * mu) ** 2. * linb(z) * linb(z) * Pmm(Pk_interps, ks, z, type=type) * np.exp(- ks * ks * mu * mu / sig2)
+    if fog:
+      sig2 = sig * sig  ##  [(h^{-1} Mpc)^2].
+
+      return  (1. + beta * mu * mu) ** 2. * bz(z) * bz(z) * Pmm(Pk_interps, ks, z, type=type) * np.exp(- ks * ks * mu * mu / sig2)
 
     else:
-      return  (1. + beta * mu * mu) ** 2. * linb(z) * linb(z) * Pmm(Pk_interps, ks, z, type=type)  
+      return  (1. + beta * mu * mu) ** 2. * bz(z) * bz(z) * Pmm(Pk_interps, ks, z, type=type)  
 
 def nP(z, mu, k, Pk_interps, fsky, nz):
     a      = 1. / (1. + z)
-    beta   = growth_rate(a) / linb(z)
+    b      = linb(z)
+    f      = growth_rate(a)
+
+    beta   = f / b
 
     nP     = nz(z) * Kaiser(Pk_interps, beta, z, mu, k)
 
@@ -95,18 +100,19 @@ def nP(z, mu, k, Pk_interps, fsky, nz):
 
 def fish_weight(b, f, mu, k, coeff):
     if coeff   == 'b':
-        return  2. / (b + f * mu ** 2.)
+        return   2. / (b + f * mu ** 2.)
 
     elif coeff == 'f':
-        return  2. * mu * mu / (b + f * mu ** 2.)
+        return   2. * mu * mu / (b + f * mu ** 2.)
 
     elif coeff == 's':
-        return -k * k * mu * mu 
+        return  -k * k * mu * mu 
 
     else:
         raise ValueError('Unacceptable coeff: %s' % coeff)
 
 def integrand(z, mu, y, Pk_interps, fsky, nz, fish_coeff=None, type='linear', fog=False, sig=20):
+    bz     = euclid_bz  ## [linb, euclid_bz]
     k      = np.exp(y)
     
     ##  dV / dz [(h^{-1} Mpc)^3];  Differential comoving volume per redshift per steradian.
@@ -114,14 +120,10 @@ def integrand(z, mu, y, Pk_interps, fsky, nz, fish_coeff=None, type='linear', fo
     ##                                               = dV/dz [d\Omega] = chi^2 dChi/dz [d\Omega].  
     ## 
 
-    print(k, z)
-    
-    exit(1)
-
     dVdz   = cosmo.differential_comoving_volume(z).value * cparams['h_100'] ** 3.
 
     a      = 1. / (1. + z) 
-    b      = linb(z)
+    b      = bz(z)
     f      = growth_rate(a)
 
     beta   = f / b
@@ -226,10 +228,10 @@ if __name__ == '__main__':
         cambx       =  CAMB()
         Pk_interps  =  get_PkInterps(cambx)
 
-        fsky        =  10000. / 41253.
+        fsky        =  15000. / 41253.
 
-        zmin        =  0.0
-        zmax        =  1.0
+        zmin        =  1.4
+        zmax        =  2.6
 
         zmean       =  np.mean([zmin, zmax])
 
@@ -261,7 +263,8 @@ if __name__ == '__main__':
         drop_nz     =  interp1d(zs, drop_nz, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False) 
         '''
 
-        drop_nz     =  lambda z: const_nz(z, ngal = 1.e-3, zmin=zmin, zmax=zmax)  ##  [(h^-1 Mpc)^-3].  
+        ##  drop_nz =  lambda z: const_nz(z, ngal = 1.e-3, zmin=zmin, zmax=zmax)  ##  [(h^-1 Mpc)^-3].  
+        drop_nz     =  euclid_nz
 
         check_dropnz(drop_nz)
 
@@ -307,8 +310,8 @@ if __name__ == '__main__':
             ##  invert ... 
             iFisher = inv(Fisher)
 
-            print(linb(zmean), growth_rate(1. / (1. + zmean)))
-            print(100. * np.sqrt(iFisher[0,0]) / linb(zmean), 100. * np.sqrt(iFisher[-1,-1]) / growth_rate(1. / (1. + zmean)))
+            print(euclid_bz(zmean), growth_rate(1. / (1. + zmean)))
+            print(100. * np.sqrt(iFisher[0,0]) / euclid_bz(zmean), 100. * np.sqrt(iFisher[-1,-1]) / growth_rate(1. / (1. + zmean)))
 
             '''  
             ##  And integrate ...
