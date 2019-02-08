@@ -228,7 +228,7 @@ if __name__ == '__main__':
         cambx       =  CAMB()
         Pk_interps  =  get_PkInterps(cambx)
 
-        fsky        =  15000. / 41253.
+        fsky        =  15000. / 41253.    ##  Euclid.
 
         zmin        =  1.4
         zmax        =  2.6

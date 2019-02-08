@@ -1,11 +1,14 @@
-import numpy as np
-import pylab as pl
+import numpy             as      np
+import pylab             as      pl
 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as      plt
 
-from   scipy.misc import derivative
-from   utils      import latexify
+from   scipy.misc        import  derivative
+from   utils             import  latexify
+from   params            import  get_params  as get_cparams
 
+
+cparams = get_cparams()
 
 def _f(x, alpha, delta, gamma):
   num = np.log10(1. + np.exp(x)) ** gamma
@@ -231,22 +234,23 @@ if __name__ == '__main__':
         ## pl.axvline(Mc, ymin=0., ymax=1., c='k', alpha=0.4)
     '''
     
+    ##  'Implicit' [h^-1 M*] conversion. 
     for drop in ['u','g', 'r']:
       SMs, Errs, c = ishikawa(drop, Ms)
-      pl.loglog(Ms, SMs, label=r'$%s$-dropout' % drop)
+      pl.loglog(Ms * cparams['h_100'], SMs, label=r'$%s$-dropout' % drop)
     
 
-    pl.xlabel(r'$M_{\rm{halo}} \ [M_{\odot}]$')
+    pl.xlabel(r'$M_{\rm{halo}} \ [h^{-1} M_{\odot}]$')
     ## pl.ylabel(r'$M_{*} \ [M_{\odot}]$')
     pl.ylabel(r'$M_{*} \ [M_{\odot}]$')   
     
     pl.xlim(1.e10, 1.e14)
-    pl.ylim(1.e8, 3.e11)
+    pl.ylim(1.e7,  1.e12)
 
     pl.legend(loc=4, ncol=1)
     
     plt.tight_layout()
 
-    pl.savefig('ishikawa.pdf')
+    pl.savefig('plots/ishikawa.pdf')
 
     print('\n\nDone.\n\n')
