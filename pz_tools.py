@@ -24,9 +24,7 @@ def  percentiles(pz, printit=False, asarray=True):
    Q3   = zs[cs > 0.75][0]
 
    if  printit:
-      print  zs
-      print  ps
-      print  cs
+      print('\nPercentiles of p(z):  ' + ''.join('  %.3lf, ' % x for x in np.array([Q1, Q2, Q3])) + '\n\n')
    
    if asarray:
      return  np.array([Q1, Q2, Q3])

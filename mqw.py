@@ -182,18 +182,31 @@ if __name__ == '__main__':
 
   print('\n\nWelcome to a McQuinn and White clustering redshift forecaster.')
   
-  fsky         =    0.10
+  fsky         =    0.01
   fover        =    0.00
 
   band         =      'g' 
   evaluate     =    True
-    
-  ##  Get dropout Schechter counts for given band. 
+
+  ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                              
+  Nsz          =  np.logspace(1.0, 4.0,  8, base=10.)
+  intlp_zs     =  [0.5]
+
+  print('\nEvaluating for nspec: ' + ''.join('%.2lf;  ' % x for x in Nsz))
+
+  ##  Get dropout Schechter photometric sample counts for given band. 
   root         =  os.environ['LBGCMB']
   data         =  np.loadtxt(root + "/dropouts/schechter/dat/schechter_estimate_%s_dropouts.txt" % band)
 
+  ##  Number of photometric galaxies per sq. deg. for given detection band limit. 
   ms           =  data[:,0][::-1]
   Npz          =  data[:,1][::-1]
+
+  ##  Cut to half mags. above 24.0                                                                                                                         
+  valid        =  (ms % 0.5 == 0) & (ms >= 24.0) & (ms < 26.0)
+
+  ms           =    ms[valid]
+  Npz          =   Npz[valid]
 
   ##  Get dropout stats.
   if  band == 'g':                                                                                               
@@ -226,18 +239,11 @@ if __name__ == '__main__':
   else:
       raise ValueError('\n\nRequested band is not available.\n\n')
   
-  ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                                                                                                            
-  Nsz        =  np.logspace(1.0, 4.0,  8, base=10.)
-  intlp_zs   =  [0.5]
+  ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                         
+  Nsz            =  np.logspace(1.0, 4.0,  8, base=10.)
+  intlp_zs       =  [0.5]
 
   print('\nEvaluating for nspec: ' + ''.join('%.2lf;  ' % x for x in Nsz))
-
-  ##  Cut to half mags. above 24.0
-  valid      =  (ms % 0.5 == 0) & (ms >= 24.0) & (ms < 26.0)
-
-  ms         =    ms[valid]
-  Npz        =   Npz[valid]
-
   print('\nEvaluating for %s-dropout nphot:' % band)
 
   for i, m in enumerate(ms):
@@ -245,10 +251,8 @@ if __name__ == '__main__':
 
   print
 
-  ##  Get the percentiles for this p(z).                                                                                                                                                                                                 
-  percentiles = percentiles(pz)
-
-  print('\nPercentiles of p(z):  ' + ''.join('  %.3lf, ' % x for x in percentiles) + '\n\n')
+  ##  Get the z percentiles for this p(z).                                                                                                                 
+  percentiles = percentiles(pz, printit=True)
 
   if evaluate:
     ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                   
