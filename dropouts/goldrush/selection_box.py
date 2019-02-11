@@ -185,8 +185,8 @@ def get_SubaruSelectionfn(printit = True, plotit = True):
        mags['z_colorcut'] =       Subaru_colourcut(mags, band='z', nocolourcut = False, mask = True)
 
        if printit == True:
-           print "\n\nObserved magnitudes layout (flux scaling of %.3lf)" % flux_scaling
-           print mags
+           print("\n\nObserved magnitudes layout (flux scaling of %.3lf)" % flux_scaling)
+           print(mags)
 
        flux_scalings     = np.logspace(0.0, 6.0, 1000)
        '''
@@ -202,9 +202,9 @@ def get_SubaruSelectionfn(printit = True, plotit = True):
        Hs.append(H)
 
        if printit == True:
-           print "\n\n%.3lf < z < %.2lf: "           % (xedges.min(), xedges.max())
-           ## print "%.3lf < log10(Mass) < %.3lf: "  % (yedges.min(), yedges.max()), "\n\n"
-           print "%.3lf < log10(Luv) < %.3lf: "      % (yedges.min(), yedges.max()), "\n\n"
+           print("\n\n%.3lf < z < %.2lf: "           % (xedges.min(), xedges.max()))
+           ## print("%.3lf < log10(Mass) < %.3lf: "  % (yedges.min(), yedges.max()), "\n\n")
+           print("%.3lf < log10(Luv) < %.3lf: "      % (yedges.min(), yedges.max()), "\n\n")
     
        for i, x in enumerate(results.keys()):
          HH = np.zeros_like(Hs[0])  
