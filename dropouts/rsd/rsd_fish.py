@@ -1,4 +1,5 @@
 import  os
+import  sys
 import  vegas
 import  pickle
 import  numpy              as      np
@@ -23,9 +24,12 @@ from    scipy.interpolate  import  interp1d
 from    completeness       import  get_dropoutpz
 from    numpy.linalg       import  inv
 from    euclid             import  euclid_bz, euclid_nz, euclid_area
+from    beast              import  beast_bz, beast_nz
 
 
 cparams = get_params()
+
+_bz     = beast_bz     ##  [linb, euclid_bz, beast_bz]
 
 def linb(z):
     return (1. + z)
@@ -33,7 +37,7 @@ def linb(z):
 @np.vectorize
 def const_nz(z, ngal=1.e-4, zmin=3.0, zmax=4.0):
     if (zmin <= z) & (z <= zmax):
-      return  ngal  ## [(h^{-1} Mpc)^-3]
+      return  ngal     ##  [(h^{-1} Mpc)^-3]
 
     else:
       return  0.0
@@ -77,19 +81,17 @@ def _vvol_integrand(x, args):
     return  vol_integrand(z, fsky, fkp_weighted, nbar, P0)
 
 def Kaiser(Pk_interps, beta, z, mu, ks, type='linear', fog=False, sig=20):
-    bz = euclid_bz      ##  [linb, euclid_bz]
-
     if fog:
       sig2 = sig * sig  ##  [(h^{-1} Mpc)^2].
 
-      return  (1. + beta * mu * mu) ** 2. * bz(z) * bz(z) * Pmm(Pk_interps, ks, z, type=type) * np.exp(- ks * ks * mu * mu / sig2)
+      return  (1. + beta * mu * mu) ** 2. * _bz(z) * _bz(z) * Pmm(Pk_interps, ks, z, type=type) * np.exp(- ks * ks * mu * mu / sig2)
 
     else:
-      return  (1. + beta * mu * mu) ** 2. * bz(z) * bz(z) * Pmm(Pk_interps, ks, z, type=type)  
+      return  (1. + beta * mu * mu) ** 2. * _bz(z) * _bz(z) * Pmm(Pk_interps, ks, z, type=type)  
 
 def nP(z, mu, k, Pk_interps, fsky, nz):
     a      = 1. / (1. + z)
-    b      = linb(z)
+    b      = _b(z)
     f      = growth_rate(a)
 
     beta   = f / b
@@ -112,7 +114,6 @@ def fish_weight(b, f, mu, k, coeff):
         raise ValueError('Unacceptable coeff: %s' % coeff)
 
 def integrand(z, mu, y, Pk_interps, fsky, nz, fish_coeff=None, type='linear', fog=False, sig=20):
-    bz     = euclid_bz  ## [linb, euclid_bz]
     k      = np.exp(y)
     
     ##  dV / dz [(h^{-1} Mpc)^3];  Differential comoving volume per redshift per steradian.
@@ -123,7 +124,7 @@ def integrand(z, mu, y, Pk_interps, fsky, nz, fish_coeff=None, type='linear', fo
     dVdz   = cosmo.differential_comoving_volume(z).value * cparams['h_100'] ** 3.
 
     a      = 1. / (1. + z) 
-    b      = bz(z)
+    b      = _bz(z)
     f      = growth_rate(a)
 
     beta   = f / b
@@ -228,11 +229,23 @@ if __name__ == '__main__':
         cambx       =  CAMB()
         Pk_interps  =  get_PkInterps(cambx)
 
-        fsky        =  15000. / 41253.    ##  Euclid.
+        ##  _bz set above. 
+        ##   nz set below. 
 
-        zmin        =  1.4
-        zmax        =  2.6
+        if len(sys.argv) == 1:
+            fsky    =  14000. / 41253.    ##  Euclid:  15,000 deg2.
 
+            zmin    =  1.4
+            zmax    =  2.6
+
+        else:
+            survey  =  sys.argv[1]
+            fsky    =  np.float(sys.argv[2])
+            
+            zmin    =  np.float(sys.argv[3])
+            zmax    =  np.float(sys.argv[4])
+
+        ##  
         zmean       =  np.mean([zmin, zmax])
 
         kmaxs       =  np.arange(0.1, 0.3, 0.1)
@@ -244,6 +257,7 @@ if __name__ == '__main__':
         ##  _vcheck_vol(fsky=fsky, fkp_weighted=False, nbar=1.e-3, P0=5.e3)
 
         '''
+        ##  Set n(z).
         band        =               'r'
         stats       =  goldrush_stats()
 
@@ -264,11 +278,11 @@ if __name__ == '__main__':
         '''
 
         ##  drop_nz =  lambda z: const_nz(z, ngal = 1.e-3, zmin=zmin, zmax=zmax)  ##  [(h^-1 Mpc)^-3].  
-        drop_nz     =  euclid_nz
+        ##  drop_nz =  euclid_nz
+        drop_nz     =  beast_nz
 
-        check_dropnz(drop_nz)
-
-        check_nP(Pk_interps, fsky=fsky, nz=drop_nz)
+        ##  check_dropnz(drop_nz)
+        ##  check_nP(Pk_interps, fsky=fsky, nz=drop_nz)
 
         for kmax in kmaxs:
             ##  y = np.log(k)
@@ -278,8 +292,6 @@ if __name__ == '__main__':
             ##  Note: integral symmetric in mu -> 2 * \int [0., 1.]
             ranges      = [[zmin, zmax], [0., 1.], [ymin, ymax]]
             args        = (Pk_interps, fsky, drop_nz)
-
-            print('\nSolving for integral with kmax = %.3lf.' % kmax)
             
             ##  result  = nquad(integrand, ranges, args=args, full_output=True)
 
@@ -290,14 +302,15 @@ if __name__ == '__main__':
             except:
               integ     = vegas.Integrator(ranges)
               print('\n\nCreating new vegas integrator.')
-
+            
+            
             ##  Fisher matrix.     
             fog         =      False
             sigp        =         10.       ##  [(h^{-1} Mpc)]
 
             params      = ['b', 'f']        ##  ['b', 's', 'f']  
             Fisher      = np.zeros(len(params) * len(params)).reshape(len(params), len(params))
-
+            
             for i, b in enumerate(params):
               for j, f in enumerate(params):
                 args    = (Pk_interps, fsky, drop_nz, b+f, 'nlinear', fog, sigp)
@@ -306,12 +319,12 @@ if __name__ == '__main__':
                 print(result.summary())
 
                 Fisher[i,j] = result.mean
-
+            
             ##  invert ... 
             iFisher = inv(Fisher)
-
-            print(euclid_bz(zmean), growth_rate(1. / (1. + zmean)))
-            print(100. * np.sqrt(iFisher[0,0]) / euclid_bz(zmean), 100. * np.sqrt(iFisher[-1,-1]) / growth_rate(1. / (1. + zmean)))
+            
+            print(kmax, survey, zmin, zmax, _bz(zmean), growth_rate(1. / (1. + zmean)))
+            print(kmax, survey, zmin, zmax, 100. * np.sqrt(iFisher[0,0]) / _bz(zmean), 100. * np.sqrt(iFisher[-1,-1]) / growth_rate(1. / (1. + zmean)))
 
             '''  
             ##  And integrate ...
@@ -331,7 +344,7 @@ if __name__ == '__main__':
             results.append(result.mean)      
             '''
 
-            exit(1)
+        exit(1)
 
         results = np.array(results)
         results = np.sqrt(results)
