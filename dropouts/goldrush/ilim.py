@@ -32,7 +32,7 @@ def get_nbar_nocontam(band, depth='W', printit=False):
     stats[band]['nbar_noint'] = sum(counts * (1. - get_contamination(magbins[:-1], zee=zee, depth=depth))) / stats['Total area'][depth]
 
     if printit:
-      print  sum(stats[band]['counts'].values()), counts.sum(), sum(counts * (1. - get_contamination(magbins[:-1], zee=zee, depth=depth)))
+      print(sum(stats[band]['counts'].values()), counts.sum(), sum(counts * (1. - get_contamination(magbins[:-1], zee=zee, depth=depth))))
 
     return  stats
 

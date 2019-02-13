@@ -23,6 +23,9 @@ def load_tables(printit = False):
   ##         Mixture of columns from Table 2 and 3, which share common row definitions.
 
   tab_one   = pd.read_table(root + 'tabone.dat',   skiprows=1, sep=r"\s*", names=['Field', 'Size', 'NBX', 'NLBG'], engine='python')  
+
+  exit(1)
+
   tab_three = pd.read_table(root + 'tabthree.dat', skiprows=1, sep=r"\s*", names=['R', 'NBX_phot', 'NBX_spec', 'NBX_int', 'NBX_fAGN',\
                                                                                   'NBX_fint', 'NLBG_phot', 'NLBG_spec', 'NLBG_int',\
                                                                                   'NLBG_fAGN', 'NLBG_fint'], engine='python')
@@ -174,7 +177,7 @@ if __name__ == "__main__":
 
   ##  pprint(stats)
 
-  '''
+  
   ##  Fig. 12 of https://arxiv.org/pdf/0706.4091.pdf
   for survey in stats:
     Phis = SchechterMfn(Ms, stats[survey]['schechter']['phi_star'], stats[survey]['schechter']['M_star'], stats[survey]['schechter']['alpha'])
@@ -185,11 +188,11 @@ if __name__ == "__main__":
 
   pl.legend()
   pl.show()
+  
   '''
-
   zs, ps = get_pz(interp=False)
-
   pl.plot(zs, ps)
+  '''
   pl.show()
   
   print('\n\nDone.\n\n')

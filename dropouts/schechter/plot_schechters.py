@@ -40,7 +40,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     count        = 0
     pnbars       = []
-    '''
+    
     ##  QSOs first. 
     for mlim in mlims:
         pnbar    = projdensity(2., 3., None, None, None, mlim=mlim, type='qso')
@@ -48,16 +48,17 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars  = np.array(pnbars)
     pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
-    '''
+    
     ##  Now dropouts.
     samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
+    
     bands        = ['BX', 'Malkan', 'g', 'r']
     labels       = ['BX-dropouts', r'$u$-dropouts', r'$g$-dropouts', r'$r$-dropouts']
     colors       = ['y', 'b', 'g', 'indigo']
 
     stop         =  2
 
-    ## for stats, band, label, color in zip(samples[:stop], bands[:stop], labels[:stop], colors[:stop]):         
+    ##  for stats, band, label, color in zip(samples[:stop], bands[:stop], labels[:stop], colors[:stop]):         
     for stats, band, label, color in zip(samples, bands, labels, colors):
       zee        = stats[band]['z']   
       dzee       = 0.7
@@ -107,7 +108,7 @@ def plot_schechters(magbias=False, nointerloper=False):
           
         crates = np.array(crates)
         pl.semilogy(mlims[::2], nbars * (1. - crates), color=color, marker='s', markersize=3, lw=0.)
-      '''  
+        
       if band == 'g':
         magbins, pnbar, counts = get_nbarbymag(band, depth='W', printit=False)
         pl.semilogy(magbins[:-1:50], pnbar[::50], color=color, marker='^', markersize=3, lw=0.)
@@ -121,7 +122,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
         rate = get_contamination(magbins[:-1:50], round(stats[band]['z']), depth='D')
         pl.semilogy(magbins[:-1:50], pnbar[::50] * (1. - rate), color=color, marker='s', markersize=3, lw=0.)
-      '''
+      
       if magbias:
         ##  Gradient for magnification bias. 
         grads   = np.gradient(pnbars, dm)
@@ -149,7 +150,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     ##  axx.set_xlabel(r'log$_{10}$\{$L_{\rm{min}} / $(ergs$/s$)\}')
 
-    '''
+    
     ##  Lyman-alpha. 
     ##  Lower limits on LF integral.
     logLmins = np.arange(40.0, 44.0, 0.1)
@@ -162,7 +163,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars   = np.array(pnbars)                                                                                                                        
     axx.semilogy(logLmins, pnbars, '-', label=r'$2.2 < z < 3.5$ Ly-$\alpha$', color='m', alpha=0.5, zorder=-1)
-    '''
+    
     '''
     ##  ... and Comparat OII.
     print('\n\nSolving for Comparat OII.\n\n')
@@ -182,18 +183,18 @@ def plot_schechters(magbias=False, nointerloper=False):
     '''
     pl.legend(loc=2)
     
-    pl.show()
-    ##  pl.savefig('plots/schechters.pdf', bbox_inches='tight')
+    ##  pl.show()
+    pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 
 
 if __name__ == "__main__":
     import  collections
 
 
-    print "\n\nWelcome to a Schechter fn. plotter.\n\n"
+    print("\n\nWelcome to a Schechter fn. plotter.\n\n")
 
     plot_schechters()
 
     ## pprint(stats)
 
-    print "\n\nDone.\n\n"
+    print("\n\nDone.\n\n")
