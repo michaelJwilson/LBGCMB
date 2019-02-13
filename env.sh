@@ -1,5 +1,5 @@
 ## Source to define 'necessary' environment variables. 
-export  LBGCMB=/Users/M.J.Wilson/work/LBGCMB/
+export  LBGCMB=/global/homes/m/mjwilson/LBGCMB
 
 export  PYTHONPATH=$LBGCMB:$LBGCMB/dropouts/:$LBGCMB/dropouts/goldrush/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/desi/py:$PYTHONPATH

@@ -29,7 +29,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     from    utils              import  latexify
 
 
-    latexify(fig_width=None, fig_height=None, columns=2, equal=False, ggplot=False)
+    ##  latexify(fig_width=None, fig_height=None, columns=2, equal=False, ggplot=False)
         
     ##  Create figure.                                                                                                                        
     fig, axarray = plt.subplots(1, 1, sharey=False)
@@ -68,7 +68,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
       
       pnbars     = []
-      '''
+      
       for mlim in mlims:
         if band in ['g', 'r']:    
           ##  Apply completeness correction to Schechter estimate.   
@@ -82,8 +82,7 @@ def plot_schechters(magbias=False, nointerloper=False):
       pnbars  = np.array(pnbars)
 
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
-      '''
-      '''
+            
       if band == 'BX':                                                                                                                              
         for mlim in np.arange(22.5, 26.0, 0.5):                                                                                                                                                                                           
           stats = reddy_stats(mlim)                                                                                                          
@@ -108,7 +107,7 @@ def plot_schechters(magbias=False, nointerloper=False):
           
         crates = np.array(crates)
         pl.semilogy(mlims[::2], nbars * (1. - crates), color=color, marker='s', markersize=3, lw=0.)
-
+      '''  
       if band == 'g':
         magbins, pnbar, counts = get_nbarbymag(band, depth='W', printit=False)
         pl.semilogy(magbins[:-1:50], pnbar[::50], color=color, marker='^', markersize=3, lw=0.)
@@ -164,6 +163,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     pnbars   = np.array(pnbars)                                                                                                                        
     axx.semilogy(logLmins, pnbars, '-', label=r'$2.2 < z < 3.5$ Ly-$\alpha$', color='m', alpha=0.5, zorder=-1)
     '''
+    '''
     ##  ... and Comparat OII.
     print('\n\nSolving for Comparat OII.\n\n')
 
@@ -179,9 +179,9 @@ def plot_schechters(magbias=False, nointerloper=False):
     axx.semilogy(logSmins, pnbars, '-', label=r'$0.6 < z < 1.6$ OII', color='c', alpha=0.5, zorder=-1)
 
     ##  axx.set_xlim(44., 39.)
-    
+    '''
     pl.legend(loc=2)
-
+    
     pl.show()
     ##  pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 
