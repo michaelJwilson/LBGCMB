@@ -1,7 +1,7 @@
-from  __future__         import  division
-from  schechterfn        import  SchechterMfn 
-from  params             import  get_params
-from  scipy.interpolate  import  interp1d
+from    __future__         import  division
+from    schechterfn        import  SchechterMfn 
+from    params             import  get_params
+from    scipy.interpolate  import  interp1d
 
 import  os
 import  numpy  as  np
@@ -22,13 +22,10 @@ def load_tables(printit = False):
   ##         In Table 3, R is the lower limit on the mag bin (typically, 0.5 in width excepth for the first which is 1.0 in width.)
   ##         Mixture of columns from Table 2 and 3, which share common row definitions.
 
-  tab_one   = pd.read_table(root + 'tabone.dat',   skiprows=1, sep=r"\s*", names=['Field', 'Size', 'NBX', 'NLBG'], engine='python')  
-
-  exit(1)
-
-  tab_three = pd.read_table(root + 'tabthree.dat', skiprows=1, sep=r"\s*", names=['R', 'NBX_phot', 'NBX_spec', 'NBX_int', 'NBX_fAGN',\
-                                                                                  'NBX_fint', 'NLBG_phot', 'NLBG_spec', 'NLBG_int',\
-                                                                                  'NLBG_fAGN', 'NLBG_fint'], engine='python')
+  tab_one   = pd.read_csv(root + 'tabone.dat',   comment='#', header=None, sep=r'\s+', names=['Field', 'Size', 'NBX', 'NLBG'], engine='python')  
+  tab_three = pd.read_csv(root + 'tabthree.dat', comment='#', header=None, sep=r'\s+', names=['R', 'NBX_phot', 'NBX_spec', 'NBX_int', 'NBX_fAGN',\
+                                                                                              'NBX_fint', 'NLBG_phot', 'NLBG_spec', 'NLBG_int',\
+                                                                                              'NLBG_fAGN', 'NLBG_fint'], engine='python')
   if printit:
     print("\n\nReddy Table one:")
     print(tab_one)
@@ -110,7 +107,7 @@ def samplestats(mag=23., printit=False, h70=False):
     if printit:
       print("\n\n%s Survey Specifications (at depth R=%.3lf):\n" % (survey, mag))
 
-      for k, v in stats[survey].iteritems():
+      for k, v in zip(stats[survey].keys(), stats[survey].values()):
         print("%s \t\t %s" % (k.ljust(20), v))
   
   return  stats
@@ -172,12 +169,12 @@ if __name__ == "__main__":
 
   print('\n\nWelcome to the Reddy (Schechter) calculator.\n\n')
 
+  
   Ms    = np.arange(-23., -18., 0.1)
   stats = samplestats(mag=23.0, printit=False, h70=True)
 
-  ##  pprint(stats)
+  pprint(stats)
 
-  
   ##  Fig. 12 of https://arxiv.org/pdf/0706.4091.pdf
   for survey in stats:
     Phis = SchechterMfn(Ms, stats[survey]['schechter']['phi_star'], stats[survey]['schechter']['M_star'], stats[survey]['schechter']['alpha'])
@@ -189,10 +186,9 @@ if __name__ == "__main__":
   pl.legend()
   pl.show()
   
-  '''
   zs, ps = get_pz(interp=False)
   pl.plot(zs, ps)
-  '''
+  
   pl.show()
   
   print('\n\nDone.\n\n')

@@ -46,7 +46,7 @@ def distance_modulus(z, unit = 'pc'):
 def pprint(d, indent=0):
   print('\n\n')
 
-  for key, value in d.iteritems():
+  for key, value in zip(d.keys(), d.values()):
     print('\t' * indent + str(key))
 
     if isinstance(value, dict):
