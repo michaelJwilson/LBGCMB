@@ -47,7 +47,6 @@ def get_nbarbymag(dropband, depth, printit=False):
     import  os
     import  glob
 
-    from    des              import  des_depths
     from    specs            import  samplestats
     from    selection_box    import  detection_bands
 
@@ -140,7 +139,6 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
     import  pylab              as      pl
     import  matplotlib.pyplot  as      plt
     
-    from    des                import  des_depths
     from    matplotlib.pyplot  import  text
     from    specs              import  samplestats
     from    selection_box      import  detection_bands
@@ -174,6 +172,7 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
           axarray[k].semilogy(magbins[1:], pnbar * (1. - rate), '--', label='Less %s' % contamination + r' ($\simeq$' + '%.2lf) interlopers' % effective_depth(dropband, contamination),\
                                                                       markersize=3, lw=1., c=color, dashes=[3, 1], alpha=0.4)
 
+        '''
         if plot_des:
           ##  DES depths/yr estimate                                                                                                                    
           depths = des_depths()
@@ -184,6 +183,7 @@ def plot_ilims(results, plot_des = False, plot_hsc = True):
           ##  and the magnitude limits per year (estimated for year greater than one).
           for year in np.arange(1, 6, 1):        
             axarray[k].axvline(depths['Y' + str(year)][detection_bands[dropband]], c='k', linestyle='-', label='', lw = 0.5)
+        '''
 
         root = os.environ['LBGCMB']
         data = np.loadtxt(root + "/dropouts/nz/schechter/dat/schechter_estimate_%s_dropouts.txt" % dropband)

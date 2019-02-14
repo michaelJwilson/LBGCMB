@@ -147,8 +147,8 @@ if __name__ == "__main__":
     for label, fitting, color in zip(['ST', 'Tinker'], [hmf.fitting_functions.ST, hmf.fitting_functions.Tinker08], ['c', 'r']):
         mf.update(z = 4.0, Mmin = 8., Mmax = np.log10(5.e14), cosmo_params = {'Om0': 0.30841}, hmf_model = fitting, delta_h = 200.)
 
-        print  mf.parameter_values
-        print  mf.parameter_info()
+        print(mf.parameter_values)
+        print(mf.parameter_info())
 
         pl.loglog(mf.m, mf.ngtm, label='py-hmf: ' + label, c=color, alpha=0.6)
 

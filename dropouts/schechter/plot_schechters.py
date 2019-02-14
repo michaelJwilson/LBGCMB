@@ -40,7 +40,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     count        = 0
     pnbars       = []
-    
+    '''
     ##  QSOs first. 
     for mlim in mlims:
         pnbar    = projdensity(2., 3., None, None, None, mlim=mlim, type='qso')
@@ -48,7 +48,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars  = np.array(pnbars)
     pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
-    
+    '''
     ##  Now dropouts.
     samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
     
@@ -79,7 +79,7 @@ def plot_schechters(magbias=False, nointerloper=False):
          pnbar   = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, type='app', printit=True)   
 
         pnbars.append(pnbar)
-  
+      
       pnbars  = np.array(pnbars)
 
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
@@ -150,7 +150,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     ##  axx.set_xlabel(r'log$_{10}$\{$L_{\rm{min}} / $(ergs$/s$)\}')
 
-    
+    '''
     ##  Lyman-alpha. 
     ##  Lower limits on LF integral.
     logLmins = np.arange(40.0, 44.0, 0.1)
@@ -163,7 +163,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars   = np.array(pnbars)                                                                                                                        
     axx.semilogy(logLmins, pnbars, '-', label=r'$2.2 < z < 3.5$ Ly-$\alpha$', color='m', alpha=0.5, zorder=-1)
-    
+    '''
     '''
     ##  ... and Comparat OII.
     print('\n\nSolving for Comparat OII.\n\n')
