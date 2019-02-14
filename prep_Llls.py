@@ -28,6 +28,6 @@ if __name__ == '__main__':
   NLlls, Llls, nmodes = prep_Llls(NLlls = 50, Lmin = 2., Lmax = 2000., log10=False)
 
   for i, L in enumerate(Llls):
-    print L, nmodes[i], len(Llls), NLlls
+    print(L, nmodes[i], len(Llls), NLlls)
 
   print('\n\nDone.\n\n')

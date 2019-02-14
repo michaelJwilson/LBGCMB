@@ -1,0 +1,47 @@
+# The density of objects with successful redshifts for a specific target class
+# (such as LRG) will be nobs*success (for example, nobs_lrg*success_lrg).  The
+# redshift distributions in the nz_*.dat files should be normalized to these
+# number densities.
+
+area: 14000. # full survey sky area in sq deg
+
+ntarget_lrg:   480. # LRG targets to tile (from LRG 2-pass retuning)
+#- https://desi.lbl.gov/trac/attachment/wiki/TargetSelectionWG/LRGretuning
+#- ntarget_lrg:   350. # LRG targets to tile (CDR)
+ntarget_boss:  119. # BOSS-like LRGs (may be tiled in 4000 sq deg)
+ntarget_elg:  2400. # ELG targets to tile
+ntarget_qso:   170. # QSO targets to tile, all redshifts
+ntarget_lya:    50. # Lyman-alpha QSO targets to tile, z > 2.1
+ntarget_badqso: 90. # Bad QSO targets (stars) to tile
+
+frac_sky: 0.08 # Fraction of fibers dedicated to sky
+frac_std: 0.02 # Fraction of fibers dedicated to standard stars
+
+nobs_lrg:  480. # observed LRG targets per sq deg, from fiber assignment
+nobs_boss:  34. # average number of unobserved BOSS-like LRGs per full-footprint sq deg
+nobs_elg: 1872. # observed ELG targets per sq deg (78% of 2400)
+nobs_qso:  170. # observed QSO targets per sq deg, all redshifts
+nobs_lya:   50. # observed Lyman-alpha QSO targets per sq deg, z > 2.1
+
+success_lrg:  0.96 # fraction of LRGs with successful redshift
+success_boss: 0.99 # fraction of BOSS-like LRGs with successful redshift
+success_elg:  0.65 # fraction of ELGs with successful redshift
+success_qso:  1.00 # fraction of QSOs with successful redshift
+success_lya:  1.00 # fraction of Lyman-alpha QSOs with successful redshift
+
+#- BGS numbers from DESI-1770
+area_bgs: 14000  # BG survey sky area in sq deg (note that this is not used in
+                 # cosmology projections, i.e., don't change and expect those 
+                 # to change (true also of main DESI area))
+ntarget_bgs_bright: 818  # number of targeting BGS r<19.5
+nobs_bgs_bright:    762  # nobs = ntarget * 0.92 fiber assignment efficiency
+success_bgs_bright: 0.97 # fraction of BG observed targets with successful redshift
+
+ntarget_bgs_faint: 618   # number of targeting BGS 19.5<r<20
+nobs_bgs_faint:    475   # nobs = ntarget * 0.77 fiber assignment efficiency
+success_bgs_faint: 0.92  # fraction of BGS_faint observed targets with successful redshift
+
+#- PLACEHOLDER MWS numbers; not documented or defined anywhere yet
+ntarget_mws:  736  # number of targeted MWS stars
+nobs_mws:     700  # nobs = ntarget * 0.95 fiber assignment efficiency 
+success_mws: 0.99  # fraction of MWS targets with successful redshift

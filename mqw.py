@@ -152,7 +152,7 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
         dstr += "\t\t Schur at Lmin: %.2lf, and Lmax: %.2lf"              % (result[zi]['S'][0], result[zi]['S'][-1])
 
         if printit:
-          print  dstr
+          print(dstr)
 
     ##  Define output. 
     output = []
@@ -286,10 +286,13 @@ if __name__ == '__main__':
   colors   = ['k', 'b', 'r', 'indigo', 'y', 'sandybrown']
 
   for color, Np in zip(colors, Npz):
-   dat  = data[data[:,2] == Np]
- 
+   dat = data[data[:,2] == Np]
+  
    for kk, percentile in enumerate(percentiles):
-     if kk == 2:
+     if   (kk == 1) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
+         label =  "%s" % (sci_notation(Np, decimal_digits=0, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]    
+
+     elif (kk == 2) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
          label =  "%s" % (sci_notation(Np, decimal_digits=0, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]
 
      else:
@@ -297,7 +300,11 @@ if __name__ == '__main__':
 
      axs[kk + 1].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6)
 
-     if kk == 2:
+     ##  
+     if   (kk == 1) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
+       axs[kk + 1].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)
+
+     elif (kk == 2) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
        axs[kk + 1].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8) 
 
      else:

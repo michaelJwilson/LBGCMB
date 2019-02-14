@@ -110,6 +110,6 @@ if __name__ == '__main__':
   pl.show()
   '''
 
-  print const_pz(zs, zlo=2.0, zhi=2.3)
+  print(const_pz(zs, zlo=2.0, zhi=2.3))
 
   print('\n\nDone.\n\n')
