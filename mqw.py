@@ -88,21 +88,22 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
 
       cgg  =   Cij(Pk_interps, Llls, zee - dz / 2.,  zee + dz / 2.)
 
-      ## eqn. (44); sum over k has implicit sum over ell and m. 
+      ##  Eqn. (44); sum over k has implicit sum over ell and m. 
       result[zee]           = {'Ns': Ns, 'Np': Np, 'bp': bp, 'bs': bs, 'cgg': cgg, 'wp': wp, 'num': (bp * bs * cgg) ** 2., 'denom': cgg * (bp * Np)**2. + wp}
 
-      ## eqns. (22) - (25) of McQuinn and White. 
+      ##  Eqns. (22) - (25) of McQuinn and White. 
       result[zee]['A0i']    =  bp * Np * bs * Ns * cgg + wps  ## < p   s_i >_L
       result[zee]['Aii']    =    (bs * Ns) ** 2. * cgg + ws   ## < s_i s_j >_L  
       result[zee]['A0i_j']  =       bp * bs * Ns * cgg        ## < p   s_i >_L, j 
       
-      ## eqn. (43); to be later normalised. 
+      ##  Eqn. (43), to be later normalised. 
       result[zee]['beta']   = (Np * bp) ** 2. * cgg 
 
-    ## Total spec. zs over the whole redshift range. 
+
+    ##  Total spec. zs over the whole redshift range. 
     nspec   = 0.0
 
-    ## ... and normalisation over redshift for beta.                                                                                                        
+    ##  ... and normalisation over redshift for beta.                                                                                                        
     bnorm   = 0.0
 
     A00     = 0.0   ## < p * p >_L
@@ -111,30 +112,30 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
     for zee in result:
         nspec  += result[zee]['Ns']
 
-        ## Array for each L value.
+        ##  Array for each L value.
         A00    += result[zee]['denom'] 
         bnorm  += result[zee]['beta']
         sshift += result[zee]['A0i'] ** 2. / result[zee]['Aii'] 
     
     for zee in result: 
-        ## Schur-Limber limit
+        ##  Schur-Limber limit
         result[zee]['beta']         /=  bnorm
 
-        ## Fractional error from eqn. (44); Schur-Limber limit of small r (due to shotnoise, or redshift overlap). 
+        ##  Fractional error from eqn. (44);  Schur-Limber limit of small r (due to shotnoise, or redshift overlap). 
         result[zee]['ratio']         =  result[zee]['num'] / A00
 
-        ## Diagonal by definition in this limit. 
+        ##  Diagonal by definition in this limit. 
         result[zee]['Fii']           =  result[zee]['Ns'] * fsky * np.sum((2. * Llls + 1) * result[zee]['ratio'])
         result[zee]['var_ii']        =    1. / result[zee]['Fii']
         result[zee]['ferr_ii']       = np.sqrt(result[zee]['var_ii']) / result[zee]['Np']
     
-    ## Limber approximation, but outwith the Schur limit.    
+    ##  Limber approximation, but outwith the Schur limit.    
     for zi in result:
-        ## Schur(L)
+        ##  Schur(L)
         result[zi]['S']              = A00  / (A00 - sshift)
         result[zi]['r']              = result[zi]['A0i'] / np.sqrt(A00 * result[zi]['Aii'])
         
-    ## Non-diagonal Fisher matrix outwith the Schur limit. 
+    ##  Non-diagonal Fisher matrix outwith the Schur limit. 
     Fisher                           = np.zeros((len(zs), len(zs)))
 
     for i, zi in enumerate(result):
