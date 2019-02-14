@@ -40,15 +40,19 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     count        = 0
     pnbars       = []
-    '''
-    ##  QSOs first. 
+
+    print('\n\nSolving for Quasars.')
+
     for mlim in mlims:
         pnbar    = projdensity(2., 3., None, None, None, mlim=mlim, type='qso')
         pnbars.append(pnbar)
 
     pnbars  = np.array(pnbars)
     pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
-    '''
+
+    ##  And save.
+    np.savetxt(os.environ['LBGCMB'] + '/dropouts/schechter/dat/qso.dat', np.c_[mlims, pnbars], fmt='%.6lf', header='mlim   g/deg^2')
+    
     ##  Now dropouts.
     samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
     
@@ -60,6 +64,8 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     ##  for stats, band, label, color in zip(samples[:stop], bands[:stop], labels[:stop], colors[:stop]):         
     for stats, band, label, color in zip(samples, bands, labels, colors):
+      print('\n\nSolving for %s.' % label)
+        
       zee        = stats[band]['z']   
       dzee       = 0.7
 
@@ -84,6 +90,9 @@ def plot_schechters(magbias=False, nointerloper=False):
 
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
             
+      ##  And save.                                                                                                                                                                                                               
+      np.savetxt(os.environ['LBGCMB'] + '/dropouts/schechter/dat/%s_drop.dat' % band, np.c_[mlims, pnbars], fmt='%.6lf', header='mlim   g/deg^2')
+
       if band == 'BX':                                                                                                                              
         for mlim in np.arange(22.5, 26.0, 0.5):                                                                                                                                                                                           
           stats = reddy_stats(mlim)                                                                                                          
@@ -139,18 +148,17 @@ def plot_schechters(magbias=False, nointerloper=False):
     pl.xlim(22.4,  27.1)
     pl.ylim(1.e0,  7.e4)
 
-    pl.xlabel(r'$m_{5\sigma}$')
-    pl.ylabel(r'$N(<m_{5\sigma})$ / deg$^2$')
+    pl.xlabel(r'$m$')
+    pl.ylabel(r'$N(<m)$ / deg$^2$')
 
     pl.legend(loc=4, ncol=2)
-    
+    '''
     ##  Line Schecter functions. 
     ax  = pl.gca()
     axx = ax.twiny()
 
     ##  axx.set_xlabel(r'log$_{10}$\{$L_{\rm{min}} / $(ergs$/s$)\}')
 
-    '''
     ##  Lyman-alpha. 
     ##  Lower limits on LF integral.
     logLmins = np.arange(40.0, 44.0, 0.1)
@@ -180,9 +188,9 @@ def plot_schechters(magbias=False, nointerloper=False):
     axx.semilogy(logSmins, pnbars, '-', label=r'$0.6 < z < 1.6$ OII', color='c', alpha=0.5, zorder=-1)
 
     ##  axx.set_xlim(44., 39.)
-    '''
-    pl.legend(loc=2)
     
+    pl.legend(loc=2)
+    '''
     ##  pl.show()
     pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 

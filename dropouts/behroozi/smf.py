@@ -12,13 +12,13 @@ latexify(columns=1, equal=True, fontsize=10, ratio=None, ggplot=True, usetex=Tru
 dat = np.loadtxt('dat/data-compilation/smf_ms/marchesini_z2.5.smf')
 
 ##  Columns:  Log10(stellar mass) (Msun), Log10(ND) (1/Mpc^3/dex), Err+ (dex), Err- (dex)                                                                                     
-pl.plot(10. ** dat[:,0], 10. ** dat[:,1], '^', label = '2.5', markersize=2)
+pl.plot(10. ** dat[:,0], 10. ** dat[:,1], label = '2.5', markersize=2)
 
 ##  Marchesini:  z=3.5                                                                                                                                                        
 dat = np.loadtxt('dat/data-compilation/smf_ms/marchesini_z3.5.smf')
 
 ##  Columns:  Log10(stellar mass) (Msun), Log10(ND) (1/Mpc^3/dex), Err+ (dex), Err- (dex)                                                                                     
-pl.plot(10. ** dat[:,0], 10. ** dat[:,1], '^', label = '3.5', markersize=2)
+pl.plot(10. ** dat[:,0], 10. ** dat[:,1], label = '3.5', markersize=2)
 
 
 ##  Table 3 and Fig. (10) of https://arxiv.org/pdf/1507.05636.pdf 
@@ -46,7 +46,7 @@ Ps = np.array([[-1.57, -1.77, -2.00, -2.22, -2.52, -2.91, -3.37,  -4.00,  -4.54]
                [-1.47, -1.81, -2.26, -2.65, -3.14, -3.69, -4.27, np.NaN, np.NaN]])
 
 for kk, x in enumerate(Ps[:-1]):
-  pl.loglog(10. ** Ms, 10. ** x, '^', label=str(zs[kk]), markersize=2)
+  pl.loglog(10. ** Ms, 10. ** x, label=str(zs[kk]), markersize=2)
 
 '''
 ##  Table 1 of https://arxiv.org/pdf/1303.4409.pdf
