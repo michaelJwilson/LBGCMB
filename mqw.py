@@ -160,7 +160,7 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
     for outz in percentiles: 
         index  = np.where(np.abs((zs - outz)) == np.min(np.abs(zs - outz)))[0]
 
-        ## Save 
+        ##  Save 
         output += [100. * result[zs[index][0]]['ferr_ii'], 100. * np.sqrt(diFish[index]) / result[zs[index][0]]['Np']]
 
     return  output
@@ -188,7 +188,7 @@ if __name__ == '__main__':
 
   ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                              
   Nsz          =  np.logspace(1.0, 4.0,  8, base=10.)
-  intlp_zs     =  [0.5]
+  intlp_zs     = [0.5]
 
   print('\nEvaluating for nspec: ' + ''.join('%.2lf;  ' % x for x in Nsz))
 
@@ -219,6 +219,8 @@ if __name__ == '__main__':
       stats      =  gsample_stats()
         
       ibz        =  get_dropoutbz()
+
+      ##  Focus on bias for a given dropout sample. 
       bz         =  lambda z:  ibz(stats[band]['z'])
     
   elif  band == 'Malkan':
@@ -249,7 +251,7 @@ if __name__ == '__main__':
 
   print
 
-  ##  Get the z percentiles for this p(z).                                                                                                                 
+  ##  Get the z percentiles for this dropout p(z).                                                                                                                 
   percentiles = percentiles(pz, printit=True)
 
   if evaluate:
@@ -272,13 +274,15 @@ if __name__ == '__main__':
     results = np.array(results)
 
     np.savetxt("dat/mqw_result_%sdrops.txt" % band, results, fmt='%.4le', delimiter='\t')
+
     
   ##  And plot ...
   data = np.loadtxt("dat/mqw_result_%sdrops.txt" % band)
     
-  Nsz  = np.unique(data[:,0])
-  mms  = np.unique(data[:,1])
-  Npz  = np.unique(data[:,2])
+  Nsz  = np.unique(data[:,0])  ##  N spec. 
+  mms  = np.unique(data[:,1])  ##  mag. lim.
+  Npz  = np.unique(data[:,2])  ##  N phot.  
+
 
   latexify(fig_height=2.08948, columns=2)
 
@@ -311,7 +315,7 @@ if __name__ == '__main__':
        axs[kk + 1].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)  
 
   for ax in axs:
-    ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='indigo', alpha=0.3)
+    ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='indigo', alpha=0.2)
       
     ##  title  = r'$%.1lf < z < %.1lf$' % (zmin, zmax) + ' for ' + r'$f_{\rm{sky}} = %.2lf$, ' % fsky + 'd$z$=%.1lf' % dz 
     ##  title +=  ' and ' + r'$f_{\rm{over}} = %.1lf$' % fover
