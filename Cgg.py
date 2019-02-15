@@ -134,8 +134,8 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
   strings    = ['%.1lf' % x   for x in tms]
   tms        = [iNs_interp(x) for x in tms]
 
-  print  strings
-  print  tms
+  print(strings)
+  print(tms)
 
   ax2.set_yticks(tms)
   ax2.set_yticklabels(strings)
@@ -303,4 +303,4 @@ if __name__ == "__main__":
   
   pl.savefig('plots/%sCgg.pdf' % band, bbox_inches='tight')
   
-  print "\n\nDone.\n\n"
+  print("\n\nDone.\n\n")

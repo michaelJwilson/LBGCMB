@@ -186,7 +186,7 @@ if __name__ == '__main__':
   fsky         =      0.01
   fover        =      0.00
 
-  band         =   'Malkan' ##  ['g', 'Malkan'] 
+  band         =        'g' ##  ['g', 'Malkan'] 
   evaluate     =      True
 
   ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                              
@@ -289,33 +289,42 @@ if __name__ == '__main__':
 
   latexify(fig_height=2.08948, columns=2)
 
-  fig, axs = plt.subplots(1, 4, sharey=True)
-  colors   = ['k', 'b', 'r', 'indigo', 'y', 'sandybrown']
+  add_desi = False
+  
+  if add_desi:
+      fig, axs = plt.subplots(1, 4, sharey=True)
+      index    = 1
+  
+  else:
+      fig, axs = plt.subplots(1, 3, sharey=True)
+      index    = 0 
+      
+  colors = ['k', 'b', 'r', 'indigo', 'y', 'sandybrown']
 
   for color, Np in zip(colors, Npz):
    dat = data[data[:,2] == Np]
   
    for kk, percentile in enumerate(percentiles):
-     if   (kk == 1) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
+     if  (kk == index) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
          label =  "%s" % (sci_notation(Np, decimal_digits=0, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]    
 
-     elif (kk == 2) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
+     elif (kk == index + 1) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
          label =  "%s" % (sci_notation(Np, decimal_digits=0, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]
 
      else:
          label = ''
 
-     axs[kk + 1].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6)
+     axs[kk + index].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6)
 
      ##  
-     if   (kk == 1) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
-       axs[kk + 1].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)
+     if   (kk == index) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
+       axs[kk + index].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)
 
-     elif (kk == 2) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
-       axs[kk + 1].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8) 
+     elif (kk == index + 1) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
+       axs[kk + index].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8) 
 
      else:
-       axs[kk + 1].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)  
+       axs[kk + index].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)  
 
   for ax in axs:
     ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='indigo', alpha=0.2)
@@ -330,7 +339,9 @@ if __name__ == '__main__':
     ax.set_ylim(0.0,  8.000)
 
   axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$')
-  axs[0].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % intlp_zs[0], handlelength=.5, fontsize=8)
+
+  if add_desi:
+    axs[0].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % intlp_zs[0], handlelength=.5, fontsize=8)
 
   pl.savefig('plots/mqw_%sdrops.pdf' % band, bbox_inches='tight')
   

@@ -69,11 +69,11 @@ if __name__ == "__main__":
   import  pylab  as      pl
 
 
-  print "\n\nWelcome to lensing.\n\n"
+  print("\n\nWelcome to lensing.\n\n")
 
   NLlls, Llls, nmodes = prep_Llls()
   zs                  = np.arange(0.0, 4.0, 0.1)
   
   kernel              = lensing_kernel(zs) / (100. * params['h_100'] * cosmo.efunc(zs))
 
-  print "\n\nDone.\n\n"
+  print("\n\nDone.\n\n")

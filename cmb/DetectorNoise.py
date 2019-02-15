@@ -6,9 +6,9 @@ from    params  import  get_params
 params = get_params()
 
 def DetectorNoise(ell, thetab = 1., DeltaT = 1., type='TT'):
-  """
+  '''
   Return the expected instrumental noise of the CMB experiment. 
-  """
+  '''
 
   DeltaT        *= 10.**-6.              ##  Convert from micro K to K.                                                            
 
@@ -40,6 +40,6 @@ if __name__ == '__main__':
 
   Llls, nmodes = prep_Llls()
 
-  print  DetectorNoise(Llls, thetab = 1., DeltaT = 1., type='TT')
+  print(DetectorNoise(Llls, thetab = 1., DeltaT = 1., type='TT'))
 
   print('\n\nDone.\n\n')
