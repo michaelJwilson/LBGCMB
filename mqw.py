@@ -89,21 +89,21 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
       cgg  =   Cij(Pk_interps, Llls, zee - dz / 2.,  zee + dz / 2.)
 
       ##  Eqn. (44); sum over k has implicit sum over ell and m. 
-      result[zee]           = {'Ns': Ns, 'Np': Np, 'bp': bp, 'bs': bs, 'cgg': cgg, 'wp': wp, 'num': (bp * bs * cgg) ** 2., 'denom': cgg * (bp * Np)**2. + wp}
+      result[zee] = {'Ns': Ns, 'Np': Np, 'bp': bp, 'bs': bs, 'cgg': cgg, 'wp': wp, 'num': (bp * bs * cgg) ** 2., 'denom': cgg * (bp * Np)**2. + wp}
 
       ##  Eqns. (22) - (25) of McQuinn and White. 
-      result[zee]['A0i']    =  bp * Np * bs * Ns * cgg + wps  ## < p   s_i >_L
-      result[zee]['Aii']    =    (bs * Ns) ** 2. * cgg + ws   ## < s_i s_j >_L  
-      result[zee]['A0i_j']  =       bp * bs * Ns * cgg        ## < p   s_i >_L, j 
+      result[zee]['A0i']   =  bp * Np * bs * Ns * cgg + wps  ## < p   s_i >_L
+      result[zee]['Aii']   =    (bs * Ns) ** 2. * cgg + ws   ## < s_i s_j >_L  
+      result[zee]['A0i_j'] =       bp * bs * Ns * cgg        ## < p   s_i >_L, j 
       
       ##  Eqn. (43), to be later normalised. 
-      result[zee]['beta']   = (Np * bp) ** 2. * cgg 
+      result[zee]['beta']  = (Np * bp) ** 2. * cgg 
 
 
     ##  Total spec. zs over the whole redshift range. 
     nspec   = 0.0
 
-    ##  ... and normalisation over redshift for beta.                                                                                                        
+    ##  ... and normalisation over redshift for beta.                                                                                                    
     bnorm   = 0.0
 
     A00     = 0.0   ## < p * p >_L
@@ -136,21 +136,23 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
         result[zi]['r']              = result[zi]['A0i'] / np.sqrt(A00 * result[zi]['Aii'])
         
     ##  Non-diagonal Fisher matrix outwith the Schur limit. 
-    Fisher                           = np.zeros((len(zs), len(zs)))
+    Fisher = np.zeros((len(zs), len(zs)))
 
     for i, zi in enumerate(result):
-      Fisher[i, i]                  =  fsky * np.sum((2. * Llls + 1) * result[zi]['S'] * result[zi]['A0i_j'] * result[zi]['A0i_j'] / result[zi]['Aii'] / A00)
+      Fisher[i, i] = fsky * np.sum((2. * Llls + 1) * result[zi]['S'] * result[zi]['A0i_j'] * result[zi]['A0i_j'] / result[zi]['Aii'] / A00)
       
       for j, zj in enumerate(result):
-        Fisher[i, j]              +=   np.sum((2. * Llls + 1) * fsky * 2. * result[zi]['S'] ** 2. * result[zi]['r'] * result[zj]['r'] \
-                                     * np.sqrt(1. / result[zi]['Aii'] / result[zj]['Aii']) * result[zi]['A0i_j'] * result[zj]['A0i_j'] / A00)  
+        Fisher[i, j] += np.sum((2. * Llls + 1) * fsky * 2. * result[zi]['S'] ** 2. * result[zi]['r'] * result[zj]['r'] \
+                                   * np.sqrt(1. / result[zi]['Aii'] / result[zj]['Aii']) * result[zi]['A0i_j'] * result[zj]['A0i_j'] / A00)  
 
     iFish    = np.linalg.inv(Fisher)
     diFish   = np.diag(iFish)
 
     for i, zz in enumerate(result):
-        dstr  = "\tz:  %.2lf \t\t Schur-Limber:  %.2lf \t\t Limber:  %.2lf" % (zz, 100. * result[zz]['ferr_ii'], 100. * np.sqrt(diFish[i])/result[zz]['Np'])
-        dstr += "\t\t Schur at Lmin: %.2lf, and Lmax: %.2lf"              % (result[zi]['S'][0], result[zi]['S'][-1])
+        dstr  = "\tz:  %.2lf \t\t Schur-Limber:  %.2lf \t\t Limber:  %.2lf" % (zz, 100. * result[zz]['ferr_ii'],\
+                                                                                   100. * np.sqrt(diFish[i])/result[zz]['Np'])
+
+        dstr += "\t\t Schur at Lmin: %.2lf, and Lmax: %.2lf"                % (result[zi]['S'][0], result[zi]['S'][-1])
 
         if printit:
           print(dstr)
@@ -181,15 +183,15 @@ if __name__ == '__main__':
 
   print('\n\nWelcome to a McQuinn and White clustering redshift forecaster.')
   
-  fsky         =    0.01
-  fover        =    0.00
+  fsky         =      0.01
+  fover        =      0.00
 
-  band         =      'g' 
-  evaluate     =    True
+  band         =   'Malkan' ##  ['g', 'Malkan'] 
+  evaluate     =      True
 
   ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                              
-  Nsz          =  np.logspace(1.0, 4.0,  8, base=10.)
-  intlp_zs     = [0.5]
+  Nsz          =  np.logspace(1.0, 4.0, 8, base=10.)
+  intlp_zs     =  [] ##  [0.5]
 
   print('\nEvaluating for nspec: ' + ''.join('%.2lf;  ' % x for x in Nsz))
 
@@ -252,7 +254,7 @@ if __name__ == '__main__':
 
   print
 
-  ##  Get the z percentiles for this dropout p(z).                                                                                                                 
+  ##  Get the z percentiles for this dropout p(z).                                                                                                      
   percentiles = percentiles(pz, printit=True)
 
   if evaluate:
@@ -263,7 +265,7 @@ if __name__ == '__main__':
     ##  Input NLlls is ignored in the log10=False case.                                                                                                
     NLlls, Llls, nmodes =  prep_Llls(NLlls = 60, Lmin = 60., Lmax = 5000., log10=False)
 
-    results    =  []
+    results = []
      
     for Ns in Nsz:
       for ii, Np in enumerate(Npz):

@@ -41,11 +41,11 @@ if __name__ == "__main__":
   alpha     = stats['Malkan']['schechter']['alpha']
   Mstar     = stats['Malkan']['schechter']['M_star']
   phi_star  = stats['Malkan']['schechter']['phi_star']
-  '''
+  
   for survey in ['Malkan']:
-    ## dropout_arealdensity(z, dz, stats, mlims)
+    dropout_arealdensity(z, dz, stats, mlims)
 
-    for mlim in np.arange(23.0, 26.0, 0.1):
-      comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=mlim, printit=True)
-  '''
+    ##  for mlim in np.arange(23.0, 26.0, 0.1):
+    ##    comovdensity(z, phi_star, Mstar, alpha, type='app', mlim=mlim, printit=True)
+  
   print("\n\nDone.\n\n")
