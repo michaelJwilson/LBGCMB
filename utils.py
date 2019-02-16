@@ -56,11 +56,11 @@ def pprint(d, indent=0):
       print('\t' * (indent + 1) + str(value))
 
 def convert_nbar(nbar, unit='deg'):
-  """
+  '''
   Given an projected number density in galaxies
   per sq. deg., return the projected number density
   in galaxies per sq. unit.
-  """
+  '''
 
   if unit == 'arcmin':
     return Ng/60.**2.

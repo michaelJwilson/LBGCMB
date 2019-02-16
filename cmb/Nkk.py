@@ -5,7 +5,7 @@ import  matplotlib.pyplot  as      plt
 from    prep_camb          import  Clxy
 from    scipy.integrate    import  simps
 from    pickle             import  load, dump
-from    pmh                import  Pmm
+from    pmh                import  Pmm, get_PkInterps
 
 
 plt.style.use('ggplot')
@@ -200,7 +200,7 @@ if __name__ == '__main__':
   ## Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                         
   cambx                =  CAMB()
 
-  Pk_interps           =  init_PmhPhh(cambx)
+  Pk_interps           =  get_PkInterps(cambx)
 
   NLlls, Llls, nmodes  =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5000., log10=True)
 
@@ -212,17 +212,18 @@ if __name__ == '__main__':
   pl.loglog(Llls, ckk, 'r')
 
   ## cmbexp            = 'SS17'                                                                                                                            
-  for cmbexp in bolometers:
-    fsky, thetab, DeltaT, iterative = bolometers[cmbexp]['fsky'], bolometers[cmbexp]['thetab'], bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
+  for cmbexp in ['CMBS4']:
+    fsky, thetab, DeltaT, iterative = bolometers[cmbexp]['fsky'], bolometers[cmbexp]['thetab'],\
+                                      bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
     print('Calculating Nkk for %s' % cmbexp)
     
-    nkk                = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'], thetab=thetab, DeltaT=DeltaT, iterative=iterative,\
-                             pickleit=True)
+    nkk                = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'], thetab=thetab,\
+                             DeltaT=DeltaT, iterative=iterative, pickleit=True)
 
-    vkk                = var_Ckk(Llls, fsky, nkk, Pk_interps, samplevar_lim=False)
+    ##  vkk            = var_Ckk(Llls, fsky, nkk, Pk_interps, samplevar_lim=False)
 
-    ## print('\n\nTotal S/N:  %.3lf' % snr(ckk, vkk, nmodes))
+    ##  print('\n\nTotal S/N:  %.3lf' % snr(ckk, vkk, nmodes))
 
     pl.loglog(Llls, nkk, 'k', label=cmbexp)
     
