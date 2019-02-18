@@ -212,7 +212,7 @@ if __name__ == '__main__':
   pl.loglog(Llls, ckk, 'r')
 
   ## cmbexp            = 'SS17'                                                                                                                            
-  for cmbexp in bolometers:
+  for cmbexp in ['CMBS4']:
     fsky, thetab, DeltaT, iterative = bolometers[cmbexp]['fsky'], bolometers[cmbexp]['thetab'], bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
     print('Calculating Nkk for %s' % cmbexp)
