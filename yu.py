@@ -111,10 +111,10 @@ pl.loglog(Llls, Llls * nkk, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5
 
 if plotit:
     data  = np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
-    pl.loglog(data[:,0], data[:,0] * data[:,1] * ckk, label='Set 1')
+    pl.loglog(data[:,0], data[:,0] * data[:,1] * ckk, label='Delensed')
 
 pl.xlim(50.,    4.e3)
-pl.ylim(1.e-6, 3.e-5)
+pl.ylim(1.e-6, 2.e-5)
 
 pl.xlabel(r'$L$')
 pl.yscale('linear')

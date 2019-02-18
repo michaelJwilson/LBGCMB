@@ -46,7 +46,7 @@ def distance_modulus(z, unit = 'pc'):
 def pprint(d, indent=0):
   print('\n\n')
 
-  for key, value in d.iteritems():
+  for key, value in zip(d.keys(), d.values()):
     print('\t' * indent + str(key))
 
     if isinstance(value, dict):
@@ -56,11 +56,11 @@ def pprint(d, indent=0):
       print('\t' * (indent + 1) + str(value))
 
 def convert_nbar(nbar, unit='deg'):
-  """
+  '''
   Given an projected number density in galaxies
   per sq. deg., return the projected number density
   in galaxies per sq. unit.
-  """
+  '''
 
   if unit == 'arcmin':
     return Ng/60.**2.

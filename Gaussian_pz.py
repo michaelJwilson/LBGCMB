@@ -39,6 +39,6 @@ if __name__ == "__main__":
   zs   = np.arange(1.0, 4.0, 0.1)
 
   for zee in zs:
-    print  Gaussian_pz(zee, z0, nbar)
+    print(Gaussian_pz(zee, z0, nbar))
 
   print("\n\nDone.\n\n")

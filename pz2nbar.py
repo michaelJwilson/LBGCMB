@@ -44,6 +44,6 @@ if __name__ == "__main__":
   result   = pz_slice(zmin, zmax, Gaussian_pz)
   result  *= nbar
 
-  print  nbar_convert(nbar, unit='str')
+  print(nbar_convert(nbar, unit='str'))
 
   print("\n\nDone.\n\n")    

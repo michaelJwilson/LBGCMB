@@ -5,7 +5,7 @@ import  matplotlib.pyplot  as      plt
 from    prep_camb          import  Clxy
 from    scipy.integrate    import  simps
 from    pickle             import  load, dump
-from    pmh                import  Pmm
+from    pmh                import  Pmm, get_PkInterps
 
 
 plt.style.use('ggplot')
@@ -91,7 +91,7 @@ def Nkk(lensCl_interps, nolensCl_interps, Ls, terms=['TT', 'TE', 'EE', 'EB'], th
   
     # All fa terms are unlensed;  TT, EE, BB have an added two in the denominator.
     if 'TT' in terms:
-      print "Calculating TT."
+      print("Calculating TT.")
 
       fa = nolensCl_interps['TT'](nu)*dLu + nolensCl_interps['TT'](nv)*dLv    
       Fa = fa/(2. * Clxy(lensCl_interps, nu, 'TT', thetab, DeltaT) * Clxy(lensCl_interps, nv, 'TT', thetab, DeltaT))
@@ -99,7 +99,7 @@ def Nkk(lensCl_interps, nolensCl_interps, Ls, terms=['TT', 'TE', 'EE', 'EB'], th
       result += fa*Fa*mask['TT']
   
     if 'TE' in terms:                # cos phi_u = \hat x \cdot \hat u  
-      print "Calculating TE."
+      print("Calculating TE.")
 
       c2phi_uv = np.cos(2.*phi_uv)
 
@@ -125,7 +125,7 @@ def Nkk(lensCl_interps, nolensCl_interps, Ls, terms=['TT', 'TE', 'EE', 'EB'], th
       result += fa_uv*Fa*mask['TE']
     
     if 'EE' in terms:
-      print "Calculating EE."
+      print("Calculating EE.")
 
       fa = (nolensCl_interps['EE'](nu)*dLu + nolensCl_interps['EE'](nv)*dLv)*np.cos(2.*phi_uv)
       Fa = fa/(2. * Clxy(lensCl_interps, nu, 'EE', thetab, DeltaT) * Clxy(lensCl_interps, nv, 'EE', thetab, DeltaT))
@@ -133,7 +133,7 @@ def Nkk(lensCl_interps, nolensCl_interps, Ls, terms=['TT', 'TE', 'EE', 'EB'], th
       result += fa*Fa*mask['EE']
 
     if 'EB' in terms:
-      print "Calculating EB."
+      print("Calculating EB.")
 
       fa = (nolensCl_interps['EE'](nu)*dLu - nolensCl_interps['BB'](nv)*dLv)*np.sin(2.*phi_uv)
       Fa = fa/(Clxy(lensCl_interps, nu, 'EE', thetab, DeltaT) * Clxy(lensCl_interps, nv, 'BB', thetab, DeltaT))
@@ -146,7 +146,7 @@ def Nkk(lensCl_interps, nolensCl_interps, Ls, terms=['TT', 'TE', 'EE', 'EB'], th
         result += fa*Fa*mask['EB']
 
     if 'BB' in terms:
-      print "Calculating BB."
+      print("Calculating BB.")
 
       fa =  (nolensCl_interps['BB'](nu)*dLu + nolensCl_interps['BB'](nv)*dLv)*np.cos(2.*phi_uv)
       Fa = fa/(2. * Clxy(lensCl_interps, nu, 'BB', thetab, DeltaT) * Clxy(lensCl_interps, nv, 'BB', thetab, DeltaT))
@@ -154,7 +154,7 @@ def Nkk(lensCl_interps, nolensCl_interps, Ls, terms=['TT', 'TE', 'EE', 'EB'], th
       result += fa*Fa*mask['BB']
  
     if 'TB' in terms:
-      print "Calculating TB."
+      print("Calculating TB.")
 
       fa = nolensCl_interps['TB'](nu)*np.sin(2.*phi_uv)*dLu
       Fa = fa/(Clxy(lensCl_interps, nu, 'TT', thetab, DeltaT) * Clxy(lensCl_interps, nv, 'BB', thetab, DeltaT))
@@ -200,7 +200,7 @@ if __name__ == '__main__':
   ## Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                         
   cambx                =  CAMB()
 
-  Pk_interps           =  init_PmhPhh(cambx)
+  Pk_interps           =  get_PkInterps(cambx)
 
   NLlls, Llls, nmodes  =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5000., log10=True)
 
@@ -213,16 +213,17 @@ if __name__ == '__main__':
 
   ## cmbexp            = 'SS17'                                                                                                                            
   for cmbexp in ['CMBS4']:
-    fsky, thetab, DeltaT, iterative = bolometers[cmbexp]['fsky'], bolometers[cmbexp]['thetab'], bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
+    fsky, thetab, DeltaT, iterative = bolometers[cmbexp]['fsky'], bolometers[cmbexp]['thetab'],\
+                                      bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
     print('Calculating Nkk for %s' % cmbexp)
     
-    nkk                = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'], thetab=thetab, DeltaT=DeltaT, iterative=iterative,\
-                             pickleit=True)
+    nkk                = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'], thetab=thetab,\
+                             DeltaT=DeltaT, iterative=iterative, pickleit=True)
 
-    vkk                = var_Ckk(Llls, fsky, nkk, Pk_interps, samplevar_lim=False)
+    ##  vkk            = var_Ckk(Llls, fsky, nkk, Pk_interps, samplevar_lim=False)
 
-    ## print('\n\nTotal S/N:  %.3lf' % snr(ckk, vkk, nmodes))
+    ##  print('\n\nTotal S/N:  %.3lf' % snr(ckk, vkk, nmodes))
 
     pl.loglog(Llls, nkk, 'k', label=cmbexp)
     

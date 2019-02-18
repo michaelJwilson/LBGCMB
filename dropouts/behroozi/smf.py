@@ -8,6 +8,19 @@ from   utils             import latexify
 
 latexify(columns=1, equal=True, fontsize=10, ratio=None, ggplot=True, usetex=True)
 
+##  Marchesini:  z=2.5                                                                                                                                                        
+dat = np.loadtxt('dat/data-compilation/smf_ms/marchesini_z2.5.smf')
+
+##  Columns:  Log10(stellar mass) (Msun), Log10(ND) (1/Mpc^3/dex), Err+ (dex), Err- (dex)                                                                                     
+pl.plot(10. ** dat[:,0], 10. ** dat[:,1], label = '2.5', markersize=2)
+
+##  Marchesini:  z=3.5                                                                                                                                                        
+dat = np.loadtxt('dat/data-compilation/smf_ms/marchesini_z3.5.smf')
+
+##  Columns:  Log10(stellar mass) (Msun), Log10(ND) (1/Mpc^3/dex), Err+ (dex), Err- (dex)                                                                                     
+pl.plot(10. ** dat[:,0], 10. ** dat[:,1], label = '3.5', markersize=2)
+
+
 ##  Table 3 and Fig. (10) of https://arxiv.org/pdf/1507.05636.pdf 
 ##  Schechter fn. form of the Luminosity type.
 
@@ -16,12 +29,12 @@ fits       = np.array([[4., 10.50, -1.55, 25.68], [5., 10.97, -1.70, 5.16], [6.,
 fits[:,1]  = 10. ** fits[:,1] 
 fits[:,3] *= 1.e-5
 
-for x in fits:
+for x in fits[:-1]:
   Ms       = np.logspace(7, 12, 50)
   Phis     = SchechterLfn(Ms, x[3], x[1], x[2])  ## [Mpc^-3]
 
   ##  Conversion from dM_* to dex, i.e. dM_* = dlog10 M_* x M_* x ln(10).
-  pl.loglog(Ms, Phis * np.log(10.) * Ms, label=x[0])
+  ##  pl.loglog(Ms, Phis * np.log(10.) * Ms, label=x[0])
 
 ##  Table 2 of https://arxiv.org/pdf/1507.05636.pdf. 
 Ms = np.array([7.25, 7.75, 8.25, 8.75, 9.25, 9.75, 10.25, 10.75, 11.25])
@@ -32,8 +45,8 @@ Ps = np.array([[-1.57, -1.77, -2.00, -2.22, -2.52, -2.91, -3.37,  -4.00,  -4.54]
                [-1.47, -1.72, -2.01, -2.33, -2.68, -3.12, -3.47,  -4.12,  -4.88],\
                [-1.47, -1.81, -2.26, -2.65, -3.14, -3.69, -4.27, np.NaN, np.NaN]])
 
-for kk, x in enumerate(Ps):
-  pl.loglog(10. ** Ms, 10. ** x, '^', label='S16, ' + str(zs[kk]), markersize=2)
+for kk, x in enumerate(Ps[:-1]):
+  pl.loglog(10. ** Ms, 10. ** x, label=str(zs[kk]), markersize=2)
 
 '''
 ##  Table 1 of https://arxiv.org/pdf/1303.4409.pdf
@@ -58,7 +71,7 @@ pl.ylim(1.e-5, 1.4e-1)
 pl.xlabel(r'$M_{*} \ [M_\odot]$')
 pl.ylabel(r'$\Phi \ [(\rm{Mpc})^{-3} \rm{dex}^{-1}]$')
  
-pl.legend(loc=1, ncol=2, handlelength=1, columnspacing=.2)
+pl.legend(loc=1, ncol=1, handlelength=1, columnspacing=.2)
 
 plt.tight_layout()
 pl.savefig('plots/StellarMass_Schechter.pdf')
