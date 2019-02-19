@@ -1,6 +1,7 @@
 import  matplotlib 
 import  numpy              as      np
 import  astropy.constants  as      const
+import  pylab              as      pl
 
 from    params             import  get_params
 from    cosmo              import  cosmo
@@ -137,6 +138,16 @@ def latexify(fig_width=None, fig_height=None, columns=1, equal=False, fontsize=1
                 'figure.facecolor': 'w'}
 
     matplotlib.rcParams.update(params)
+
+    plt.rcParams['axes.facecolor'] = 'white'
+
+    ax = pl.gca()
+    ax.set_aspect(aspect=0.2)
+    ax.set_axis_on()
+    ax.spines['bottom'].set_color('black')
+    ax.spines['top'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.spines['right'].set_color('black')
 
 def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     '''

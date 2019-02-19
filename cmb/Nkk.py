@@ -46,7 +46,7 @@ def Nkk(lensCl_interps, nolensCl_interps, Ls, terms=['TT', 'TE', 'EE', 'EB'], th
     return  result
 
   except:
-    print("Failed to load Nkk from a pickle, calculating from scratch.  Creating:\n")
+    print("Failed to load Nkk from %s, calculating from scratch.  Creating:\n" % fpath)
     print('%d < L < %d, in %d bins.' % (Ls[0], Ls[-1], len(Ls)))
     print('For:  thetab = %.3lf, DeltaT = %.3lf and with iteration = %d' % (thetab, DeltaT, np.int(iterative == True)))
     print('and:  ' + '_'.join(terms))

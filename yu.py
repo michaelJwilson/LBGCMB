@@ -75,7 +75,7 @@ for ii, L in enumerate(Llls):
   gg             = [[Cgg(Pk_interps, L, zmin, zmax, p, b, bz2  = b2, survey_pz2 = p2, zeff=False) for [b,  p,  n]  in samples]\
                                                                                                   for [b2, p2, n2] in samples]
   kg             =  np.array(kg)
-  gg             =  np.array(gg)[:,:,0]
+  gg             =  np.array(gg) ## [:,:,0]
 
   for i, [b, p, n] in enumerate(samples):
     ##  Add shotnoise to the auto on the diagonal.
