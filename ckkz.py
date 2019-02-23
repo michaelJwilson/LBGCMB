@@ -1,5 +1,6 @@
 import  numpy              as      np
 import  pylab              as      pl
+import  matplotlib.pyplot  as      plt
 
 from    prep_camb          import  CAMB
 from    prep_Llls          import  prep_Llls
@@ -18,7 +19,7 @@ from    bolometers         import  bolometers
 from    utils              import  latexify
 
 
-latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
+latexify(columns=1, equal=True, fontsize=10)
 
 cmbexp                             = 'CMBS4'
 
@@ -70,5 +71,6 @@ pl.ylim(1.e-7, 2.e-4)
 
 pl.legend(ncol=3, handlelength=.5, loc=1, handletextpad=0.5)
 
-pl.savefig('plots/ckkz.pdf', bbox_inches='tight')
+plt.tight_layout()
+pl.savefig('plots/ckkz.pdf')
 

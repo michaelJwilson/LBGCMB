@@ -74,6 +74,21 @@ def convert_nbar(nbar, unit='deg'):
   else:
     raise  ValueError("\n\nRequested unit is not available for conversion of nbar.\n\n")
 
+def set_size(w, h, ax=None):
+    ''' 
+    w, h: width, height in inches.
+    '''
+    if not ax: 
+      ax = plt.gca()
+
+    l    = ax.figure.subplotpars.left
+    r    = ax.figure.subplotpars.right
+    t    = ax.figure.subplotpars.top
+    b    = ax.figure.subplotpars.bottom
+    figw = float(w)/(r-l)
+    figh = float(h)/(t-b)
+    ax.figure.set_size_inches(figw, figh)
+
 def latexify(fig_width=None, fig_height=None, columns=1, equal=False, fontsize=10, ratio=None, ggplot=True, usetex=True):
     '''
     Set up matplotlib's RC params for LaTeX plotting.
@@ -135,19 +150,30 @@ def latexify(fig_width=None, fig_height=None, columns=1, equal=False, fontsize=1
                 'text.usetex': usetex,
                 'figure.figsize': [fig_width, fig_height],
                 'font.family': 'serif',
-                'figure.facecolor': 'w'}
+                'figure.facecolor': 'w',
+                'axes.facecolor': 'white'}
 
     matplotlib.rcParams.update(params)
 
-    plt.rcParams['axes.facecolor'] = 'white'
-
     ax = pl.gca()
-    ax.set_aspect(aspect=0.2)
     ax.set_axis_on()
     ax.spines['bottom'].set_color('black')
     ax.spines['top'].set_color('black')
     ax.spines['left'].set_color('black')
     ax.spines['right'].set_color('black')
+
+    w = 0.9 * 6.08948 if columns == 2 else 0.9 * 6.08948 / 2.
+
+    if equal is False:
+      if ratio is None:
+        ratio = (sqrt(5.) - 1.0) / 2.0
+   
+      h       = w * ratio                        ## Height in inches                                                                            
+
+    else:
+        h     = w
+
+    set_size(w, h, ax=ax)
 
 def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     '''
