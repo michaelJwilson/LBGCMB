@@ -186,7 +186,7 @@ if __name__ == '__main__':
   fsky         =      0.01
   fover        =      0.00
 
-  band         =        'g' ##  ['g', 'Malkan'] 
+  band         =   'Malkan' ##  ['g', 'Malkan'] 
   evaluate     =      True
 
   ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                              
@@ -287,7 +287,7 @@ if __name__ == '__main__':
   Npz  = np.unique(data[:,2])  ##  N phot.  
 
 
-  latexify(fig_height=2.08948, columns=2, fontsize=12)
+  latexify(fig_height=2.2, columns=2, fontsize=12)
 
   add_desi = False
   
@@ -306,39 +306,50 @@ if __name__ == '__main__':
   
    for kk, percentile in enumerate(percentiles):
      if  (kk == index) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
-         label =  "%s" % (sci_notation(Np, decimal_digits=0, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]    
+         label =  "%s" % (sci_notation(Np, decimal_digits=1, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]    
 
      elif (kk == index + 1) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
-         label =  "%s" % (sci_notation(Np, decimal_digits=0, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]
+         label =  "%s" % (sci_notation(Np, decimal_digits=1, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]
 
      else:
          label = ''
 
-     axs[kk + index].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6, fontsize=10)
+     axs[kk + index].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6, lw=1)
 
      ##  
      if   (kk == index) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
-       axs[kk + index].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)
+       axs[kk + index].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8)
 
      elif (kk == index + 1) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
-       axs[kk + index].legend(ncol=1, title=r'$N_p (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8) 
+       axs[kk + index].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8) 
 
      else:
-       axs[kk + index].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % percentile, handlelength=.5, fontsize=8)  
+       axs[kk + index].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8)  
 
   for ax in axs:
-    ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='indigo', alpha=0.2)
+    ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='orange', alpha=0.2)
       
     ##  title  = r'$%.1lf < z < %.1lf$' % (zmin, zmax) + ' for ' + r'$f_{\rm{sky}} = %.2lf$, ' % fsky + 'd$z$=%.1lf' % dz 
     ##  title +=  ' and ' + r'$f_{\rm{over}} = %.1lf$' % fover
       
-    ax.set_xlabel(r'$N_s \ [10^3]$', fontsize=10)
+    ax.set_xlabel(r'$N_s \ [10^3]$', fontsize=8)
     ax.set_xscale('linear')
+
+    ax.xaxis.set_tick_params(labelsize=8)
+    ax.yaxis.set_tick_params(labelsize=8)
 
     ax.set_xlim(0.1,    4.0)
     ax.set_ylim(0.0,  8.000)
 
-  axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$', fontsize=10)
+    ax.set_axis_on()
+
+    ax.spines['bottom'].set_color('black')
+    ax.spines['top'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.spines['right'].set_color('black')
+
+
+  axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$', fontsize=8)
 
   if add_desi:
     axs[0].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % intlp_zs[0], handlelength=.5, fontsize=8)

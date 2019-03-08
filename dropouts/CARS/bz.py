@@ -62,6 +62,7 @@ pl.xlabel(r'$z$')
 pl.ylabel(r'$b(z)$')
 
 pl.legend(loc=2, ncol=2, handletextpad=.05)
+
 plt.tight_layout()
 
 ##  pl.show()
