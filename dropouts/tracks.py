@@ -12,7 +12,7 @@ from    pylab              import  rcParams
 from    utils              import  latexify
 
 
-latexify(fig_width=None, fig_height=None, columns=1, equal=True)
+latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=12, ggplot=True, usetex=True)
 
 def colourtrack(dband = 'g'):    
                   ## Hildebrandt (2018), https://arxiv.org/pdf/0903.3951.pdf;  Otherwise, GoldRush (Ono, 2018).  
@@ -108,6 +108,16 @@ def colourtrack(dband = 'g'):
 
     plt.colorbar(cax, label=r'$z$', boundaries = np.linspace(0., 5., 24), format='%.2lf')
 
+
+    ax = pl.gca()
+
+    ax.set_axis_on()
+
+    ax.spines['bottom'].set_color('black')
+    ax.spines['top'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.spines['right'].set_color('black')
+
     pl.xlabel(r'$' + str(rcol) + '$')
     pl.ylabel(r'$' + str(bcol) + '$')
 
@@ -123,6 +133,6 @@ def colourtrack(dband = 'g'):
 if __name__ == "__main__":
   print('\n\nWelcome to tracks.\n\n')
     
-  colourtrack(dband = 'g')
+  colourtrack(dband = 'u')
 
   print('\n\nDone.\n\n')

@@ -8,7 +8,7 @@ from    utils              import  comoving_distance
 from    params             import  get_params 
 
 
-latexify(fig_width=None, fig_height=None, columns=1, equal=True)
+latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=12)
 
 params   = get_params()
 
@@ -53,7 +53,7 @@ pl.loglog(dm[:,0],  dm[:,1]*bias**2, label=labels[2])
 pl.plot(pxr[:,0], pxr[:,1], label=labels[3], dashes=[3,1])
 pl.plot(dm[:,0],  dm[:,1],  label=labels[4], dashes=[3,1])
 
-## Plot linear. 
+##  Plot linear. 
 linear  = np.loadtxt('../dat/thy/pklin_%.4lf.txt' % a)
 pl.plot(linear[:,0], linear[:,1], label=labels[5])
 
@@ -65,11 +65,19 @@ pl.ylabel(r'$P(k)\quad [h^{-3}\,{\rm Mpc}^3]$')
 pl.xlim(0.04, 1.)
 pl.ylim(1.e1, 1.e5)
 
-## Add upper axis.                                                                                                                                                                            
+##  Add upper axis.                                                                                                                                                                            
 ax  = pl.gca()
+
+ax.set_axis_on()
+
+ax.spines['bottom'].set_color('black')
+ax.spines['top'].set_color('black')
+ax.spines['left'].set_color('black')
+ax.spines['right'].set_color('black')
+
 ax2 = ax.twiny()
 
-## Set new lims. 
+##  Set new lims. 
 ax2.set_xlim(ax.get_xlim())
 ax2.set_xscale('log')
 
@@ -81,8 +89,15 @@ ax2.set_xticklabels(new_ticks)
                                                                                                                                   
 ax2.set_xlabel(r"$L = k \cdot \chi_*$")
 
-## Finally, add redshift label.
+ax2.set_axis_on()
+
+ax2.spines['bottom'].set_color('black')
+ax2.spines['top'].set_color('black')
+ax2.spines['left'].set_color('black')
+ax2.spines['right'].set_color('black')
+
+##  Finally, add redshift label.
 text = plt.text(0.045, 20, r'$z$ = ' + '%.1lf' % zee)
 text.set_bbox(dict(facecolor='white', alpha=0.5, edgecolor='white'))
 
-pl.savefig('../plots/pk_z%.2lf.pdf' % zee, bbox_inches='tight')
+pl.savefig('../plots/pk_z%s.pdf' % ('%.2lf' % zee).replace('.', 'p'), bbox_inches='tight')

@@ -6,7 +6,7 @@ from   schechterfn       import SchechterLfn
 from   utils             import latexify
 
 
-latexify(columns=1, equal=True, fontsize=10, ratio=None, ggplot=True, usetex=True)
+latexify(columns=1, equal=True, fontsize=12, ratio=None, ggplot=True, usetex=True)
 
 ##  Marchesini:  z=2.5                                                                                                                                                        
 dat = np.loadtxt('dat/data-compilation/smf_ms/marchesini_z2.5.smf')

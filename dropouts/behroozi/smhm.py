@@ -220,7 +220,7 @@ if __name__ == '__main__':
     zs = np.array([3.0, 4.0, 5.0])
     Ms = np.logspace(10.0, 15.0, num=50)                             ## [Msun].
     
-    latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, ggplot=True, usetex=True)
+    latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=12, ggplot=True, usetex=True)
     
     '''
     for z in zs:

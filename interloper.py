@@ -58,7 +58,7 @@ def get_ClsCov(Llls, Cls, Nls, fsky, printit=False):
 
   if printit:
     for key in result:
-      print key, result[key]
+      print(key, result[key])
 
   return  result
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
 
   ##  Dropout selection.   
-  band  =     'g'
+  band  =     'u'
 
   zmin  =   0.01
   zmax  =  10.00
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     peakz        =  stats[band]['z']
 
     ##  Contamination corrected estimate.
-    nbar         =  stats[band]['nbar_nointerlopers']
+    nbar         =  stats[band]['nbar_noint']
     nbar_wint    =  stats[band]['nbar']
 
     ##  With and without interlopers;  Sq. deg. to steradian.
@@ -202,23 +202,25 @@ if __name__ == "__main__":
   if plotit:
     pl.clf()
 
-    latexify(columns=1, equal=True)
+    latexify(columns=1, equal=True, fontsize=12)
 
     pl.axvline(LllMax, label='ZA limit.', c='k', alpha=0.5)
 
     pl.plot(Llls,       100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$dC_{gg}/C_{gg} [\%]$')
 
     ##  kg is linear, gg is quad. in dNdz.
-    pl.plot(Llls,  2. * 100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$2 \cdot dC_{kg}/C_{kg} [\%]$')
+    pl.plot(Llls,       100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$dC_{kg}/C_{kg} [\%]$')
     
     pl.xlim(50., 4.e3)
-    pl.ylim(-1.,  50.)
+    pl.ylim(-1.,  30.)
 
     pl.xlabel(r'$L$')
-    pl.legend(ncol=2)
+    pl.legend(ncol=1, loc=1, frameon=False, handlelength=.6)
+
+    plt.tight_layout()
 
     ##  pl.show()
-    pl.savefig('plots/interloper_bias_cls_%s-drops.pdf' % band, bbox_inches='tight')  
+    pl.savefig('plots/interloper_bias_cls_%s-drops.pdf' % band)  
 
   ##  The resulting parameter bias, (dsig8, db1).                                                                                                        
   nparam             =  2  
@@ -293,7 +295,7 @@ if __name__ == "__main__":
   ##  And plot contour ...                                                                                                                                 
   pl.clf()
 
-  latexify(columns=1, equal=True)
+  latexify(columns=1, equal=True, fontsize=12)
 
   fig    = plt.gcf()
   ax     = plt.gca()
@@ -309,7 +311,9 @@ if __name__ == "__main__":
   pl.xlabel(r'$\sigma_8(z=%.1lf)$' % peakz)
   pl.ylabel(r'$b_1(z=%.1lf)$'      % peakz)
 
+  plt.tight_layout()
+
   ##  pl.show()
-  pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band, bbox_inches='tight')
+  pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band)
   
   print("\n\nDone.\n\n")

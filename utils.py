@@ -156,22 +156,31 @@ def latexify(fig_width=None, fig_height=None, columns=1, equal=False, fontsize=1
     matplotlib.rcParams.update(params)
 
     ax = pl.gca()
+
     ax.set_axis_on()
+
     ax.spines['bottom'].set_color('black')
     ax.spines['top'].set_color('black')
     ax.spines['left'].set_color('black')
     ax.spines['right'].set_color('black')
 
-    w = 0.9 * 6.08948 if columns == 2 else 0.9 * 6.08948 / 2.
+    if fig_width == None:
+      w = 0.9 * 6.08948 if columns == 2 else 0.9 * 6.08948 / 2.
+
+    else:
+      w = fig_width 
 
     if equal is False:
       if ratio is None:
         ratio = (sqrt(5.) - 1.0) / 2.0
-   
+
       h       = w * ratio                        ## Height in inches                                                                            
 
     else:
-        h     = w
+        h     =  w
+
+    if fig_height != None:
+      h       = fig_height 
 
     set_size(w, h, ax=ax)
 

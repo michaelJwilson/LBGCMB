@@ -124,7 +124,7 @@ def nbar(survey = "CMASS", printit=False):
     raise  ValueError("Spec. x Photo. p(z) normalisation is not defined for %s." % survey)
 
   if printit:
-      print "\n%s survey has %.6lf g/deg2." % (survey, N / area)
+      print("\n%s survey has %.6lf g/deg2." % (survey, N / area))
 
   return  N / area                                    ## Number of galaxies per sq. degree.
  
@@ -148,14 +148,14 @@ def zsplit_QSO_samplestats(zs):
     fwhm_zlo  = fwhm(std_zlo)
     fwhm_zhi  = fwhm(std_zhi)
 
-    print lonbar, hinbar
-    print mean_zlo, mean_zhi
-    print std_zlo, std_zhi
-    print fwhm_zlo, fwhm_zhi
+    print(lonbar, hinbar)
+    print(mean_zlo, mean_zhi)
+    print(std_zlo, std_zhi)
+    print(fwhm_zlo, fwhm_zhi)
 
 
 if __name__ == "__main__":
-    print "\nWelcome to a (Patej & Eisenstein) spec. x photo z calculator.\n\n"
+    print("\nWelcome to a (Patej & Eisenstein) spec. x photo z calculator.\n\n")
     
     dz   = 0.01    
     zs   = np.arange(0.0, 6.0, dz)

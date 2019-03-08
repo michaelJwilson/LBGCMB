@@ -19,7 +19,7 @@ from    bolometers         import  bolometers
 from    utils              import  latexify
 
 
-latexify(columns=1, equal=True, fontsize=10)
+latexify(columns=1, equal=True, fontsize=12)
 
 cmbexp                             = 'CMBS4'
 
@@ -65,6 +65,7 @@ for zmax in [2., 3., 4., 5., 7., 9.]:
 ## pl.loglog(Llls[::5], (1. - rho(Llls[::5]) ** 2.) * ckk, label=r'$(1 - \rho_L^2) \ C_{\kappa \kappa}$')
 
 pl.xlabel(r'$L$')
+pl.ylabel(r'$C_{\kappa \kappa}(L)$')
 
 pl.xlim(50.,    4.e3)
 pl.ylim(1.e-7, 2.e-4)

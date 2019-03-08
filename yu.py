@@ -23,7 +23,7 @@ from    schmittfull_nz     import  get_ss17_samples
 
 latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 
-Test                               =                  True
+Test                               =                 False
 plotit                             =                  True
 
 cambx                              =                CAMB()
@@ -64,7 +64,7 @@ nkk                                =   nkk[::5]
 
 zmin                               =       0.01
 zmax                               =      10.00
-'''
+
 ##  Based on https://arxiv.org/pdf/1705.02332.pdf
 for ii, L in enumerate(Llls):
   print('Solving for %d of %d' % (L, Llls.max()))
@@ -103,10 +103,9 @@ for ii, L in enumerate(Llls):
 result  = np.array(result)
 rho     =      result[:,1]
 
-##  np.savetxt('rho/' + '_'.join(s for s in ss) + '.txt', np.c_[Llls, (1. - rho ** 2.)])
-
+np.savetxt('rho/' + '_'.join(s for s in ss) + '.txt', np.c_[Llls, (1. - rho ** 2.)])
 ##  pl.loglog(Llls, Llls * (1. - rho ** 2.) * ckk, label=r'$L \cdot (1 - \rho_L^2) \ C_{\kappa \kappa}$')
-'''
+
 pl.loglog(Llls, Llls * ckk * 1.e5,      label=r'$L \cdot C_{\kappa \kappa}$')
 pl.loglog(Llls, Llls * nkk * 1.e5, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5, dashes=[3,1])
 
@@ -118,7 +117,7 @@ pl.xlim(50.,    4.e3)
 pl.ylim(1.e-1,  2.e0)
 
 pl.xlabel(r'$L$')
-pl.ylabel('[$10^{-5}$]')
+pl.ylabel(r'$C_{\kappa \kappa}(L) \ [$10^{-5}$]$')
 pl.yscale('linear')
 
 ##  Set sci notation on y-axis label.
