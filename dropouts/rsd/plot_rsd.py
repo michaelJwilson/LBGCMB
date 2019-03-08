@@ -1,12 +1,13 @@
-import numpy as     np
-import pylab as     pl
+import  numpy              as  np
+import  pylab              as  pl
+import  matplotlib.pyplot  as  plt
 
-from   utils import latexify
+from    utils              import  latexify
 
 
-latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, ratio=None, ggplot=True, usetex=True)
+latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=12, ratio=None, ggplot=True, usetex=True)
 
-dat   = np.loadtxt('rsd.dat')
+dat   = np.loadtxt('dat/rsd.dat')
 dat   = dat[1::2]
 
 k1    = dat[::2]
@@ -26,5 +27,6 @@ pl.plot(zmean[zmean > 2.0], k2[:,4][zmean > 2.0], c='orange', label=r'', marker=
 pl.xlabel(r'$z$')
 pl.ylabel(r'$\sigma_f$')
 
-pl.legend(ncol=1, loc=2)
+pl.legend(ncol=1, loc=2, frameon=False)
+plt.tight_layout()
 pl.savefig('plots/sigf.pdf')

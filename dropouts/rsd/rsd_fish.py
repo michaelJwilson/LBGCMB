@@ -221,7 +221,7 @@ def check_dropnz(nz):
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
     
-    compute = True
+    compute = False
 
     if compute:
         print('Loading CAMB module.')
@@ -349,10 +349,10 @@ if __name__ == '__main__':
         results = np.array(results)
         results = np.sqrt(results)
 
-        np.savetxt('dat/rsd.txt', np.c_[kmaxs, results], fmt='%.6lf \t %.6le')
+        np.savetxt('dat/rsd.dat', np.c_[kmaxs, results], fmt='%.6lf \t %.6le')
 
     else:
-        kmaxs, results  = np.loadtxt('dat/rsd.txt', unpack=True)
+        kmaxs, results  = np.loadtxt('dat/rsd.dat', unpack=True)
 
         
     ##  And plot ...
