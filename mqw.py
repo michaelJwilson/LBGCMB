@@ -287,7 +287,7 @@ if __name__ == '__main__':
   Npz  = np.unique(data[:,2])  ##  N phot.  
 
 
-  latexify(fig_height=2.08948, columns=2)
+  latexify(fig_height=2.08948, columns=2, fontsize=12)
 
   add_desi = False
   
@@ -314,7 +314,7 @@ if __name__ == '__main__':
      else:
          label = ''
 
-     axs[kk + index].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6)
+     axs[kk + index].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6, fontsize=10)
 
      ##  
      if   (kk == index) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
@@ -332,17 +332,19 @@ if __name__ == '__main__':
     ##  title  = r'$%.1lf < z < %.1lf$' % (zmin, zmax) + ' for ' + r'$f_{\rm{sky}} = %.2lf$, ' % fsky + 'd$z$=%.1lf' % dz 
     ##  title +=  ' and ' + r'$f_{\rm{over}} = %.1lf$' % fover
       
-    ax.set_xlabel(r'$N_s \ [10^3]$')
+    ax.set_xlabel(r'$N_s \ [10^3]$', fontsize=10)
     ax.set_xscale('linear')
 
     ax.set_xlim(0.1,    4.0)
     ax.set_ylim(0.0,  8.000)
 
-  axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$')
+  axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$', fontsize=10)
 
   if add_desi:
     axs[0].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % intlp_zs[0], handlelength=.5, fontsize=8)
 
-  pl.savefig('plots/mqw_%sdrops.pdf' % band, bbox_inches='tight')
+  plt.tight_layout()
+
+  pl.savefig('plots/mqw_%sdrops.pdf' % band)
   
   print('\n\nDone.\n\n')
