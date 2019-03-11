@@ -7,7 +7,7 @@ import  matplotlib           as      mpl
 from    cosmo                import  cosmo
 from    nbar                 import  dVols
 from    qso.get_pz           import  get_pz
-from    elg_nz               import  elg_pz
+from    elg_nz               import  get_pz  as elg_pz
 from    completeness         import  interp_completeness
 from    Gaussian_pz          import  Gaussian
 from    lensing              import  lensing_kernel
@@ -21,7 +21,7 @@ from    scipy.interpolate    import  interp1d
 from    utils                import  latexify
 
 
-latexify(fig_width=None, fig_height=None, columns=2, equal=False)
+latexify(fig_width=None, fig_height=None, columns=2, equal=False, fontsize=12, ratio=0.5)
 
 params = get_params()
 
@@ -70,6 +70,7 @@ if __name__ == "__main__":
 
       pl.plot(zs, whitebook_pz(zs, ilims[ilim]), label=ilim, lw=1.5, c=colors[k])
 
+  elg_pz       = elg_pz(interp=True)
   smooth_elgs  = convolve(elg_pz(zs), Box1DKernel(30))
 
   ## Hildebrandt et al. (2009) -- Measured dndz.
@@ -86,7 +87,7 @@ if __name__ == "__main__":
 
   ## BM / BX redshift 2 selection; https://arxiv.org/pdf/astro-ph/0401439.pdf 
   ## Hildebrandt et al. (2009) -- Gaussian approximation:  Gaussian(zs, 2.96, 0.24)
-  curves       = [get_pz(zs, "QSO"), smooth_elgs, Gaussian(zs, 1.70, 0.34), Gaussian(zs, 2.20, 0.32),\
+  curves       = [get_pz(zs, 'QSO'), smooth_elgs, Gaussian(zs, 1.70, 0.34), Gaussian(zs, 2.20, 0.32),\
                   pz_H09(zs), interp_completeness(zs, drop='g') * dVs, interp_completeness(zs, drop='r') * dVs]
 
   for pz, color, label in zip(curves, colors, labels):
@@ -102,6 +103,6 @@ if __name__ == "__main__":
 
   pl.legend(loc=1, ncol=3)
   
-  pl.savefig("plots/survey_pz.pdf", bbox_inches='tight')  
+  pl.savefig('plots/survey_pz.pdf', bbox_inches='tight')  
   
   print("\n\nDone.\n\n")

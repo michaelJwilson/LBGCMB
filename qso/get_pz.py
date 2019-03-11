@@ -8,19 +8,19 @@ from    utils   import  fwhm
 
 root  = os.environ['LBGCMB']
  
-def load_survey(survey="CMASS"):
+def load_survey(survey='CMASS'):
     import  astropy.io.fits  as  fits
 
-    """
+    '''
     Load all redshifts for a given catalogues. 
     Currently available:  CMASS, QSO and SDSS9.
-    """
+    '''
     all_zs = []
 
     print("\n\nLoading survey %s" % survey)
 
-    if survey == "CMASS":
-        for area in ["North", "South"]:
+    if survey == 'CMASS':
+        for area in ['North', 'South']:
             data  = fits.open(root + '/cmass/galaxy_DR12v5_CMASS_%s.fits' % area)
             
             zs    = data[1].data['Z']
@@ -57,10 +57,10 @@ def load_survey(survey="CMASS"):
     return all_zs
 
 def calc_pz(zs, survey=None):
-    """
+    '''
     Given an array of redshifts, calculate p(z).
     If survey is defined, write to a pickle file.
-    """
+    '''
 
     bins          =   np.arange(0.0, 6.0, 0.01)
     (dNdz, bins)  = np.histogram(zs, bins=bins)
@@ -75,21 +75,21 @@ def calc_pz(zs, survey=None):
     pz            = dNdz/dz                               ## sampled at each midz; assumed constant across the bin.                                        
 
     if survey is not None:
-      print("\n\nPickling p(z) for %s" % survey)
+      print('\n\nPickling p(z) for %s' % survey)
 
       pickle.dump(np.column_stack((midz, pz)), open(survey + '/dNdz.p', 'wb'))
 
 def get_pz(z, survey = "CMASS"):
     from  scipy.interpolate  import interp1d
     
-    """
+    '''
     Get p(z) for given survey; loading the relevant pickle file. 
-    """
+    '''
 
     surveys      = {"DESI-QSO": {"fname":   'qso/dNdz.p'},   "QSO": {"fname":   'qso/dNdz.p'},\
                        "SDSS9": {"fname": 'sdss9/dNdz.p'}, "CMASS": {"fname": 'CMASS/dNdz.p'}}
 
-    fpath        =  root + surveys[survey]["fname"]
+    fpath        =  root + '/' + surveys[survey]["fname"]
 
     data         =  pickle.load(open(fpath, 'r'))
 
