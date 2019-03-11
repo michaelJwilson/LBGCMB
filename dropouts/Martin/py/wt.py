@@ -11,7 +11,9 @@ from    utils              import  latexify
 if __name__=="__main__":
     print('\n\nWelcome to a (plotter) of the angular correlation fn.\n\n')
 
-    latexify(fig_width=None, fig_height=None, columns=2, equal=False, ratio=0.5, fontsize=10)
+    latexify(fig_width=None, fig_height=None, columns=2, equal=False, ratio=0.5, fontsize=12)
+
+    pl.clf()
 
     '''
     Makes a 2 panel plot of w(theta) and b(r).
@@ -23,12 +25,11 @@ if __name__=="__main__":
     
     ##  First plot w(theta) for z=3 and 4.    
     cc    = 'darkblue'
-    fig   = pl.gcf()
+    fig   =  pl.gcf()
 
     fig.add_subplot(1, 2, 1)
 
-    ## fname = os.environ['LBGCMB'] + '/Hildebrandt09/wtheta/H09_udrop_r24.5.txt'
-    fname = os.environ['LBGCMB'] + '/Hildebrandt09/wtheta/wtheta_udropouts_r23p0t24p5_Masim.dat'
+    fname = os.environ['LBGCMB'] + '/Hildebrandt09/dat/wtheta_udropouts_r23p0t24p5_Masim.dat'
 
     wt    = np.loadtxt(fname)
     ww    = np.nonzero(wt[:,0] * 60. > tlo)[0]
@@ -66,11 +67,20 @@ if __name__=="__main__":
     pl.xlabel(r'$\theta$  [arcsec]')
     pl.ylabel(r'$w(\theta)$')
 
+    ax = pl.gca()
+
+    ax.set_axis_on()
+
+    ax.spines['bottom'].set_color('black')
+    ax.spines['top'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.spines['right'].set_color('black')
+
     ##  plt.tight_layout()
 
     ##  bbox_inches='tight'
     ##  plt.savefig("../plots/wt.pdf")
-
+    
     ##  Now plot the bias.
     fig.add_subplot(1, 2, 2)
     ## pl.clf()
@@ -104,19 +114,21 @@ if __name__=="__main__":
 
     pl.xlim(1.0, 40.)
     pl.ylim(3.7, 9.7)
+
+    ## 
+    ax = pl.gca()
+
+    ax.set_axis_on()
+
+    ax.spines['bottom'].set_color('black')
+    ax.spines['top'].set_color('black')
+    ax.spines['left'].set_color('black')
+    ax.spines['right'].set_color('black')
     
     plt.tight_layout()
-
-    ##  bbox_inches='tight'
-    plt.savefig("../plots/br.pdf")
-
-
-if __name__=="__main__":
-  print('\n\nWelcome to a (plotter) of the angular correlation fn.\n\n')
-
-  plot_wt()
     
-  ## plot_bias()
+    ##  bbox_inches='tight'
+    plt.savefig("../plots/biases.pdf")
 
-  print('\n\nDone.\n\n')
+print('\n\nDone.\n\n')
 
