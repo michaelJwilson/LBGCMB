@@ -153,7 +153,7 @@ if __name__ == "__main__":
   from    prep_Llls          import  prep_Llls
   from    Gaussian_pz        import  Gaussian_pz
   from    prep_camb          import  CAMB
-  from    schmittfull        import  ss_pz
+  ##  from    schmittfull        import  ss_pz
   from    snr                import  snr
   from    completeness       import  get_dropoutpz       as  get_gdropoutpz
   from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     zee, pzee    =  get_gdropoutpz()
     pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
-    nbar         =  stats[band]['nbar_nointerlopers']
+    nbar         =  stats[band]['nbar_noint']
     peakz        =  stats[band]['z']
 
     decband      =  'i'
