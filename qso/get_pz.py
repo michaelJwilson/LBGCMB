@@ -75,9 +75,9 @@ def calc_pz(zs, survey=None):
     pz            = dNdz/dz                               ## sampled at each midz; assumed constant across the bin.                                        
 
     if survey is not None:
-      print('\n\nPickling p(z) for %s' % survey)
+      print('\n\nSaving p(z) for %s' % survey)
 
-      pickle.dump(np.column_stack((midz, pz)), open(survey + '/dNdz.p', 'wb'))
+      np.savetxt('qso_dndz.txt', np.column_stack((midz, pz)), fmt='%.6le')
 
 def get_pz(z, survey = 'CMASS'):
     from  scipy.interpolate  import interp1d
