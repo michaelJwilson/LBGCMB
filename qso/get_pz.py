@@ -86,12 +86,12 @@ def get_pz(z, survey = 'CMASS'):
     Get p(z) for given survey; loading the relevant pickle file. 
     '''
 
-    surveys      = {'DESI-QSO': {'fname':   'qso/dNdz.p'},   'QSO': {'fname':   'qso/dNdz.p'},\
-                       'SDSS9': {'fname': 'sdss9/dNdz.p'}, 'CMASS': {'fname': 'CMASS/dNdz.p'}}
+    surveys      = {'DESI-QSO': {'fname': 'qso/qso_dndz.txt'},   'QSO': {'fname':   'qso/qso_dndz.txt'},\
+                       'SDSS9': {'fname': 'sdss9/dNdz.p'},       'CMASS': {'fname': 'CMASS/dNdz.p'}}
 
     fpath        =  root + '/' + surveys[survey]['fname']
 
-    data         =  pickle.load(open(fpath, 'r'))
+    data         =  np.loadtxt(fpath)
 
     midz         =  data[:,0]
     pz           =  data[:,1]
