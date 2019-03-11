@@ -79,17 +79,17 @@ def calc_pz(zs, survey=None):
 
       pickle.dump(np.column_stack((midz, pz)), open(survey + '/dNdz.p', 'wb'))
 
-def get_pz(z, survey = "CMASS"):
+def get_pz(z, survey = 'CMASS'):
     from  scipy.interpolate  import interp1d
     
     '''
     Get p(z) for given survey; loading the relevant pickle file. 
     '''
 
-    surveys      = {"DESI-QSO": {"fname":   'qso/dNdz.p'},   "QSO": {"fname":   'qso/dNdz.p'},\
-                       "SDSS9": {"fname": 'sdss9/dNdz.p'}, "CMASS": {"fname": 'CMASS/dNdz.p'}}
+    surveys      = {'DESI-QSO': {'fname':   'qso/dNdz.p'},   'QSO': {'fname':   'qso/dNdz.p'},\
+                       'SDSS9': {'fname': 'sdss9/dNdz.p'}, 'CMASS': {'fname': 'CMASS/dNdz.p'}}
 
-    fpath        =  root + '/' + surveys[survey]["fname"]
+    fpath        =  root + '/' + surveys[survey]['fname']
 
     data         =  pickle.load(open(fpath, 'r'))
 
@@ -100,31 +100,31 @@ def get_pz(z, survey = "CMASS"):
 
     return  pz_interp(z)
 
-def nbar(survey = "CMASS", printit=False):
-  """
+def nbar(survey = 'CMASS', printit=False):
+  '''
   Get the number of galaxies per sq. deg for given survey.
-  """
-  if survey == "CMASS":
+  '''
+  if survey == 'CMASS':
     N            = 618806. + 230831.                  ## Observed CMASS numbers -- sum of north and south galactic caps.                            
     area         =             9493.                  ## deg^2                                                                                     
   
-  elif survey == "QSO":
+  elif survey == 'QSO':
     N            = 297301.                            ## Observed quasar numbers;                                                                 
     area         = 9376.                              ## deg^2                                                                                         
 
-  elif survey == "SDSS9":
+  elif survey == 'SDSS9':
     N            = 6594677.                           ## Observed SDSS9 galaxies (for Patej and Eisenstein.);                                          
     area         = 14555.                             ## deg^2                                                                                        
 
-  elif survey == "DESI-QSO":
+  elif survey == 'DESI-QSO':
     N            = 2.4e6
     area         = 14000.
 
   else:
-    raise  ValueError("Spec. x Photo. p(z) normalisation is not defined for %s." % survey)
+    raise  ValueError('Spec. x Photo. p(z) normalisation is not defined for %s.' % survey)
 
   if printit:
-      print("\n%s survey has %.6lf g/deg2." % (survey, N / area))
+      print('\n%s survey has %.6lf g/deg2.' % (survey, N / area))
 
   return  N / area                                    ## Number of galaxies per sq. degree.
  
@@ -154,15 +154,15 @@ def zsplit_QSO_samplestats(zs):
     print(fwhm_zlo, fwhm_zhi)
 
 
-if __name__ == "__main__":
-    print("\nWelcome to a (Patej & Eisenstein) spec. x photo z calculator.\n\n")
+if __name__ == '__main__':
+    print('\nWelcome to a (Patej & Eisenstein) spec. x photo z calculator.\n\n')
     
     dz   = 0.01    
     zs   = np.arange(0.0, 6.0, dz)
 
     ## Also available: SDSS9, DESI-QSO.
-    for survey, zcut in zip(["QSO"], [3.0]):
-    ## for survey, zcut in zip(["QSO", "CMASS"], [3.0, 0.6, None, None]):
+    for survey, zcut in zip(['QSO'], [3.0]):
+    ## for survey, zcut in zip(['QSO', 'CMASS'], [3.0, 0.6, None, None]):
         zs = load_survey(survey)
 
         zsplit_QSO_samplestats(zs)
@@ -176,6 +176,6 @@ if __name__ == "__main__":
             print zee, pz[i]
 
         if zcut is not None:
-            print "\n\np(z) estimate of %s with z > %.1lf:  %.4lf\n" % (survey, zcut, dz * pz[zs > zcut].sum())
+            print '\n\np(z) estimate of %s with z > %.1lf:  %.4lf\n' % (survey, zcut, dz * pz[zs > zcut].sum())
         '''
-    print("\n\nDone.\n\n")
+    print('\n\nDone.\n\n')
