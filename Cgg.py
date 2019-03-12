@@ -109,7 +109,7 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
 
   root       = os.environ['LBGCMB']
 
-  data       = np.loadtxt(root + "/dropouts/nz/schechter/dat/schechter_estimate_%s_dropouts.txt" % band)
+  data       = np.loadtxt(root + "/dropouts/schechter/dat/schechter_estimate_%s_dropouts.txt" % band)
   ms         = data[:,0]
   Ns         = data[:,1]
 
@@ -182,8 +182,8 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  ## band      =  'Malkan'              ## Reddy u-drops.
-  band         =  'g'
+  ##  band      =  'Malkan'              ## Reddy u-drops.
+  band  =  'g'
   
   
   ##  Set (no interloper) nbar, b(z) and p(z).                                                                                                         
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     colors       =  ['darkgreen', 'limegreen', 'g']
   
   elif band ==  'Malkan': 
-    ## Reddy u-drops.
+    ##  Malkan u-drops.
     stats        =  usample_stats()
 
     peakz        =  stats[band]['z']
@@ -228,14 +228,17 @@ if __name__ == "__main__":
   ## pz, nbar  =  ss_pz()  
 
   ##  Bias with z.
-  ## bz        =  linz_bz
-  bz           =  get_dropoutbz()
+  bz           =  linz_bz
+  ##  bz       =  get_dropoutbz()
 
   ##  hard p(z) limits.
   zmin         =  peakz - 2.00
   zmax         =  peakz + 2.00
-  
-  ## Cgg.
+
+  ##
+  pl.clf() 
+
+  ##  Cgg.
   cgg          =      Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
   ngg          =      Ngg(Llls, zmin, zmax, pz, nbar)
   vgg          =  var_Cgg(Llls, zmin, zmax, pz, bz, nbar, fsky, samplevar_lim=False, cgg = cgg)
@@ -296,11 +299,18 @@ if __name__ == "__main__":
 
   pl.xlabel(r'$L$')
   
-  pl.legend(loc = 1, ncol=1, framealpha=1.0, facecolor='w')
+  pl.legend(loc = 2, ncol=3, frameon=False, facecolor='w')
 
-  ## Mag axis.                                                                                                                                     
+  ## Mag axis.                                                                                                            
   ax2 = maglim_ax(Llls, cgg, ax, band = band, decband=decband)
-  
+  ## ax2.set_axis_on()
+
+  ax2.spines['bottom'].set_color('black')
+  ax2.spines['top'].set_color('black')
+  ax2.spines['left'].set_color('black')
+  ax2.spines['right'].set_color('black')
+  ax2.grid(False)
+
   pl.savefig('plots/%sCgg.pdf' % band, bbox_inches='tight')
   
   print("\n\nDone.\n\n")

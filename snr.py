@@ -20,10 +20,11 @@ latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 params   = get_params()
 
 def snr(Llls, Cls, Vars, nmodes, lmax=1.e5):
-  result = (Cls[Llls <= lmax] / np.sqrt(Vars[Llls <= lmax])) ** 2.
-  result = np.sum(result[Llls <= lmax] * nmodes[Llls <= lmax])
+  result  = (Cls[Llls <= lmax] / np.sqrt(Vars[Llls <= lmax])) ** 2.
+  result  = np.sum(nmodes[Llls <= lmax] * result)
 
   return  np.sqrt(result)
+
 
 if __name__ == '__main__':
   import  pylab              as      pl
@@ -32,12 +33,11 @@ if __name__ == '__main__':
   from    Gaussian_pz        import  Gaussian_pz
   from    pmh                import  Pmm, get_PkInterps, linz_bz
   from    prep_camb          import  CAMB
-  from    schmittfull        import  ss_pz
+  ##  from    schmittfull        import  ss_pz
   from    completeness       import  get_dropoutpz
   
   ## from    specs              import  samplestats
   from    ilim               import  get_nbar_nocontam
-  from    schmittfull        import  ss_pz
   from    scipy.interpolate  import  interp1d
   from    prep_camb          import  CAMB
   from    bolometers         import  bolometers
@@ -51,42 +51,43 @@ if __name__ == '__main__':
 
 
   print('\n\nWelcome to snr.\n\n')
-  
-  ## Galaxies per sq. degree.                                                                                                                            
+  '''
+  ##  Galaxies per sq. degree.                                                                                                                            
   band                 =  'g'
   stats                =  samplestats()
   stats                =  get_nbar_nocontam(band, depth='W', printit=False)
 
   peakz                =  stats[band]['z']
-  nbar                 =  stats[band]['nbar_nointerlopers']                                                                                               
+  nbar                 =  stats[band]['nbar_noint']                                                                                               
 
   ##  Effectively overwrites hard z limits above.                                                                                                          
   zee, pzee            =  get_dropoutpz()                                                                                                                   
   pz                   =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)                                   
-  
   '''
+  
   ##  Reddy u-drops.
   band                 =  'LBG'
   stats                =  samplestats()
   
   peakz                =  stats[band]['z']
-  nbar                 =  stats[band]['nbar_nointerlopers'] 
+  nbar                 =  stats[band]['nbar_noint'] 
   
   ##  Defaults to Hildebrandt (2009).
   pz                   =  Gaussian_pz
-  '''
-  ## Stored z, b(z) for LBGs at z=3, 4 etc. (u and g respectively).
-  bz                   =  get_dropoutbz()  ## linz_bz 
   
-  ## Schmittfull and Seljak (2017).                                                                                                                          
-  ## pz, nbar          =  ss_pz()
+  ##  Stored z, b(z) for LBGs at z=3, 4 etc. (u and g respectively).
+  bz                   =  linz_bz 
+  ##  bz               =  get_dropoutbz()
+  
+  ##  Schmittfull and Seljak (2017).                                                                                                                          
+  ##  pz, nbar         =  ss_pz()
 
   zmin                 =  peakz - 2.00
   zmax                 =  peakz + 2.00
 
   Lmax                 =  Lcutmax[np.round(peakz)][0] 
-  
-  ## Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                        
+
+  ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                        
   cambx                =  CAMB()
   NLlls, Llls, nmodes  =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5000., log10=True)
 
@@ -121,7 +122,7 @@ if __name__ == '__main__':
       results.append(result)
 
       print('\n\nFor z=%.1lf, total S/N: %.1lf to Lmax of %.1lf (fsky, thetab, DeltaT = %.3lf, %.2lf, %.2lf)' % (peakz, result, Lmax, fsky, thetab, DeltaT))
-      
+
     results = np.array(results) 
     
     pl.semilogx(dfactors * nbar, results, label=cmbexp)
@@ -129,12 +130,14 @@ if __name__ == '__main__':
   pl.xlabel(r'$\bar n / \rm{deg}^{2}$', fontsize=12)
   pl.ylabel('Cumulative (S/N) ' + r'$/ \ \sqrt{f_{\rm{sky}}}$', fontsize=12)
 
-  pl.xlim(1.e1, 1.e5)
+  pl.xlim(1.e1, 1.e4)
   pl.ylim(0.0,  550.)
   
   pl.legend(loc=2, ncol=2)
+
+  plt.tight_layout()
   
-  pl.savefig('plots/%ssnr.pdf' % band, bbox_inches='tight')
+  pl.savefig('plots/%ssnr.pdf' % band)
 
   print('\n\nDone.\n\n')
 
