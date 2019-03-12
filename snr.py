@@ -27,6 +27,9 @@ def snr(Llls, Cls, Vars, nmodes, lmax=1.e5):
 
   return  np.sqrt(result)
 
+def zeros(arg):
+  return  np.zeros_like(arg)
+
 
 if __name__ == '__main__':
   import  pylab              as      pl
@@ -100,39 +103,41 @@ if __name__ == '__main__':
   ##  Get low-z delensing efficiency. 
   ns, ps, bs, ss       =  get_ss17_samples(nolsst=False)  ##  <\bar n>, p(z), b(z).
   rho                  =  np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
-  rho                  =  interp1d(rho[:,0], rho[:,1], kind='linear', copy=True, bounds_error=None, fill_value=0.0, assume_sorted=False)
+  rho                  =  interp1d(rho[:,0], rho[:,1], kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
 
   ##  Dilution factors.
   dfactors             =  np.array([1.e-5, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 1.e1, 5.e1, 3.e3])
+  colors               =  plt.rcParams['axes.prop_cycle'].by_key()['color']
   
-  for cmbexp in bolometers: 
-    results            =  []
-
-    ckg                =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
+  for ii, cmbexp in enumerate(bolometers): 
+    ckg                   =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
 
     fsky, thetab, DeltaT, iterative = bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                       bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
-    nkk                =  Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
-                              thetab=thetab,  DeltaT=DeltaT,    iterative=iterative, pickleit=False)
+    nkk                   =  Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
+                                 thetab=thetab,  DeltaT=DeltaT,    iterative=iterative, pickleit=False)
 
-    for dfactor in dfactors:    
-      dnbar               = dfactor * nbar
-  
-      vkg                 =  var_Ckg(Pk_interps, lensCl_interps, nolensCl_interps, Llls, zmin, zmax, pz, bz, dnbar, fsky,\
+    for rho, ls, label in zip([zeros, rho], ['-', '--'], [cmbexp, '']):
+      results             =  []
+
+      for dfactor in dfactors:    
+        dnbar             = dfactor * nbar
+ 
+        vkg               =  var_Ckg(Pk_interps, lensCl_interps, nolensCl_interps, Llls, zmin, zmax, pz, bz, dnbar, fsky,\
                                      nkk=nkk,    iterative=iterative, pickleit=True, rho=rho)
       
-      result              =  snr(Llls, ckg, vkg, nmodes, lmax = Lmax)
-      result             /=  np.sqrt(fsky)
+        result            =  snr(Llls, ckg, vkg, nmodes, lmax = Lmax)
+        result           /=  np.sqrt(fsky)
       
-      results.append(result)
+        results.append(result)
 
-      print('\n\nFor z=%.1lf, total S/N: %.1lf to Lmax of %.1lf (fsky, thetab, DeltaT = %.3lf, %.2lf, %.2lf)' % (peakz, result, Lmax,\
-                                                                                                                 fsky, thetab, DeltaT))
+        print('\n\nFor z=%.1lf, total S/N: %.1lf to Lmax of %.1lf (fsky, thetab, DeltaT = %.3lf, %.2lf, %.2lf)' % (peakz, result, Lmax,\
+                                                                                                                   fsky, thetab, DeltaT))
 
-    results = np.array(results) 
+      results = np.array(results) 
     
-    pl.semilogx(dfactors * nbar, results, label=cmbexp)
+      pl.semilogx(dfactors * nbar, results, ls, label=label, c=colors[ii])
   
   pl.xlabel(r'$\bar n / \rm{deg}^{2}$', fontsize=12)
 
