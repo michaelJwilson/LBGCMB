@@ -97,7 +97,7 @@ if __name__ == '__main__':
   (lensCl_interps, nolensCl_interps) = cambx.get_Cls()
 
   ## Dilution factors.
-  dfactors                           =  np.array([0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 1.e1, 5.e1])
+  dfactors                           =  np.array([1.e-5, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 1.e1, 5.e1, 3.e3])
   
   for cmbexp in bolometers: 
     results = []
@@ -121,14 +121,17 @@ if __name__ == '__main__':
       
       results.append(result)
 
-      print('\n\nFor z=%.1lf, total S/N: %.1lf to Lmax of %.1lf (fsky, thetab, DeltaT = %.3lf, %.2lf, %.2lf)' % (peakz, result, Lmax, fsky, thetab, DeltaT))
+      print('\n\nFor z=%.1lf, total S/N: %.1lf to Lmax of %.1lf (fsky, thetab, DeltaT = %.3lf, %.2lf, %.2lf)' % (peakz, result, Lmax,\
+                                                                                                                 fsky, thetab, DeltaT))
 
     results = np.array(results) 
     
     pl.semilogx(dfactors * nbar, results, label=cmbexp)
   
   pl.xlabel(r'$\bar n / \rm{deg}^{2}$', fontsize=12)
-  pl.ylabel('Cumulative (S/N) ' + r'$/ \ \sqrt{f_{\rm{sky}}}$', fontsize=12)
+
+  if band == 'LBG':
+    pl.ylabel('Cumulative (S/N) ' + r'$/ \ \sqrt{f_{\rm{sky}}}$', fontsize=12)
 
   pl.xlim(1.e1, 1.e4)
   pl.ylim(0.0,  550.)
