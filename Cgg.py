@@ -213,8 +213,7 @@ if __name__ == "__main__":
   
   ##  band = 'Malkan'      
   band = 'g'
-  
-  
+    
   ##  Set (no interloper) nbar, b(z) and p(z).                                                                                                         
   if  band == 'g':
     colors       =  ['darkgreen', 'limegreen', 'g']

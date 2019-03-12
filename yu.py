@@ -38,7 +38,7 @@ fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[c
                                       bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
 ##  <\bar n>, p(z), b(z).
-ns, ps, bs, ss                     =  get_ss17_samples(nolsst=False)
+ns, ps, bs, ss                     =  get_ss17_samples(nolsst=True)
 
 if Test:
   nsurvey =            2
