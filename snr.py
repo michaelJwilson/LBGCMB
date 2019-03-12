@@ -56,8 +56,8 @@ if __name__ == '__main__':
 
 
   print('\n\nWelcome to snr.\n\n')
-  '''
-  ##  Galaxies per sq. degree.                                                                                                                            
+  
+  ##  Galaxies per sq. degree.                                                                                                            
   band                 =  'g'
   stats                =  samplestats()
   stats                =  get_nbar_nocontam(band, depth='W', printit=False)
@@ -65,11 +65,10 @@ if __name__ == '__main__':
   peakz                =  stats[band]['z']
   nbar                 =  stats[band]['nbar_noint']                                                                                               
 
-  ##  Effectively overwrites hard z limits above.                                                                                                          
+  ##  Effectively overwrites hard z limits above.                                                                                      
   zee, pzee            =  get_dropoutpz()                                                                                                                   
-  pz                   =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)                                   
+  pz                   =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)                                  
   '''
-  
   ##  Reddy u-drops.
   band                 =  'LBG'
   stats                =  samplestats()
@@ -79,7 +78,8 @@ if __name__ == '__main__':
   
   ##  Defaults to Hildebrandt (2009).
   pz                   =  Gaussian_pz
-  
+  '''
+
   ##  Stored z, b(z) for LBGs at z=3, 4 etc. (u and g respectively).
   bz                   =  linz_bz 
   ##  bz               =  get_dropoutbz()
