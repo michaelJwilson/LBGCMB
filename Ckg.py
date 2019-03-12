@@ -59,13 +59,18 @@ def Ckg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = True):
      return  result
 
 def var_Ckg(Pk_interps, lensCl_interps, nolensCl_interps, Llls, zmin, zmax, survey_pz, bz, nbar, fsky,\
-            ngg=None, nkk=None, thetab=1., DeltaT=1., zeff = True, modesample_lim=False, iterative=False, pickleit=True):
+            ngg=None, nkk=None, thetab=1., DeltaT=1., zeff = True, modesample_lim=False, iterative=False,\
+            pickleit=True, rho=None):
 
-  ckk = Ckk(Pk_interps, Llls)
-  cgg = Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = zeff)
-  ckg = Ckg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = zeff)
+  ckk   = Ckk(Pk_interps, Llls)
+  cgg   = Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = zeff)
+  ckg   = Ckg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, zeff = zeff)
 
-  if  modesample_lim:
+  if rho is not None:
+    ##  Delens by provided rho(L); ckk = (1 - rho * rho) ckk. 
+    ckk = (1. - rho(Llls) ** 2.) * ckk
+  
+  if modesample_lim:
     ngg   = np.zeros_like(Llls)
 
   else:

@@ -123,11 +123,10 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
   ymin, ymax = ax.get_ylim()
 
   ax2.loglog(Llls, cgg, alpha=0.0)
-
   ax2.set_ylim([ymin, ymax])
 
-  ## ticks   = [5.e-8, 1.e-7, 5.e-7, 10.e-7, 50.e-7, 100.e-7, 500.e-7, 1000.e-7]
-  ## strings = ['%.1lf' % ms_interp(1. / x) for x in ticks]
+  ##  ticks   = [5.e-8, 1.e-7, 5.e-7, 10.e-7, 50.e-7, 100.e-7, 500.e-7, 1000.e-7]
+  ##  strings = ['%.1lf' % ms_interp(1. / x) for x in ticks]
 
   tms        =  np.arange(23.5, 26.5, 0.5)
 
@@ -141,11 +140,41 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
   ax2.set_yticklabels(strings)
 
   ax2.set_ylabel(r'$%s_{{\rm{AB}}}$' % decband)
-
   ax2.tick_params(axis='y', which='minor', color='w')
 
   return  ax2
 
+def get_Goldrush(band='g'):
+  stats        =  gsample_stats()
+  stats        =  get_nbar_nocontam(band, depth='W', printit=False)
+
+  ##  Effectively overwrites hard-z limits above.                                                                                                           
+  zee, pzee    =  get_gdropoutpz()
+  pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
+
+  nbar         =  stats[band]['nbar_noint']
+  peakz        =  stats[band]['z']
+
+  return  pz
+
+def get_Malkan():
+  ##  Defines pz for Malkan u-drops.                                                                                                                     
+  stats        =  usample_stats()
+
+  peakz        =  stats[band]['z']
+
+  alpha        =  stats[band]['schechter']['alpha']
+  Mstar        =  stats[band]['schechter']['M_star']
+  phi_star     =  stats[band]['schechter']['phi_star']
+
+  dzee         =  0.61 / 2.
+  peakz        =  stats[band]['z']
+  nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=24.5, printit = True, completeness=None)
+
+  pz           =  Gaussian_pz
+  
+  return  pz
+  
 
 if __name__ == "__main__":
   import  pylab              as      pl
@@ -182,56 +211,29 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  ##  band      =  'Malkan'              ## Reddy u-drops.
-  band  =  'g'
+  ##  band = 'Malkan'      
+  band = 'g'
   
   
   ##  Set (no interloper) nbar, b(z) and p(z).                                                                                                         
-  
   if  band == 'g':
-    stats        =  gsample_stats()
-    stats        =  get_nbar_nocontam(band, depth='W', printit=False)
-  
-    ##  Effectively overwrites hard z limits above.                                                                                                 
-    zee, pzee    =  get_gdropoutpz()
-    pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
-
-    nbar         =  stats[band]['nbar_noint']
-    peakz        =  stats[band]['z']
-
-    decband      =  'i'
     colors       =  ['darkgreen', 'limegreen', 'g']
   
-  elif band ==  'Malkan': 
+  elif band == 'Malkan': 
     ##  Malkan u-drops.
-    stats        =  usample_stats()
-
-    peakz        =  stats[band]['z']
-
-    alpha        =  stats[band]['schechter']['alpha']
-    Mstar        =  stats[band]['schechter']['M_star']
-    phi_star     =  stats[band]['schechter']['phi_star']
-    
-    dzee         =  0.61 / 2.
-    peakz        =  stats[band]['z']
-    nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=24.5, printit = True, completeness=None)
-  
-    pz           =  Gaussian_pz
-
-    decband      =  'R'
     colors       =  ['darkblue', 'deepskyblue', 'b']
 
   else:
     raise ValueError('\n\nChosen band is not available.\n\n')
 
-  ## Galaxies per sq. degree.                                                                                                                           
-  ## pz, nbar  =  ss_pz()  
+  ##  Galaxies per sq. degree.                                                                                                                           
+  ##  pz, nbar  =  ss_pz()  
 
   ##  Bias with z.
   bz           =  linz_bz
   ##  bz       =  get_dropoutbz()
 
-  ##  hard p(z) limits.
+  ##  Gard p(z) limits.
   zmin         =  peakz - 2.00
   zmax         =  peakz + 2.00
 

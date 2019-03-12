@@ -10,7 +10,7 @@ from    whitebook_pz       import  const_pz
 
 
 def ss_pz():
-    ## Schmittfull and Seljak (2017).
+    ##  Schmittfull and Seljak (2017).
     data      = np.loadtxt('dat/schmittfull_nbar.dat')
 
     zs        = data[:,0]
@@ -30,8 +30,7 @@ def ss_pz():
 def load_samples():
     return  pd.read_csv("dat/ss17_tracers.dat", names = ['zmin', 'zmax', 'N', 'Surveys'], sep = '\s+', comment='#')
 
-def get_ss17_samples(nolsst=False):
-    ## -- non-LSST -- ##                                                                                                                   
+def get_ss17_samples(nolsst=True):
     dframe    =  load_samples()
     surveys   =  list(dframe['Surveys'].values)
 

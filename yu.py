@@ -21,11 +21,10 @@ from    whitebook_pz       import  const_pz
 from    schmittfull_nz     import  get_ss17_samples
 
 
-latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
+latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, usetex=True)
 
 Test                               =                 False
-plotit                             =                  True
-
+compute                            =                 False
 cambx                              =                CAMB()
 Pk_interps                         =  get_PkInterps(cambx)
 
@@ -62,71 +61,73 @@ Llls                               =  Llls[::5]
 ckk                                =   ckk[::5]
 nkk                                =   nkk[::5]
 
-zmin                               =       0.01
-zmax                               =      10.00
+if compute:
+  zmin                             =       0.01
+  zmax                             =      10.00
 
-##  Based on https://arxiv.org/pdf/1705.02332.pdf
-for ii, L in enumerate(Llls):
-  print('Solving for %d of %d' % (L, Llls.max()))
+  ##  Based on https://arxiv.org/pdf/1705.02332.pdf
+  for ii, L in enumerate(Llls):
+    print('Solving for %d of %d' % (L, Llls.max()))
+    
+    L              =  np.array([L])
+    kk             =        ckk[ii]
+
+    kg             =  [Ckg(Pk_interps, L, zmin, zmax, p, b, zeff=False)[0]                        for [b, p, n] in samples]
+    gg             = [[Cgg(Pk_interps, L, zmin, zmax, p, b, bz2=b2, survey_pz2=p2, zeff=False)[0] for [b, p, n] in samples] for [b2, p2, n2] in samples]
+
+    kg             =  np.array(kg)
+    gg             =  np.array(gg)
+
+    for i, [b, p, n] in enumerate(samples):
+      ##  Add shotnoise to the auto on the diagonal.
+      gg[i,i]     +=  Ngg(L, zmin, zmax, p, n)
+
+      diag         =  np.diag(gg)
+      rho          =  np.copy(gg)
+
+    for i in np.arange(len(diag)):
+      for j in np.arange(len(diag)):
+        rho[i,j]  /=  np.sqrt(diag[i]) * np.sqrt(diag[j])
   
-  L              =  np.array([L])
-  kk             =        ckk[ii]
+    kg            /= (np.sqrt(kk) * np.sqrt(diag))
 
-  kg             =  [Ckg(Pk_interps, L, zmin, zmax, p, b, zeff=False)[0]                        for [b, p, n] in samples]
-  gg             = [[Cgg(Pk_interps, L, zmin, zmax, p, b, bz2=b2, survey_pz2=p2, zeff=False)[0] for [b, p, n] in samples] for [b2, p2, n2] in samples]
+    irho           =  np.linalg.inv(rho)
+    interim        =  0.0
 
-  kg             =  np.array(kg)
-  gg             =  np.array(gg)
-
-  for i, [b, p, n] in enumerate(samples):
-    ##  Add shotnoise to the auto on the diagonal.
-    gg[i,i]     +=  Ngg(L, zmin, zmax, p, n)
-
-  diag           =  np.diag(gg)
-  rho            =  np.copy(gg)
-
-  for i in np.arange(len(diag)):
-    for j in np.arange(len(diag)):
-      rho[i,j]  /=  np.sqrt(diag[i]) * np.sqrt(diag[j])
-  
-  kg            /= (np.sqrt(kk) * np.sqrt(diag))
-
-  irho           =  np.linalg.inv(rho)
-  interim        =  0.0
-
-  for i in np.arange(len(kg)):
-    for j in np.arange(len(kg)):
-      interim   += kg[i] * irho[i, j] * kg[j] 
+    for i in np.arange(len(kg)):
+      for j in np.arange(len(kg)):
+        interim   += kg[i] * irho[i, j] * kg[j] 
       
-  result.append([L, np.sqrt(interim)])
+    result.append([L, np.sqrt(interim)])
 
-result  = np.array(result)
-rho     =      result[:,1]
+    result  = np.array(result)
+    rho     =      result[:,1]
 
-np.savetxt('rho/' + '_'.join(s for s in ss) + '.txt', np.c_[Llls, (1. - rho ** 2.)])
-##  pl.loglog(Llls, Llls * (1. - rho ** 2.) * ckk, label=r'$L \cdot (1 - \rho_L^2) \ C_{\kappa \kappa}$')
+    np.savetxt('rho/' + '_'.join(s for s in ss) + '.txt', np.c_[Llls, (1. - rho ** 2.)])
+    ##  pl.loglog(Llls, Llls * (1. - rho ** 2.) * ckk, label=r'$L \cdot (1 - \rho_L^2) \ C_{\kappa \kappa}$')
 
-pl.loglog(Llls, Llls * ckk * 1.e5,      label=r'$L \cdot C_{\kappa \kappa}$')
+pl.loglog(Llls, Llls * ckk * 1.e5,      label=r'No delensing')
 pl.loglog(Llls, Llls * nkk * 1.e5, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5, dashes=[3,1])
 
-if plotit:
-    data  = np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
-    pl.loglog(data[:,0], data[:,0] * data[:,1] * ckk * 1.e5, label='Delensed')
+
+data  = np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
+pl.loglog(data[:,0], data[:,0] * data[:,1] * ckk * 1.e5, label=r'Delensed')
 
 pl.xlim(50.,    4.e3)
 pl.ylim(1.e-1,  2.e0)
 
 pl.xlabel(r'$L$')
-pl.ylabel(r'$C_{\kappa \kappa}(L) \ [$10^{-5}$]$')
+pl.ylabel(r'$L \cdot C_{\kappa \kappa}(L)$ \ [$10^{-5}$]')
 pl.yscale('linear')
 
 ##  Set sci notation on y-axis label.
 ##  ax = pl.gca()
 ##  ax.ticklabel_format(axis='y', scilimits=(0,0), style='sci')
 
-pl.legend(ncol=2, handlelength=.5, loc=3, handletextpad=0.5)
+pl.legend(ncol=1, handlelength=.5, loc=3, handletextpad=0.3, frameon=False)
 
 plt.tight_layout()
+
 pl.savefig('plots/yu.pdf')
 
 print('\n\nDone.\n\n')

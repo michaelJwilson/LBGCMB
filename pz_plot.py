@@ -73,7 +73,7 @@ if __name__ == "__main__":
   elg_pz       = elg_pz(interp=True)
   smooth_elgs  = convolve(elg_pz(zs), Box1DKernel(30))
 
-  ## Hildebrandt et al. (2009) -- Measured dndz.
+  ##  Hildebrandt et al. (2009) -- measured dndz.
   midz, pz_H09 = getpz_H09()
   pz_H09       = interp1d(midz, pz_H09, kind='linear', bounds_error=False, fill_value=0.0)
 

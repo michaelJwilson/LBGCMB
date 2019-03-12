@@ -13,6 +13,8 @@ from    pmh                import  Pmm
 from    dropouts.reddy     import  samplestats
 from    sliced_pz          import  sliced_pz
 from    utils              import  latexify
+from    schmittfull_nz     import  get_ss17_samples
+from    scipy.interpolate  import  interp1d
 
 
 latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
@@ -81,7 +83,6 @@ if __name__ == '__main__':
   
   ##  Schmittfull and Seljak (2017).                                                                                                                          
   ##  pz, nbar         =  ss_pz()
-
   zmin                 =  peakz - 2.00
   zmax                 =  peakz + 2.00
 
@@ -93,28 +94,33 @@ if __name__ == '__main__':
 
   Pk_interps           =  get_PkInterps(cambx)
 
-  ## No Detector noise -- this is handled by Clxy of prep_camb.                                                                                   
+  ##  No Detector noise -- this is handled by Clxy of prep_camb.                                                                                   
   (lensCl_interps, nolensCl_interps) = cambx.get_Cls()
 
-  ## Dilution factors.
-  dfactors                           =  np.array([1.e-5, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 1.e1, 5.e1, 3.e3])
+  ##  Get low-z delensing efficiency. 
+  ns, ps, bs, ss       =  get_ss17_samples(nolsst=False)  ##  <\bar n>, p(z), b(z).
+  rho                  =  np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
+  rho                  =  interp1d(rho[:,0], rho[:,1], kind='linear', copy=True, bounds_error=None, fill_value=0.0, assume_sorted=False)
+
+  ##  Dilution factors.
+  dfactors             =  np.array([1.e-5, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 1.e1, 5.e1, 3.e3])
   
   for cmbexp in bolometers: 
-    results = []
+    results            =  []
 
-    ckg     = Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
+    ckg                =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
 
     fsky, thetab, DeltaT, iterative = bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                       bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
-    nkk     = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
-                  thetab=thetab,  DeltaT=DeltaT,    iterative=iterative, pickleit=False)
+    nkk                =  Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
+                              thetab=thetab,  DeltaT=DeltaT,    iterative=iterative, pickleit=False)
 
     for dfactor in dfactors:    
       dnbar               = dfactor * nbar
   
       vkg                 =  var_Ckg(Pk_interps, lensCl_interps, nolensCl_interps, Llls, zmin, zmax, pz, bz, dnbar, fsky,\
-                                     nkk=nkk,    iterative=iterative, pickleit=True)
+                                     nkk=nkk,    iterative=iterative, pickleit=True, rho=rho)
       
       result              =  snr(Llls, ckg, vkg, nmodes, lmax = Lmax)
       result             /=  np.sqrt(fsky)
