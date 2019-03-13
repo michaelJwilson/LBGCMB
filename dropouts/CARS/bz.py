@@ -2,8 +2,13 @@ import numpy as np
 import pylab as pl
 import matplotlib.pyplot as plt
 
-from   scipy.interpolate import UnivariateSpline, interp1d
-from   utils             import latexify
+from   scipy.interpolate import  UnivariateSpline, interp1d
+from   utils             import  latexify
+from   scipy.optimize    import  curve_fit
+
+
+def _f():
+    
 
 
 latexify(fig_height=2., fig_width=3., columns=2, equal=False, fontsize=10, ratio=0.5, ggplot=True, usetex=True)
@@ -32,6 +37,11 @@ pl.plot(zs, ii(zs), 'orange')
 ozs, obs = np.concatenate([[cars[0,0]], [cars[1,0]], [har[0,0]], har[1:,0]]), np.concatenate([[cars[0,2]], [cars[1,2]], [har[0,3]], har[1:,3]])
 ##  ii   = interp1d(ozs, obs, 'quadratic', copy=True, bounds_error=False, fill_value='extrapolate', assume_sorted=False)
 ii       = UnivariateSpline(ozs, obs, k=3, s=2, ext=0, check_finite=False)
+
+print(ii.get_coeffs())
+
+exit(1)
+
 
 pl.plot(zs, ii(zs), 'cyan')
 

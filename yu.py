@@ -24,7 +24,7 @@ from    schmittfull_nz     import  get_ss17_samples
 latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, usetex=True)
 
 Test                               =                 False
-compute                            =                 False
+compute                            =                  True
 cambx                              =                CAMB()
 Pk_interps                         =  get_PkInterps(cambx)
 
@@ -100,11 +100,11 @@ if compute:
       
     result.append([L, np.sqrt(interim)])
 
-    result  = np.array(result)
-    rho     =      result[:,1]
+  result  = np.array(result)
+  rho     =      result[:,1]
 
-    np.savetxt('rho/' + '_'.join(s for s in ss) + '.txt', np.c_[Llls, (1. - rho ** 2.)])
-    ##  pl.loglog(Llls, Llls * (1. - rho ** 2.) * ckk, label=r'$L \cdot (1 - \rho_L^2) \ C_{\kappa \kappa}$')
+  np.savetxt('rho/' + '_'.join(s for s in ss) + '.txt', np.c_[Llls, (1. - rho ** 2.)])
+  ##  pl.loglog(Llls, Llls * (1. - rho ** 2.) * ckk, label=r'$L \cdot (1 - \rho_L^2) \ C_{\kappa \kappa}$')
 
 pl.loglog(Llls, Llls * ckk * 1.e5,      label=r'No delensing')
 pl.loglog(Llls, Llls * nkk * 1.e5, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5, dashes=[3,1])
