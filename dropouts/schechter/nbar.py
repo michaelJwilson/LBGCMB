@@ -168,16 +168,11 @@ def dVols(zs, cosmo, params, tvol=False):
   else:
     return  zs, dVs
 
-def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False):
-  ''' 
-  Integrate (e.g. app. mag. selected) \bar n(z) over a redshift slice of 
-  width dz to get expected galaxies per sq. degree.  
-  '''
-  
+def dndz(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False):  
   zs       =  np.linspace(zmin, zmax, 1500)
   zs, dVs  =       dVols(zs, cosmo, params)
 
-  pnbar    =  0.0
+  ns       =  []
 
   for i, zee in enumerate(zs):
     '''
@@ -200,52 +195,67 @@ def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit =
 
     nbar = 10. ** nbar               ##  [(h_100/Mpc)^3]
 
+    ns.append(nbar)
+
+  ns = np.array(ns)
+
+  return  zs, dVs, ns
+
+def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False):
+  '''                                                                                                                                                     
+  Integrate (e.g. app. mag. selected) \bar n(z) over a redshift slice of                                                                                  
+  width dz to get expected galaxies per sq. degree.                                                                                                       
+  '''
+
+  pnbar       = 0.0
+  zs, dVs, ns = dndz(zmin, zmax, phi_star, M_star, alpha, mlim, type=type, printit=printit, completeness=completeness, app_linelim=app_linelim)
+
+  for ii, zee in enumerate(zs):
     if completeness is not None:
-      pnbar += dVs[i] * nbar * completeness(zee)
+      pnbar  += dVs[ii] * ns[ii] * completeness(zee)
 
     else:
-      pnbar += dVs[i] * nbar         ##  Aggregate number of each slice.   
+      pnbar  += dVs[ii] * ns[ii]   ##  Aggregate number of each slice.                                                                                  
 
-  pnbar   /= 4.*np.pi                ##  Galaxies per steradian.                          
-  pnbar   /= (180. / np.pi)**2.      ##  Galaxies per sq. degree.
+  pnbar /= 4. * np.pi              ##  Galaxies per steradian.                                                                                          
+  pnbar /= (180. / np.pi) ** 2.    ##  Galaxies per sq. degree.                                                                                            
 
   if printit:
     print('mlim:  %3.3lf \t z:  %.1lf \t %6.6le g/deg^2 \t\t Vol.:  %6.3le (Mpc/h)^3' % (mlim, (zmin + zmax) / 2., pnbar, dVs.sum()))
-  
-  return  pnbar                                                                                                                      
 
+  return  pnbar
+  
 
 if __name__ == "__main__":
-  from  reddy  import  samplestats
+  import  pylab  as  pl
+
+  from    reddy  import  samplestats
 
 
-  print("\n\nWelcome to a Schechter fn. calculator for the projected density of LBG dropouts.\n\n")
-  '''
-  stats          =  samplestats(printit = True)    ## Luminosity fn. of * all star forming galaxies *. 
-                                                   ## Note:  [\phi*] = [h_70/Mpc]^3 per mag, for M*_AB(1700 \AA).
-
-  dz             =  0.9  
-  mlim           =  25.00                          ## 24.65
+  print('\n\nWelcome to a Schechter fn. calculator for the projected density of LBG dropouts.\n\n')
+  
+  stats          =  samplestats(printit = True)    ##  Luminosity fn. of * all star forming galaxies *. 
+                                                   ##  Note:  [\phi*] = [h_70/Mpc]^3 per mag, for M*_AB(1700 \AA).
+  
+  dz             =    0.9  
+  mlim           =  25.00                          
 
   midz           =  stats['LBG']['z']
-  alpha          =  stats['LBG']['alpha']
-  M_star         =  stats['LBG']['M_star']
-  phi_star       =  stats['LBG']['phi_star']
-
-  loz            =  midz - dz/2.
-  hiz            =  midz + dz/2.
-
-  print("\n\nReddy calc.\n\n")
-
-  ## Mlim, Llim  =  mlimitedM(loz, mlim, M_star)
-  ## nbar        =  comovdensity(loz, phi_star, M_star, alpha, type='app', mlim=mlim, printit=True)
+  alpha          =  stats['LBG']['schechter']['alpha']
+  M_star         =  stats['LBG']['schechter']['M_star']
+  phi_star       =  stats['LBG']['schechter']['phi_star']
   
-  pnbar          =   projdensity(loz, hiz, phi_star, M_star, alpha, mlim, printit = True)
-  '''
+  loz            =  0.1  ##  midz - dz/2.
+  hiz            =  4.0  ##  midz + dz/2.
 
-  zs            = np.arange(0.6, 1.61, 0.01)
-  zs, dVs, tVol =   dVols(zs, cosmo, params, tvol=True)  
+  ##  Mlim, Llim =  mlimitedM(loz, mlim, M_star)
+  ##  nbar       =  comovdensity(loz, phi_star, M_star, alpha, type='app', mlim=mlim, printit=True)
+  
+  ##  pnbar      =  projdensity(loz, hiz, phi_star, M_star, alpha, mlim, printit = True)
+  
+  zs, dVs, ns    =  dndz(loz, hiz, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False)
 
-  print(tVol * 0.00398107170553 / 41252.96) 
-
-  print("\n\nDone.\n\n")
+  pl.plot(zs, ns * dVs)
+  pl.show()
+  
+  print('\n\nDone.\n\n')
