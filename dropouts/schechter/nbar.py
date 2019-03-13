@@ -4,6 +4,7 @@ import  astropy.units            as      u
 from    cosmo                    import  cosmo
 from    params                   import  get_params
 from    schechterfn              import  SchechterLfn, SchechterMfn
+from    dVols                    import  dVols
 
 
 params = get_params()
@@ -151,27 +152,8 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     
     return  nbar
 
-def dVols(zs, cosmo, params, tvol=False):
-  Vs    = cosmo.comoving_volume(zs).value                                           ##  Get volume to each redshift slice.                               
-  Vs   *= params['h_100']**3.                                                       ##  [h^-1 Mpc]^3 
-
-  dVs   = Vs - np.roll(Vs, 1)
-
-  ##  Lower z limit on each slice.
-  zs    = zs[:-1]
-  dVs   = dVs[1:]
-
-  if tvol:
-    ##  Total volume of the slice. 
-    return  zs, dVs, Vs[-1] - Vs[0]
-
-  else:
-    return  zs, dVs
-
-def dndz(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False):  
-  zs       =  np.linspace(zmin, zmax, 1500)
-  zs, dVs  =       dVols(zs, cosmo, params)
-
+def dndz(zs, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False):  
+  zs, dVs  =  dVols(zs, cosmo, params)
   ns       =  []
 
   for i, zee in enumerate(zs):
@@ -208,7 +190,9 @@ def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit =
   '''
 
   pnbar       = 0.0
-  zs, dVs, ns = dndz(zmin, zmax, phi_star, M_star, alpha, mlim, type=type, printit=printit, completeness=completeness, app_linelim=app_linelim)
+
+  zs          = np.linspace(zmin, zmax, 1500)
+  zs, dVs, ns = dndz(zs, phi_star, M_star, alpha, mlim, type=type, printit=printit, completeness=completeness, app_linelim=app_linelim)
 
   for ii, zee in enumerate(zs):
     if completeness is not None:
@@ -227,14 +211,16 @@ def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit =
   
 
 if __name__ == "__main__":
-  import  pylab  as  pl
+  import  pylab         as      pl
 
-  from    reddy  import  samplestats
+  from    reddy         import  samplestats as rsamplestats
+  from    specs         import  samplestats as gsample_stats
+  from    Malkan.specs  import  samplestats as usample_stats
 
 
   print('\n\nWelcome to a Schechter fn. calculator for the projected density of LBG dropouts.\n\n')
   
-  stats          =  samplestats(printit = True)    ##  Luminosity fn. of * all star forming galaxies *. 
+  stats          =  rsamplestats(printit = True)   ##  Luminosity fn. of * all star forming galaxies *. 
                                                    ##  Note:  [\phi*] = [h_70/Mpc]^3 per mag, for M*_AB(1700 \AA).
   
   dz             =    0.9  

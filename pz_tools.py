@@ -32,6 +32,15 @@ def  percentiles(pz, printit=False, asarray=True):
    else:
      return  [Q1, Q2, Q3] 
 
+def calc_moments(zee, pz):
+  dz             = zee[1] - zee[0]
+  mean_zee       = np.sum(zee * pz * dz)
+
+  var_zee        = np.sum(zee * zee * pz * dz) - mean_zee ** 2.
+  std_zee        = np.sqrt(var_zee)
+
+  print(mean_zee, 2. * std_zee, 2. * np.sqrt( 2. * np.log(2.) ) * std_zee)
+
 
 if __name__ == '__main__':
    print('\n\nWelcome to p(z) tools.\n\n') 
