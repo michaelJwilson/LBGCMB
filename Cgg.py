@@ -1,6 +1,4 @@
 import  os
-import  matplotlib         as      mpl
-import  matplotlib.pyplot  as      plt
 import  numpy              as      np
 import  astropy.units      as      u
   
@@ -10,16 +8,9 @@ from    utils              import  comoving_distance
 from    astropy            import  constants as const
 from    scipy.integrate    import  simps
 from    pmh                import  Pmm, get_PkInterps, linz_bz
-from    reddy              import  samplestats as reddy_samplestats
 from    sliced_pz          import  sliced_pz
-from    bz                 import  get_dropoutbz
-from    utils              import  latexify
-from    nbar               import  projdensity
-from    zeldovich_Lmax     import  Lcutmax
 from    matplotlib.patches import  Rectangle
 
-
-latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 
 params = get_params()
          
@@ -98,7 +89,7 @@ def Ngg(Llls, zmin, zmax, survey_pz, nbar):
 
   spz   = pz_slice(zmin, zmax, survey_pz)
 
-  ##  Assumes input nbar is 1 / deg2 (the default unit) Converts to  per steradian. 
+  ##  Assumes input nbar is per sq. deg. (the default unit) to convert to per steradian. 
   nbar  = nbar_convert(nbar, unit='str')
 
   return  np.ones_like(Llls) / (nbar * spz)
@@ -133,9 +124,6 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
   strings    = ['%.1lf' % x   for x in tms]
   tms        = [iNs_interp(x) for x in tms]
 
-  print(strings)
-  print(tms)
-
   ax2.set_yticks(tms)
   ax2.set_yticklabels(strings)
 
@@ -144,59 +132,27 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
 
   return  ax2
 
-def get_Goldrush(band='g'):
-  stats        =  gsample_stats()
-  stats        =  get_nbar_nocontam(band, depth='W', printit=False)
-
-  ##  Effectively overwrites hard-z limits above.                                                                                                           
-  zee, pzee    =  get_gdropoutpz()
-  pz           =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
-
-  nbar         =  stats[band]['nbar_noint']
-  peakz        =  stats[band]['z']
-
-  return  pz
-
-def get_Malkan():
-  ##  Defines pz for Malkan u-drops.                                                                                                                     
-  stats        =  usample_stats()
-
-  peakz        =  stats[band]['z']
-
-  alpha        =  stats[band]['schechter']['alpha']
-  Mstar        =  stats[band]['schechter']['M_star']
-  phi_star     =  stats[band]['schechter']['phi_star']
-
-  dzee         =  0.61 / 2.
-  peakz        =  stats[band]['z']
-  nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=24.5, printit = True, completeness=None)
-
-  pz           =  Gaussian_pz
-  
-  return  pz
-  
 
 if __name__ == "__main__":
   import  pylab              as      pl
+  import  matplotlib         as      mpl
+  import  matplotlib.pyplot  as      plt
 
   from    prep_Llls          import  prep_Llls
   from    Gaussian_pz        import  Gaussian_pz
   from    prep_camb          import  CAMB
-  ##  from    schmittfull        import  ss_pz
-  from    snr                import  snr
-  from    completeness       import  get_dropoutpz       as  get_gdropoutpz
-  from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
-  from    specs              import  samplestats         as  gsample_stats
-  from    ilim               import  get_nbar_nocontam
   from    scipy.interpolate  import  interp1d
   from    bolometers         import  bolometers
   from    lensing            import  Ckk, var_Ckk
   from    Nkk                import  Nkk
   from    Ckg                import  Ckg, var_Ckg 
+  from    dropouts.bz        import  get_dropoutbz
+  from    utils              import  latexify
+  from    zeldovich_Lmax     import  Lcutmax
 
 
   print("\n\nWelcome to Cgg.\n\n")
-
+  
   ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                     
   cambx                              =  CAMB()
   Pk_interps                         =  get_PkInterps(cambx)
@@ -211,43 +167,35 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  ##  band = 'Malkan'      
-  band = 'g'
-    
-  ##  Set (no interloper) nbar, b(z) and p(z).                                                                                                         
-  if  band == 'g':
-    colors       =  ['darkgreen', 'limegreen', 'g']
+  ##  ['BX', 'Malkan', 'g', 'r'] 
+  band  = 'g'                      
+
+  setup = {'g':      {'colors': ['darkgreen', 'limegreen', 'g'],   'bz': linz_bz, 'pz': },\
+           'Malkan': {'colors': ['darkblue',  'deepskyblue', 'b'], 'bz': linz_bz, 'pz': },\  
+          }
   
-  elif band == 'Malkan': 
-    ##  Malkan u-drops.
-    colors       =  ['darkblue', 'deepskyblue', 'b']
+  colors     =  setup[band]['colors']
+  bz         =  setup[band]['bz']       ##  [linz_bz, get_dropoutbz()]
+  pz         =  setup[band]['pz']
+  nbar       =  setup[band]['nbar']     ##  galaxies per sq. deg.  
+  peakz      = 
 
-  else:
-    raise ValueError('\n\nChosen band is not available.\n\n')
-
-  ##  Galaxies per sq. degree.                                                                                                                           
-  ##  pz, nbar  =  ss_pz()  
-
-  ##  Bias with z.
-  bz           =  linz_bz
-  ##  bz       =  get_dropoutbz()
-
-  ##  Gard p(z) limits.
-  zmin         =  peakz - 2.00
-  zmax         =  peakz + 2.00
+  ##  Hard p(z) limits.
+  zmin       =  peakz - 2.00
+  zmax       =  peakz + 2.00
 
   ##
   pl.clf() 
+
+  latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 
   ##  Cgg.
   cgg          =      Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
   ngg          =      Ngg(Llls, zmin, zmax, pz, nbar)
   vgg          =  var_Cgg(Llls, zmin, zmax, pz, bz, nbar, fsky, samplevar_lim=False, cgg = cgg)
-
-  print('\n\nTotal Cgg S/N:  %.1lf' % snr(Llls, cgg, vgg, nmodes, lmax=1.e5))
-
+  
+  '''
   pl.loglog(Llls, cgg, colors[0], label=r'$C_{gg}$')
-
   pl.axhline(y = ngg[0], xmin = 0., xmax = 1.e4, c=colors[0], alpha=0.4, label=r'$N_{gg}$') 
 
   ax           = pl.gca()                                                                                                                            
@@ -255,7 +203,7 @@ if __name__ == "__main__":
 
   pl.errorbar(Llls, cgg, np.sqrt(vgg), c=colors[0])
   
-  ## Ckg.
+  ##  Ckg.
   ckg                 =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
   nkk                 =  Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
                              thetab=thetab, DeltaT=DeltaT, iterative=iterative, pickleit=False)
@@ -266,7 +214,7 @@ if __name__ == "__main__":
   pl.loglog(Llls,   ckg, c=colors[1], label=r'$C_{\kappa g}$')
   pl.errorbar(Llls, ckg, np.sqrt(vkg), c=colors[1])
   
-  ## Ckk
+  ##  Ckk
   ckk                  = Ckk(Pk_interps, Llls)
   nkk                  = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'], thetab=thetab, DeltaT=DeltaT, iterative=iterative,\
                              pickleit=True)
@@ -313,5 +261,5 @@ if __name__ == "__main__":
   ax2.grid(False)
 
   pl.savefig('plots/%sCgg.pdf' % band, bbox_inches='tight')
-  
+  '''
   print("\n\nDone.\n\n")

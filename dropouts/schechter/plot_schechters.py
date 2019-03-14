@@ -91,7 +91,7 @@ def plot_schechters(magbias=False, nointerloper=False):
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
             
       ##  And save.                                                                                                                                                                                                               
-      np.savetxt(os.environ['LBGCMB'] + '/dropouts/schechter/dat/%s_drop.dat' % band, np.c_[mlims, pnbars], fmt='%.6lf', header='mlim   g/deg^2')
+      np.savetxt(os.environ['LBGCMB'] + '/dropouts/schechter/dat/%sDrop.dat' % band, np.c_[mlims, pnbars], fmt='%.6lf', header='mlim   g/deg^2')
 
       if band == 'BX':                                                                                                                              
         for mlim in np.arange(22.5, 26.0, 0.5):                                                                                                                                                                                           

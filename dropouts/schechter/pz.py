@@ -9,11 +9,12 @@ from    Malkan                import  completeness    as malkan_completeness
 from    nbar                  import  dndz
 from    get_schechters        import  get_schechters
 from    get_wschechters       import  get_wschechter
+from    scipy.interpolate     import  interp1d
 
 
 params = get_params()
 
-def get_pz(zs, ns, C):
+def get_pz(zs, ns, C, interp=False):
   assert  np.allclose(np.diff(zs), np.roll(np.diff(zs), 1))
 
   zs, Vs  = dVols(zs, cosmo, params, tvol=False)
@@ -27,7 +28,16 @@ def get_pz(zs, ns, C):
   ps     /= norm                                                                                                                 
   ps     /= dz
 
-  return  zs, ps
+  if interp:
+    return  interp1d(zs, ps, kind='linear', copy=True, bounds_error=None, fill_value=nan, assume_sorted=False)
+
+  else:
+    return  zs, ps
+
+def peakz(zs, ps):
+  index = (ps == ps.max())
+
+  return  zs[index]
 
 
 if __name__ == '__main__':
