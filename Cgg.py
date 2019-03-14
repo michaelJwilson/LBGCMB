@@ -173,7 +173,7 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  band       =   'g'                      
+  band       =  'r'                      
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
@@ -271,7 +271,7 @@ if __name__ == "__main__":
 
   plt.tight_layout()
 
-  pl.show()
-  ##  pl.savefig('plots/%sCgg.pdf' % band, bbox_inches='tight')
+  ##  pl.show()
+  pl.savefig('plots/%sCgg.pdf' % band, bbox_inches='tight')
   
   print("\n\nDone.\n\n")

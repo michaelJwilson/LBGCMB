@@ -6,7 +6,6 @@ import  astropy.units       as      u
   
 from    params              import  get_params
 from    pmh                 import  get_PkInterps
-from    bz                  import  get_dropoutbz
 from    utils               import  latexify
 from    nbar                import  projdensity
 from    zeldovich_Lmax      import  Lcutmax
@@ -78,7 +77,6 @@ if __name__ == "__main__":
   import  pylab              as      pl
 
   from    prep_Llls          import  prep_Llls
-  from    Gaussian_pz        import  Gaussian_pz
   from    prep_camb          import  CAMB
   from    completeness       import  get_dropoutpz       as  get_gdropoutpz
   from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
@@ -89,6 +87,10 @@ if __name__ == "__main__":
   from    lensing            import  Ckk, var_Ckk
   from    Nkk                import  Nkk
   from    Ckg                import  Ckg, var_Ckg 
+  from    schechter.gen_pz   import  peakz               as  _peakz
+  from    schechter.get_shot import  get_shot
+  from    schechter.get_pz   import  get_pz
+  from    get_bz             import  bz_callmodel
 
 
   print("\n\nWelcome to a calculator for the parameter bias due to interlopers.\n\n")
@@ -112,53 +114,34 @@ if __name__ == "__main__":
   
   ##  Get interp1d for sigma8(z) and its Planckian error.                                                                                               
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
-
-  ##  Dropout selection.   
-  band  =     'u'
-
-  zmin  =   0.01
-  zmax  =  10.00
   
-  if  band == 'g':
-    stats        =  gsample_stats()
-    stats        =  get_nbar_nocontam(band, depth='W', printit=False)
+
+  band       =   'g'
+
+  setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
+                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
+                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.5, 'decband': 'i'},\
+                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.5, 'decband': 'z'}}
+
+  mlim       =  setup[band]['maglim']
+
+  pz         =  get_pz(band)
+  bz         =  lambda z:  bz_callmodel(z, mlim)
+
+  nbar       =  get_shot(band, mlim)
+  nbar      /=  (4. * np.pi / 41253.)  ##  Sq. deg. to steradian. 
+
+  decband    =  setup[band]['decband']
+  colors     =  setup[band]['colors']
+
+  peakz      =  _peakz(pz)
+
+  ##  Hard p(z) limits. 
+  zmin       =   0.01
+  zmax       =  10.00
+
+  exit(1)
   
-    peakz        =  stats[band]['z']
-
-    ##  Contamination corrected estimate.
-    nbar         =  stats[band]['nbar_noint']
-    nbar_wint    =  stats[band]['nbar']
-
-    ##  With and without interlopers;  Sq. deg. to steradian.
-    nbar        /=  (4. * np.pi / 41253.)
-    nbar_wint   /=  (4. * np.pi / 41253.)
-
-  elif band in ['u']: 
-    ##  Malkan u-drops.
-    mlim         =  24.5
-
-    stats        =  usample_stats(mag=mlim)
-    peakz        =  stats['Malkan']['z']
-
-    alpha        =  stats['Malkan']['schechter']['alpha']
-    Mstar        =  stats['Malkan']['schechter']['M_star']
-    phi_star     =  stats['Malkan']['schechter']['phi_star']
-    
-    dzee         =  0.50             ##  0.61 / 2.
-    peakz        =  stats['Malkan']['z']
-
-    ##  Actual u-dropouts;  N per sq. deg. 
-    nbar         =  projdensity(peakz - dzee / 2., peakz + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, printit=True, completeness=None)
-    nbar        /=  (4. * np.pi / 41253.)
-
-    ##  With contamination. 
-    nbar_wint    =  stats['Malkan']['nbar']    ##  per sq. deg.
-    nbar_wint   /=  (4. * np.pi / 41253.)  ##  per steradian. 
-
-  else:
-    raise  ValueError('\n\nChosen sample is not available.\n\n')
-
-
   ##  Bias with z.
   drop_bz            =      get_dropoutbz(m=24.5) ## [24.5, 25.0, 25.5] 
   bz                 =  lambda z:  drop_bz(peakz)

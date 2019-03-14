@@ -185,7 +185,7 @@ if __name__ == '__main__':
   fsky         =  0.01
   fover        =  0.00
 
-  band         =   'g'
+  band         =   'u'
 
   setup        = {'BX':  {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                    'u':  {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
