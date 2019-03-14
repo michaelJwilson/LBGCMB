@@ -9,7 +9,6 @@ from    astropy            import  constants as const
 from    scipy.integrate    import  simps
 from    pmh                import  Pmm, get_PkInterps, linz_bz
 from    sliced_pz          import  sliced_pz
-from    matplotlib.patches import  Rectangle
 
 
 params = get_params()
@@ -58,7 +57,8 @@ def Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, survey_pz2=None, bz2=None, 
       result[i,:] =  Pmm(Pk_interps, ks, z) * bz(z) * bz2(z)
 
   ##  Accounts for both spatial to angular mapping as function of z;  i.e. k = (l. + 0.5) / chi(z) and redshift evolution of P_mm(k).
-  prefactor   = (cosmo.H(zs).value / const.c.to('km/s').value) * sliced_pz(zs, zmin, zmax, survey_pz) * sliced_pz(zs, zmin, zmax, survey_pz2) / chis**2.
+  prefactor   = (cosmo.H(zs).value / const.c.to('km/s').value) * sliced_pz(zs, zmin, zmax, survey_pz)\
+                                                               * sliced_pz(zs, zmin, zmax, survey_pz2) / chis**2.
   
   integrand   =  prefactor[:, None] * result
   integrand  /=  params['h_100']
@@ -100,7 +100,10 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
 
   root       = os.environ['LBGCMB']
 
-  data       = np.loadtxt(root + "/dropouts/schechter/dat/schechter_estimate_%s_dropouts.txt" % band)
+  files      = {'BX': 'BXDrop.dat', 'u': 'MalkanDrop.dat', 'g': 'gDrop.dat', 'r': 'rDrop.dat'}
+  file       = files[band]
+
+  data       = np.loadtxt(root + '/dropouts/schechter/dat/' + file)
   ms         = data[:,0]
   Ns         = data[:,1]
 
@@ -134,21 +137,24 @@ def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
 
 
 if __name__ == "__main__":
-  import  pylab              as      pl
-  import  matplotlib         as      mpl
-  import  matplotlib.pyplot  as      plt
-
-  from    prep_Llls          import  prep_Llls
-  from    Gaussian_pz        import  Gaussian_pz
-  from    prep_camb          import  CAMB
-  from    scipy.interpolate  import  interp1d
-  from    bolometers         import  bolometers
-  from    lensing            import  Ckk, var_Ckk
-  from    Nkk                import  Nkk
-  from    Ckg                import  Ckg, var_Ckg 
-  from    dropouts.bz        import  get_dropoutbz
-  from    utils              import  latexify
-  from    zeldovich_Lmax     import  Lcutmax
+  import  pylab                    as      pl
+  import  matplotlib               as      mpl
+  import  matplotlib.pyplot        as      plt
+  
+  from    prep_Llls                import  prep_Llls
+  from    prep_camb                import  CAMB
+  from    scipy.interpolate        import  interp1d
+  from    bolometers               import  bolometers
+  from    lensing                  import  Ckk, var_Ckk
+  from    Nkk                      import  Nkk
+  from    Ckg                      import  Ckg, var_Ckg 
+  from    utils                    import  latexify
+  from    zeldovich_Lmax           import  Lcutmax
+  from    matplotlib.patches       import  Rectangle
+  from    dropouts.bz              import  get_dropoutbz
+  from    schechter.gen_pz         import  peakz            as  _peakz
+  from    schechter.get_shot       import  get_shot
+  from    schechter.get_pz         import  get_pz
 
 
   print("\n\nWelcome to Cgg.\n\n")
@@ -167,20 +173,22 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  ##  ['BX', 'Malkan', 'g', 'r'] 
-  band  = 'g'                      
+  band  = 'r'                      
 
-  setup = {'g':      {'colors': ['darkgreen', 'limegreen', 'g'],   'bz': linz_bz, 'pz': },\
-           'Malkan': {'colors': ['darkblue',  'deepskyblue', 'b'], 'bz': linz_bz, 'pz': },\  
-          }
+  setup = {'BX': {'colors': ['goldenrod', 'tan',          'y'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
+            'u': {'colors': ['darkblue',  'deepskyblue',  'b'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
+            'g': {'colors': ['darkgreen', 'limegreen',    'g'], 'bz': linz_bz, 'maglim': 25., 'decband': 'i'},\
+            'r': {'colors': ['darkred',   'indianred',    'r'], 'bz': linz_bz, 'maglim': 25., 'decband': 'z'}}
   
   colors     =  setup[band]['colors']
-  bz         =  setup[band]['bz']       ##  [linz_bz, get_dropoutbz()]
-  pz         =  setup[band]['pz']
-  nbar       =  setup[band]['nbar']     ##  galaxies per sq. deg.  
-  peakz      = 
+  bz         =  setup[band]['bz']                         ##  [linz_bz, get_dropoutbz()]
+  pz         =  get_pz(band)
+  nbar       =  get_shot(band, setup[band]['maglim'])     ##  galaxies per sq. deg.  
+  decband    =  setup[band]['decband']
 
-  ##  Hard p(z) limits.
+  peakz      =  _peakz(pz)
+
+  ##  Hard p(z) limits.  
   zmin       =  peakz - 2.00
   zmax       =  peakz + 2.00
 
@@ -188,13 +196,12 @@ if __name__ == "__main__":
   pl.clf() 
 
   latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
-
+  
   ##  Cgg.
   cgg          =      Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
   ngg          =      Ngg(Llls, zmin, zmax, pz, nbar)
   vgg          =  var_Cgg(Llls, zmin, zmax, pz, bz, nbar, fsky, samplevar_lim=False, cgg = cgg)
   
-  '''
   pl.loglog(Llls, cgg, colors[0], label=r'$C_{gg}$')
   pl.axhline(y = ngg[0], xmin = 0., xmax = 1.e4, c=colors[0], alpha=0.4, label=r'$N_{gg}$') 
 
@@ -213,27 +220,26 @@ if __name__ == "__main__":
 
   pl.loglog(Llls,   ckg, c=colors[1], label=r'$C_{\kappa g}$')
   pl.errorbar(Llls, ckg, np.sqrt(vkg), c=colors[1])
+
+  ##  Plot Lmax modelling limit for this redshift.                                                                                      
+  ax                   =  pl.gca()
+  Lmax                 =  Lcutmax[np.round(peakz)][0]
+
+  ax.add_patch(Rectangle((Lmax, 0.), 5.e3,    1.e6, color=colors[2], alpha=0.3))
   
   ##  Ckk
   ckk                  = Ckk(Pk_interps, Llls)
-  nkk                  = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'], thetab=thetab, DeltaT=DeltaT, iterative=iterative,\
-                             pickleit=True)
+  nkk                  = Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'], thetab=thetab, DeltaT=DeltaT,\
+                             iterative=iterative, pickleit=True)
 
   vkk                  = var_Ckk(Llls, fsky, nkk, Pk_interps, samplevar_lim=False)
 
   pl.loglog(Llls, ckk,   'k', label=r'$C_{\kappa \kappa}$')
-  pl.loglog(Llls, nkk,   'k', alpha=0.4, label=r'$N_{\kappa \kappa}$')
-
   pl.errorbar(Llls, ckk, np.sqrt(vkk), c='k')
 
-  ##  Plot Lmax modelling limit for this redshift. 
-  ax                   =  pl.gca()
-  Lmax                 =  Lcutmax[np.round(peakz)][0]
-  
+  pl.loglog(Llls[Llls < Lmax], nkk[Llls < Lmax],   'k', alpha=0.4, label=r'$N_{\kappa \kappa}$')
 
-  ax.add_patch(Rectangle((Lmax, 0.), 5.e3,    1.e6, color=colors[2], alpha=0.3))
-
-  ##  Plot SO noise curve. 
+  ##  Plot SO and Planck noise curves. 
   for cmbexp in ['SO', 'Planck']:
     fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                           bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
@@ -241,18 +247,18 @@ if __name__ == "__main__":
     nkk                                =  Nkk(lensCl_interps, nolensCl_interps, Llls, terms=['TT', 'TE', 'EE', 'EB'],\
                                           thetab=thetab, DeltaT=DeltaT, iterative=iterative, pickleit=False)
 
-    pl.loglog(Llls, nkk, 'k', alpha=0.4, label=r'')
+    pl.loglog(Llls[Llls < Lmax], nkk[Llls < Lmax], 'k', alpha=0.4, label=r'')
   
   pl.xlim(5.e1,   5.e3)
   pl.ylim(1.e-9, 3.e-5)
 
   pl.xlabel(r'$L$')
   
-  pl.legend(loc = 2, ncol=3, frameon=False, facecolor='w')
+  pl.legend(loc = 2, ncol=3, frameon=False, handlelength=1.5, columnspacing=1.5)
 
-  ## Mag axis.                                                                                                            
+  ##  Mag axis.                                                                                                            
   ax2 = maglim_ax(Llls, cgg, ax, band = band, decband=decband)
-  ## ax2.set_axis_on()
+  ##  ax2.set_axis_on()
 
   ax2.spines['bottom'].set_color('black')
   ax2.spines['top'].set_color('black')
@@ -260,6 +266,9 @@ if __name__ == "__main__":
   ax2.spines['right'].set_color('black')
   ax2.grid(False)
 
-  pl.savefig('plots/%sCgg.pdf' % band, bbox_inches='tight')
-  '''
+  plt.tight_layout()
+
+  pl.show()
+  ##  pl.savefig('plots/%sCgg.pdf' % band, bbox_inches='tight')
+  
   print("\n\nDone.\n\n")

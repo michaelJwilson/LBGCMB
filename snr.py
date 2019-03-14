@@ -10,14 +10,11 @@ from    utils              import  comoving_distance
 from    astropy            import  constants as const
 from    scipy.integrate    import  simps
 from    pmh                import  Pmm
-from    dropouts.reddy     import  samplestats
 from    sliced_pz          import  sliced_pz
 from    utils              import  latexify
-from    schmittfull_nz     import  get_ss17_samples
 from    scipy.interpolate  import  interp1d
+from    schmittfull_nz     import  get_ss17_samples
 
-
-latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
 
 params   = get_params()
 
@@ -32,62 +29,49 @@ def zeros(arg):
 
 
 if __name__ == '__main__':
-  import  pylab              as      pl
+  import  pylab               as      pl
 
-  from    prep_Llls          import  prep_Llls
-  from    Gaussian_pz        import  Gaussian_pz
-  from    pmh                import  Pmm, get_PkInterps, linz_bz
-  from    prep_camb          import  CAMB
-  ##  from    schmittfull        import  ss_pz
-  from    completeness       import  get_dropoutpz
-  
-  ## from    specs              import  samplestats
-  from    ilim               import  get_nbar_nocontam
-  from    scipy.interpolate  import  interp1d
-  from    prep_camb          import  CAMB
-  from    bolometers         import  bolometers
-  from    lensing            import  Ckk, var_Ckk
-  from    Nkk                import  Nkk
-  from    Ckg                import  Ckg, var_Ckg
-  from    bolometers         import  bolometers
-  from    zeldovich_Lmax     import  Lcutmax
-  from    pylab              import  rcParams
-  from    bz                 import  get_dropoutbz
+  from    prep_Llls           import  prep_Llls
+  from    pmh                 import  Pmm, get_PkInterps, linz_bz
+  from    prep_camb           import  CAMB
+  from    scipy.interpolate   import  interp1d
+  from    prep_camb           import  CAMB
+  from    bolometers          import  bolometers
+  from    lensing             import  Ckk, var_Ckk
+  from    Nkk                 import  Nkk
+  from    Ckg                 import  Ckg, var_Ckg
+  from    bolometers          import  bolometers
+  from    zeldovich_Lmax      import  Lcutmax
+  from    pylab               import  rcParams
+  from    dropouts.bz         import  get_dropoutbz
+  from    schechter.gen_pz    import  peakz            as  _peakz
+  from    schechter.get_shot  import  get_shot
+  from    schechter.get_pz    import  get_pz
 
 
   print('\n\nWelcome to snr.\n\n')
   
-  ##  Galaxies per sq. degree.                                                                                                            
-  band                 =  'g'
-  stats                =  samplestats()
-  stats                =  get_nbar_nocontam(band, depth='W', printit=False)
+  band  = 'r'
 
-  peakz                =  stats[band]['z']
-  nbar                 =  stats[band]['nbar_noint']                                                                                               
+  setup = {'BX': {'colors': ['goldenrod', 'tan',          'y'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
+            'u': {'colors': ['darkblue',  'deepskyblue',  'b'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
+            'g': {'colors': ['darkgreen', 'limegreen',    'g'], 'bz': linz_bz, 'maglim': 25., 'decband': 'i'},\
+            'r': {'colors': ['darkred',   'indianred',    'r'], 'bz': linz_bz, 'maglim': 25., 'decband': 'z'}}
 
-  ##  Effectively overwrites hard z limits above.                                                                                      
-  zee, pzee            =  get_dropoutpz()                                                                                                                   
-  pz                   =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)                                  
-  '''
-  ##  Reddy u-drops.
-  band                 =  'LBG'
-  stats                =  samplestats()
-  
-  peakz                =  stats[band]['z']
-  nbar                 =  stats[band]['nbar_noint'] 
-  
-  ##  Defaults to Hildebrandt (2009).
-  pz                   =  Gaussian_pz
-  '''
+  colors     =  setup[band]['colors']
+  bz         =  setup[band]['bz']                         ##  [linz_bz, get_dropoutbz()]                                                                    
 
-  ##  Stored z, b(z) for LBGs at z=3, 4 etc. (u and g respectively).
-  bz                   =  linz_bz 
-  ##  bz               =  get_dropoutbz()
-  
-  ##  Schmittfull and Seljak (2017).                                                                                                                          
-  ##  pz, nbar         =  ss_pz()
-  zmin                 =  peakz - 2.00
-  zmax                 =  peakz + 2.00
+  pz         =  get_pz(band)
+  nbar       =  get_shot(band, setup[band]['maglim'])     ##  galaxies per sq. deg.                                                                        
+
+  decband    =  setup[band]['decband']
+
+  peakz      =  _peakz(pz)
+
+  ##  Hard p(z) limits.                                                                                                                                     
+  zmin       =  peakz - 2.00
+  zmax       =  peakz + 2.00
+
 
   Lmax                 =  Lcutmax[np.round(peakz)][0] 
 
@@ -101,13 +85,17 @@ if __name__ == '__main__':
   (lensCl_interps, nolensCl_interps) = cambx.get_Cls()
 
   ##  Get low-z delensing efficiency. 
-  ns, ps, bs, ss       =  get_ss17_samples(nolsst=False)  ##  <\bar n>, p(z), b(z).
+  ns, ps, bs, ss       =  get_ss17_samples(nolsst=True)  ##  <\bar n>, p(z), b(z).
+
   rho                  =  np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
   rho                  =  interp1d(rho[:,0], rho[:,1], kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
 
   ##  Dilution factors.
   dfactors             =  np.array([1.e-5, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 1.e1, 5.e1, 3.e3])
   colors               =  plt.rcParams['axes.prop_cycle'].by_key()['color']
+
+  ##  
+  latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
   
   for ii, cmbexp in enumerate(bolometers): 
     ckg                   =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
@@ -151,7 +139,8 @@ if __name__ == '__main__':
 
   plt.tight_layout()
   
-  pl.savefig('plots/%ssnr.pdf' % band)
+  pl.show()
+  ##  pl.savefig('plots/%ssnr.pdf' % band)
 
   print('\n\nDone.\n\n')
 

@@ -4,9 +4,7 @@ import  numpy              as      np
 from    scipy.interpolate  import  interp1d
 
 
-def get_completeness(drop='u'):
-  mmap           =  {'u': 3}
-
+def get_completeness():
   root           =  os.environ['LBGCMB']
   path           =  root + '/dropouts/Malkan/dat/completeness.dat'
 
