@@ -80,7 +80,7 @@ def samplestats(printit = False):
   if printit:
     pprint(stats)
                                                      
-  return  stats                                                                            ## [\phi*] = [h_100/Mpc]^3 per mag;
+  return  stats                                                                            ## [\phi*] = [h_100 / Mpc]^3
 
 
 if __name__ == "__main__":

@@ -5,10 +5,7 @@ import matplotlib.pyplot as plt
 from   scipy.interpolate import  UnivariateSpline, interp1d
 from   utils             import  latexify
 from   scipy.optimize    import  curve_fit
-
-
-def _f():
-    
+from   growth_rate       import  growth_factor
 
 
 latexify(fig_height=2., fig_width=3., columns=2, equal=False, fontsize=10, ratio=0.5, ggplot=True, usetex=True)
@@ -37,11 +34,6 @@ pl.plot(zs, ii(zs), 'orange')
 ozs, obs = np.concatenate([[cars[0,0]], [cars[1,0]], [har[0,0]], har[1:,0]]), np.concatenate([[cars[0,2]], [cars[1,2]], [har[0,3]], har[1:,3]])
 ##  ii   = interp1d(ozs, obs, 'quadratic', copy=True, bounds_error=False, fill_value='extrapolate', assume_sorted=False)
 ii       = UnivariateSpline(ozs, obs, k=3, s=2, ext=0, check_finite=False)
-
-print(ii.get_coeffs())
-
-exit(1)
-
 
 pl.plot(zs, ii(zs), 'cyan')
 
@@ -75,5 +67,12 @@ pl.legend(loc=2, ncol=2, handletextpad=.05)
 
 plt.tight_layout()
 
-##  pl.show()
-pl.savefig('bz.pdf') 
+zs = np.arange(2.5, 6.0, 0.01)
+aa = 1. / (1. + zs)
+gs = growth_factor(aa)
+
+pl.plot(zs, 0.3 / (gs**1.9), 'k-')
+##  pl.plot(zs, 0.2 * (1. + zs) ** 2., 'r-')
+
+pl.show()
+##  pl.savefig('bz.pdf') 

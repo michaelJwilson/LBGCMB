@@ -1,4 +1,5 @@
 import  numpy as np
+import  get_wschechters
 
 from    dVols                 import  dVols
 from    cosmo                 import  cosmo
@@ -7,6 +8,7 @@ from    goldrush              import  completeness    as grush_completeness
 from    Malkan                import  completeness    as malkan_completeness 
 from    nbar                  import  dndz
 from    get_schechters        import  get_schechters
+from    get_wschechters       import  get_wschechter
 
 
 params = get_params()
@@ -40,11 +42,12 @@ if __name__ == '__main__':
   print('\n\nWelcome to get_schechters.\n\n')
 
   mlim           =  26.5
-  key            =  'r'
+  key            =  'g'
 
   stats          =  grush_stats(printit = True)
 
   midz, alpha, M_star, phi_star = get_schechters(stats, key)
+  ##  midz, alpha, M_star, phi_star     = get_wschechter(4.0)
 
   zs             =  np.arange(0.0, 10.0, 0.01)
   zs, dVs, ns    =  dndz(zs, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False)
@@ -54,7 +57,7 @@ if __name__ == '__main__':
   zs, ps         =  get_pz(zs, ns, C)
   
   ##  Reddy
-  zs, ps         =  reddy_getpz(interp=False)
+  ##  zs, ps     =  reddy_getpz(interp=False)
 
   pl.plot(zs, ps)
   ##  pl.xlim(4.0, 6.0)
