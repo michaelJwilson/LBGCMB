@@ -258,7 +258,6 @@ if __name__ == "__main__":
 
   ##  Mag axis.                                                                                                            
   ax2 = maglim_ax(Llls, cgg, ax, band = band, decband=decband)
-  ##  ax2.set_axis_on()
 
   ax2.spines['bottom'].set_color('black')
   ax2.spines['top'].set_color('black')

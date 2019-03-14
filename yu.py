@@ -9,7 +9,6 @@ from    Ckg                import  Ckg
 from    Cgg                import  Cgg, Ngg
 from    Gaussian_pz        import  Gaussian_pz
 from    bz                 import  get_dropoutbz
-from    completeness       import  get_dropoutpz
 from    scipy.interpolate  import  interp1d
 from    cib                import  nWCIB
 from    lensing            import  Ckk, var_Ckk
@@ -24,7 +23,9 @@ from    schmittfull_nz     import  get_ss17_samples
 latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, usetex=True)
 
 Test                               =                 False
-compute                            =                  True
+compute                            =                 False
+nolsst                             =                  True
+
 cambx                              =                CAMB()
 Pk_interps                         =  get_PkInterps(cambx)
 
@@ -38,7 +39,7 @@ fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[c
                                       bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
 ##  <\bar n>, p(z), b(z).
-ns, ps, bs, ss                     =  get_ss17_samples(nolsst=True)
+ns, ps, bs, ss                     =  get_ss17_samples(nolsst=nolsst)
 
 if Test:
   nsurvey =            2
@@ -106,28 +107,28 @@ if compute:
   np.savetxt('rho/' + '_'.join(s for s in ss) + '.txt', np.c_[Llls, (1. - rho ** 2.)])
   ##  pl.loglog(Llls, Llls * (1. - rho ** 2.) * ckk, label=r'$L \cdot (1 - \rho_L^2) \ C_{\kappa \kappa}$')
 
-pl.loglog(Llls, Llls * ckk * 1.e5,      label=r'No delensing')
-pl.loglog(Llls, Llls * nkk * 1.e5, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5, dashes=[3,1])
-
-
 data  = np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
+
+pl.loglog(Llls, Llls * ckk * 1.e5,      label=r'Intrinsic')
 pl.loglog(data[:,0], data[:,0] * data[:,1] * ckk * 1.e5, label=r'Delensed')
+pl.loglog(Llls, Llls * nkk * 1.e5, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5, dashes=[5,3], lw=0.6)
 
 pl.xlim(50.,    4.e3)
 pl.ylim(1.e-1,  2.e0)
 
 pl.xlabel(r'$L$')
-pl.ylabel(r'$L \cdot C_{\kappa \kappa}(L)$ \ [$10^{-5}$]')
+pl.ylabel(r'$L \cdot C_{\kappa \kappa}$ \ [$10^{-5}$]')
 pl.yscale('linear')
 
 ##  Set sci notation on y-axis label.
 ##  ax = pl.gca()
 ##  ax.ticklabel_format(axis='y', scilimits=(0,0), style='sci')
 
-pl.legend(ncol=1, handlelength=.5, loc=3, handletextpad=0.3, frameon=False)
+pl.legend(ncol=1, handlelength=1.5, loc=3, handletextpad=0.6, frameon=False)
 
 plt.tight_layout()
 
+##  pl.show()
 pl.savefig('plots/yu.pdf')
 
 print('\n\nDone.\n\n')

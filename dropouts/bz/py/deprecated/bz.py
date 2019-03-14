@@ -7,7 +7,7 @@ from    growth_rate        import  growth_factor
 
 def get_dropoutbz(m=24.5):
     ##  z, b(z).
-    data = np.loadtxt(os.environ['LBGCMB'] + '/dropouts/dat/dropout_bz.dat')
+    data = np.loadtxt(os.environ['LBGCMB'] + '/dropouts/bz/dat/dropout_bz.dat')
 
     if m == 24.5:
       return  interp1d(data[:-1,0], data[:-1,1], kind='quadratic', bounds_error=True, fill_value=0.0)
