@@ -173,19 +173,22 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  band  = 'u'                      
+  band       =   'g'                      
 
-  setup = {'BX': {'colors': ['goldenrod', 'tan',          'y'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
-            'u': {'colors': ['darkblue',  'deepskyblue',  'b'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
-            'g': {'colors': ['darkgreen', 'limegreen',    'g'], 'bz': linz_bz, 'maglim': 25., 'decband': 'i'},\
-            'r': {'colors': ['darkred',   'indianred',    'r'], 'bz': linz_bz, 'maglim': 25., 'decband': 'z'}}
+  setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
+                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
+                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.5, 'decband': 'i'},\
+                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.5, 'decband': 'z'}}
   
-  colors     =  setup[band]['colors']
   mlim       =  setup[band]['maglim']
-  bz         =  lambda z:  bz_callmodel(z, mlim)   ##  [linz_bz, get_dropoutbz()]
+
   pz         =  get_pz(band)
-  nbar       =  get_shot(band, mlim)               ##  galaxies per sq. deg.  
+  bz         =  lambda z:  bz_callmodel(z, mlim)
+
+  nbar       =  get_shot(band, mlim)              
+
   decband    =  setup[band]['decband']
+  colors     =  setup[band]['colors']
 
   peakz      =  _peakz(pz)
 
@@ -199,7 +202,7 @@ if __name__ == "__main__":
   latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
   
   ##  Cgg.
-  cgg          =      Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
+  cgg          =      Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=False, bz2 = bz, survey_pz2 = pz)
   ngg          =      Ngg(Llls, zmin, zmax, pz, nbar)
   vgg          =  var_Cgg(Llls, zmin, zmax, pz, bz, nbar, fsky, samplevar_lim=False, cgg = cgg)
   

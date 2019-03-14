@@ -2,18 +2,15 @@ import  numpy              as      np
 import  matplotlib.pyplot  as      plt
 
 from    prep_Llls          import  prep_Llls
-from    pmh                import  invG_bz, linz_bz, Pmm, get_PkInterps, dropout_bz
+from    pmh                import  invG_bz, linz_bz, Pmm, get_PkInterps
 from    prep_camb          import  CAMB
 from    utils              import  comoving_distance
 from    collections        import  OrderedDict
 from    pz2nbar            import  nbar_convert
 from    whitebook_pz       import  whitebook_pz
 from    utils              import  latexify, sci_notation
-from    completeness       import  get_dropoutpz
 from    scipy.interpolate  import  interp1d
-from    Gaussian_pz        import  Gaussian_pz
 from    whitebook_pz       import  const_pz
-from    bz                 import  get_dropoutbz
 
 
 def Ng(ilim, deg=True):
@@ -59,25 +56,25 @@ def sparsespec_lim(Llls, zee, result, Nspec = 1.3, ellim=1.e3):
     
     return  (Nspec / 1.e3)** -0.5 * (result / 0.1)**-0.5 
     
-def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsky=0.1, fover=0.0, percentiles = [], intlp_zs = [], printit=False):
+def Fisher(Pk_interps, Llls, tNs, tNp, ps, _bs, pp, _bp, dz = 0.1, zmin=3.0, zmax=4.0, fsky=0.1, fover=0.0, percentiles = [], intlp_zs = [], printit=False):
     ##  Returns the variance on \hat Np = F^{-1}_ii.
     
-    zs                  =  np.arange(zmin + dz / 2., zmax + dz / 2., dz)
-    result              =  OrderedDict()
+    zs      =  np.arange(zmin + dz / 2., zmax + dz / 2., dz)
+    result  =  OrderedDict()
     
     for i, zee in enumerate(zs):
       ##  Returns linear bias of spectroscopic galaxies at each redshift. 
-      bs    =  bz(zee)
+      bs    = _bs(zee) 
 
       ##  Returns linear bias of photometric galaxies at each redshift.                                                                                    
-      bp    =  bz(zee)
+      bp    = _bp(zee)
 
       ##  Returns number of spectroscopic redshifts in each shell given nbar in per sq. deg.
-      Ns    =  nbar_convert(tNs, unit='str') * pz(zee) 
+      Ns    =  nbar_convert(tNs, unit='str') * ps(zee) 
       Ns   *=  dz
 
       ##  Returns number of photometric redshifts in each shell.
-      Np   =   nbar_convert(tNp, unit='str') * pz(zee)
+      Np   =   nbar_convert(tNp, unit='str') * pp(zee)
       Np  *=   dz
       
       ##  Returns shot noise: wp = Np for fsat = 0.0;  Eqn. (11) of MQW16. 
@@ -98,7 +95,6 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
       
       ##  Eqn. (43), to be later normalised. 
       result[zee]['beta']  = (Np * bp) ** 2. * cgg 
-
 
     ##  Total spec. zs over the whole redshift range. 
     nspec   = 0.0
@@ -132,7 +128,7 @@ def Fisher(Pk_interps, Llls, tNs, tNp, pz, bz, dz = 0.1, zmin=3.0, zmax=4.0, fsk
     ##  Limber approximation, but outwith the Schur limit.    
     for zi in result:
         ##  Schur(L)
-        result[zi]['S']              = A00  / (A00 - sshift)
+        result[zi]['S']              = A00 / (A00 - sshift)
         result[zi]['r']              = result[zi]['A0i'] / np.sqrt(A00 * result[zi]['Aii'])
         
     ##  Non-diagonal Fisher matrix outwith the Schur limit. 
@@ -174,80 +170,70 @@ if __name__ == '__main__':
   import  pylab              as      pl
 
   from    pickle             import  dump, load
-  from    completeness       import  get_dropoutpz       as  get_gdropoutpz
-  from    Malkan.specs       import  samplestats         as  usample_stats
-  from    specs              import  samplestats         as  gsample_stats
   from    ilim               import  get_nbar_nocontam
   from    pz_tools           import  percentiles  
+  from    schechter.gen_pz   import  peakz            as  _peakz
+  from    schechter.get_shot import  get_shot
+  from    schechter.get_pz   import  get_pz
+  from    get_bz             import  bz_callmodel
 
 
   print('\n\nWelcome to a McQuinn and White clustering redshift forecaster.')
-  
-  fsky         =      0.01
-  fover        =      0.00
 
-  band         =   'Malkan' ##  ['g', 'Malkan'] 
-  evaluate     =      True
+  dz           =   0.1
+  
+  fsky         =  0.01
+  fover        =  0.00
+
+  band         =   'g'
+
+  setup        = {'BX':  {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
+                   'u':  {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
+                   'g':  {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.5, 'decband': 'i'},\
+                   'r':  {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.5, 'decband': 'z'}}
+
+  add_desi     =  False
+  evaluate     =  False 
+
+  mlim         =  setup[band]['maglim']
+
+  ps           =  get_pz(band)
+  bs           =  lambda z:  bz_callmodel(z, mlim)
+
+  pp           =  get_pz(band)
+  bp           =  lambda z:  bz_callmodel(z, mlim)
+
+  nbar         =  get_shot(band, mlim)
+
+  peakz        =  _peakz(ps)
+
+  zmin         =  peakz - 1.0
+  zmax         =  peakz + 1.0
 
   ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                              
   Nsz          =  np.logspace(1.0, 4.0, 8, base=10.)
   intlp_zs     =  [] ##  [0.5]
 
-  print('\nEvaluating for nspec: ' + ''.join('%.2lf;  ' % x for x in Nsz))
-
   ##  Get dropout Schechter photometric sample counts for given band. 
   root         =  os.environ['LBGCMB']
-  data         =  np.loadtxt(root + "/dropouts/schechter/dat/schechter_estimate_%s_dropouts.txt" % band)
+  data         =  np.loadtxt(root + "/dropouts/schechter/dat/%sDrop.dat" % band)
 
   ##  Number of photometric galaxies per sq. deg. for given detection band limit. 
   ms           =  data[:,0][::-1]
   Npz          =  data[:,1][::-1]
 
   ##  Cut to half mags. above 24.0                                                                                                                         
-  valid        =  (ms % 0.5 == 0) & (ms >= 24.0) & (ms < 26.0)
+  valid        =  (ms % 0.5 == 0) & (ms >= 24.0) & (ms < 26.5)
 
   ms           =    ms[valid]
   Npz          =   Npz[valid]
-
-  ##  Get dropout stats.
-  if  band == 'g':                                                                                               
-      ##  Constrain dN/dz in steps dz between zmin < z < zmax.                                                                                             
-      dz         =  0.1
-      zmin       =  3.0
-      zmax       =  4.5
-
-      zee, pzee  =  get_gdropoutpz()
-      pz         =  interp1d(zee, pzee, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
-
-      stats      =  gsample_stats()
-        
-      ibz        =  get_dropoutbz()
-
-      ##  Focus on bias for a given dropout sample. 
-      bz         =  lambda z:  ibz(stats[band]['z'])
-    
-  elif  band == 'Malkan':
-      ##  Constrain dN/dz in steps dz between zmin < z < zmax.                                                                                               
-      dz         =  0.1
-      zmin       =  2.0
-      zmax       =  3.8
-
-      pz         =  Gaussian_pz
-
-      stats      =  usample_stats()
-
-      ibz        =  get_dropoutbz()
-      bz         =  lambda z:  ibz(stats[band]['z'])
-
-  else:
-      raise ValueError('\n\nRequested band is not available.\n\n')
   
   ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                         
   Nsz            =  np.logspace(1.0, 4.0,  8, base=10.)
   intlp_zs       =  [0.5]
 
-  print('\nEvaluating for nspec: ' + ''.join('%.2lf;  ' % x for x in Nsz))
-  print('\nEvaluating for %s-dropout nphot:' % band)
+  print('\nEvaluating for nspec:\n' + ''.join('%.2lf\n' % x for x in Nsz))
+  print('Evaluating for %s-dropout nphot:' % band)
 
   for i, m in enumerate(ms):
       print('%.2lf \t %.2lf' % (m, Npz[i]))
@@ -255,7 +241,7 @@ if __name__ == '__main__':
   print
 
   ##  Get the z percentiles for this dropout p(z).                                                                                                      
-  percentiles = percentiles(pz, printit=True)
+  percentiles = percentiles(ps, printit=True)
 
   if evaluate:
     ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                                   
@@ -271,16 +257,15 @@ if __name__ == '__main__':
       for ii, Np in enumerate(Npz):
           print("Solving for:  Ns: %.2lf \t mlim:  %.2lf \t Np: %.2lf" % (Ns, ms[ii], Np))
 
-          result = Fisher(Pk_interps, Llls, Ns, Np, pz, bz, dz=dz, fsky=fsky, zmin=zmin, zmax=zmax, fover=fover, percentiles=percentiles, intlp_zs=[0.5])
+          result = Fisher(Pk_interps, Llls, Ns, Np, ps, bs, pp, bp, dz=dz, fsky=fsky, zmin=zmin, zmax=zmax, fover=fover, percentiles=percentiles, intlp_zs=intlp_zs)
           results.append([Ns, ms[ii], Np] + result)
 
     results = np.array(results)
 
-    np.savetxt("dat/mqw_result_%sdrops.txt" % band, results, fmt='%.4le', delimiter='\t')
-
+    np.savetxt("dat/mqw_%sdrops.txt" % band, results, fmt='%.4le', delimiter='\t')
     
   ##  And plot ...
-  data = np.loadtxt("dat/mqw_result_%sdrops.txt" % band)
+  data = np.loadtxt("dat/mqw_%sdrops.txt" % band)
     
   Nsz  = np.unique(data[:,0])  ##  N spec. 
   mms  = np.unique(data[:,1])  ##  mag. lim.
@@ -288,8 +273,6 @@ if __name__ == '__main__':
 
 
   latexify(fig_height=2.2, columns=2, fontsize=12)
-
-  add_desi = False
   
   if add_desi:
       fig, axs = plt.subplots(1, 4, sharey=True)
@@ -327,7 +310,7 @@ if __name__ == '__main__':
        axs[kk + index].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8)  
 
   for ax in axs:
-    ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='orange', alpha=0.2)
+    ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color='crimson', alpha=0.2)
       
     ##  title  = r'$%.1lf < z < %.1lf$' % (zmin, zmax) + ' for ' + r'$f_{\rm{sky}} = %.2lf$, ' % fsky + 'd$z$=%.1lf' % dz 
     ##  title +=  ' and ' + r'$f_{\rm{over}} = %.1lf$' % fover
@@ -338,16 +321,13 @@ if __name__ == '__main__':
     ax.xaxis.set_tick_params(labelsize=8)
     ax.yaxis.set_tick_params(labelsize=8)
 
-    ax.set_xlim(0.1,    4.0)
-    ax.set_ylim(0.0,  8.000)
-
-    ax.set_axis_on()
+    ax.set_xlim(0.1,   4.0)
+    ax.set_ylim(0.0, 8.000)
 
     ax.spines['bottom'].set_color('black')
     ax.spines['top'].set_color('black')
     ax.spines['left'].set_color('black')
     ax.spines['right'].set_color('black')
-
 
   axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$', fontsize=8)
 

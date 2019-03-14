@@ -43,28 +43,30 @@ if __name__ == '__main__':
   from    bolometers          import  bolometers
   from    zeldovich_Lmax      import  Lcutmax
   from    pylab               import  rcParams
-  from    dropouts.bz         import  get_dropoutbz
   from    schechter.gen_pz    import  peakz            as  _peakz
   from    schechter.get_shot  import  get_shot
   from    schechter.get_pz    import  get_pz
+  from    get_bz              import  bz_callmodel
 
 
   print('\n\nWelcome to snr.\n\n')
   
-  band  = 'r'
+  band       =   'g'
 
-  setup = {'BX': {'colors': ['goldenrod', 'tan',          'y'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
-            'u': {'colors': ['darkblue',  'deepskyblue',  'b'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
-            'g': {'colors': ['darkgreen', 'limegreen',    'g'], 'bz': linz_bz, 'maglim': 25., 'decband': 'i'},\
-            'r': {'colors': ['darkred',   'indianred',    'r'], 'bz': linz_bz, 'maglim': 25., 'decband': 'z'}}
+  setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
+                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
+                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.5, 'decband': 'i'},\
+                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.5, 'decband': 'z'}}
 
-  colors     =  setup[band]['colors']
-  bz         =  setup[band]['bz']                         ##  [linz_bz, get_dropoutbz()]                                                                    
+  mlim       =  setup[band]['maglim']
 
   pz         =  get_pz(band)
-  nbar       =  get_shot(band, setup[band]['maglim'])     ##  galaxies per sq. deg.                                                                        
+  bz         =  lambda z:  bz_callmodel(z, mlim)
+
+  nbar       =  get_shot(band, mlim)
 
   decband    =  setup[band]['decband']
+  colors     =  setup[band]['colors']
 
   peakz      =  _peakz(pz)
 
