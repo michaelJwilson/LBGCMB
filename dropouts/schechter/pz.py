@@ -3,37 +3,59 @@ import  numpy as np
 from    dVols                 import  dVols
 from    cosmo                 import  cosmo
 from    params                import  get_params
-from    goldrush              import  completeness 
+from    goldrush              import  completeness    as grush_completeness
+from    Malkan                import  completeness    as malkan_completeness 
 from    nbar                  import  dndz
+from    get_schechters        import  get_schechters
 
 
 params = get_params()
 
 def get_pz(zs, ns, C):
-  ##  Note:  returns normalised completeness curve.                                                                                                      
-  ##         requires LF and volume factors to be added.                                                                                                 
-  params         = get_params()
+  assert  np.allclose(np.diff(zs), np.roll(np.diff(zs), 1))
 
-  zs, Vs         = dVols(zs, cosmo, params, tvol=False)
+  zs, Vs  = dVols(zs, cosmo, params, tvol=False)
+  Cs      = C(zs)
 
-  Cs             = C(zs)
+  ps      = ns[:-1] * Vs * Cs
 
-  I              = ns * Vs * Cs
+  dz      = np.unique(np.diff(zs))[0]                                                                                                       
 
-  ##  dz         = zee[1] - zee[0]                                                                                                                       
-  ##  norm       = np.sum(completeness * dz)                                                                                                               
+  norm    = np.sum(ps) * dz                                                                                                           
+  ps     /= norm                                                                                                                 
+  ps     /= dz
 
-  ##  pzee       = completeness / norm                                                                                                                    
-
-  ##  return  zee, pzee    
+  return  zs, ps
 
 
 if __name__ == '__main__':
-  zs             = np.arange(0.0, 10.0, 0.01)
-  zs, dVs, ns    = dndz(zs, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False)
+  import  pylab as pl
 
-  C              = completeness.get_completeness(drop)
+  from    reddy          import  samplestats as reddy_stats
+  from    goldrush.specs import  samplestats as grush_stats
+  from    Malkan.specs   import  samplestats as malkan_stats
 
-  ##  get_pz()
 
+  print('\n\nWelcome to get_schechters.\n\n')
+
+  mlim           =  26.5
+  key            =  'r'
+
+  stats          =  grush_stats(printit = True)
+
+  midz, alpha, M_star, phi_star = get_schechters(stats, key)
+
+  zs             =  np.arange(0.0, 10.0, 0.01)
+  zs, dVs, ns    =  dndz(zs, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False)
+  
+  C              =  grush_completeness.get_completeness(key)
+
+  zs, ps         =  get_pz(zs, ns, C)
+
+  pl.plot(zs, ps)
+  pl.xlim(4.0, 6.0)
+  pl.xlabel(r'$z$')
+  pl.ylabel(r'$p(z)$')
+  pl.show()
+  
   print('\n\nDone.\n\n')

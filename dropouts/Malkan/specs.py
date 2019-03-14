@@ -2,13 +2,14 @@ import  os
 import  numpy        as      np
 import  pylab        as      pl
 
+from    utils        import  pprint
 from    collections  import  OrderedDict
 from    params       import  get_params
 
 
 params  = get_params()
 
-def samplestats(mag=25.5):
+def samplestats(mag=25.5, printit=False):
   stats                         = {'Malkan': {'z': 3.0}, 'Reddy': {}, 'Sawicki': {}, 'Bian': {}}
 
   ## Table 3 of Malkan et al. (2017), https://arxiv.org/pdf/1711.04787.pdf
@@ -27,6 +28,9 @@ def samplestats(mag=25.5):
 
   stats['Malkan']['Rlim'] = mag
   stats['Malkan']['nbar'] = dat[:,3][dat[:,1] <= mag].sum() * 60. * 60.                    ## N(m < mag) per sq. deg.
+
+  if printit:
+    pprint(stats)
   
   return  stats
 
