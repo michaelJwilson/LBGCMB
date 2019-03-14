@@ -14,6 +14,7 @@ export  PYTHONPATH=$LBGCMB/desihub/redrock/py/redrock:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/qso/kcorr/NPD:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/qso:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/dropouts/Martin/py:$PYTHONPATH
+export  PYTHONPATH=$LBGCMB/dropouts/bz/py:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/desihub/desiutil/py:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/desihub/desispec/py:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/dropouts/edison/py:$PYTHONPATH

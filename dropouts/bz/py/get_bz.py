@@ -22,6 +22,9 @@ def bz_fitmodel(z, A, B):
 @np.vectorize
 def bz_callmodel(z, mlim):
   params = np.array([[24.0, 1.494, 0.077], [24.5, 0.668, 0.195], [25.0, -0.069, 0.320], [25.5, -0.365, 0.356]])
+
+  assert  mlim in params[:,0]
+
   indexs = np.abs(params[:,0] - mlim) == np.abs(params[:,0] - mlim).min()
 
   A      = params[indexs, 1]

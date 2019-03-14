@@ -3,7 +3,6 @@ import  math
 import  numpy              as      np
 
 from    growth_rate        import  growth_factor
-from    bz                 import  get_dropoutbz
 from    pmm                import  Pmm
 
 
@@ -15,11 +14,6 @@ def linz_bz(z):
 
 def invG_bz(z):
   return  1. / growth_factor(z)
-
-def dropout_bz(z):
-  bz = get_dropoutbz()
-  
-  return  bz(z)
 
 def get_PkInterps(cambx):
   Pk_interps              = {}

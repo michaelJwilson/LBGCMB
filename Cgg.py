@@ -151,10 +151,10 @@ if __name__ == "__main__":
   from    utils                    import  latexify
   from    zeldovich_Lmax           import  Lcutmax
   from    matplotlib.patches       import  Rectangle
-  from    dropouts.bz              import  get_dropoutbz
   from    schechter.gen_pz         import  peakz            as  _peakz
   from    schechter.get_shot       import  get_shot
   from    schechter.get_pz         import  get_pz
+  from    get_bz                   import  bz_callmodel
 
 
   print("\n\nWelcome to Cgg.\n\n")
@@ -173,7 +173,7 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  band  = 'r'                      
+  band  = 'u'                      
 
   setup = {'BX': {'colors': ['goldenrod', 'tan',          'y'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
             'u': {'colors': ['darkblue',  'deepskyblue',  'b'], 'bz': linz_bz, 'maglim': 25., 'decband': 'R'},\
@@ -181,9 +181,10 @@ if __name__ == "__main__":
             'r': {'colors': ['darkred',   'indianred',    'r'], 'bz': linz_bz, 'maglim': 25., 'decband': 'z'}}
   
   colors     =  setup[band]['colors']
-  bz         =  setup[band]['bz']                         ##  [linz_bz, get_dropoutbz()]
+  mlim       =  setup[band]['maglim']
+  bz         =  lambda z:  bz_callmodel(z, mlim)   ##  [linz_bz, get_dropoutbz()]
   pz         =  get_pz(band)
-  nbar       =  get_shot(band, setup[band]['maglim'])     ##  galaxies per sq. deg.  
+  nbar       =  get_shot(band, mlim)               ##  galaxies per sq. deg.  
   decband    =  setup[band]['decband']
 
   peakz      =  _peakz(pz)
