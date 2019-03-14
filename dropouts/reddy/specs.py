@@ -14,7 +14,7 @@ def load_tables(printit = False):
   import  pandas as pd
 
   root      = os.environ['LBGCMB']
-  root     += '/dropouts/dat/reddy/'
+  root     += '/dropouts/reddy/dat/'
 
   ##  Size in arcmin^2.
   ##  Notes:
@@ -112,55 +112,6 @@ def samplestats(mag=23., printit=False, h70=False):
   
   return  stats
 
-def Reddy_colourcut(zs, luv, u, g, r, i, z, y, type='BX', nocolourcut = False):
-    if type == 'BM':
-        ##  1.5 < z < 2.0                                                                                                                                   
-        crit  = (g - r) >= -0.2
-        crit &= (u - g) >= (g - r)     - 0.1
-        crit &= (g - r) <= 0.2*(u - g) + 0.4
-        crit &= (u - g) <= (g - r)     + 0.2
-
-    elif type == 'BX':
-        ##  2.0 < z < 2.5                                                                                                                                   
-        crit  = (g - r) >= -0.2
-        crit &= (u - g) >= (g - r)     + 0.2
-        crit &= (g - r) <= 0.2*(u - g) + 0.4
-        crit &= (u - g) <= (g - r)     + 1.0
-
-    else:
-        raise ValueError("Specified Reddy colour selection is not available.")
-
-def get_pEBV(printit=False):
-  names       = ['loEBV', 'hiEBV', 'p(z=2)', 'p(z=3)']
-
-  data        = pd.read_csv("dat/reddy_tabfive.dat", sep='\s+', skiprows=0, names=names)
-  data['EBV'] = 0.5 * (data['loEBV'].values + data['hiEBV'].values)
-
-  if printit:
-    for i, x in enumerate(data['EBV'].values):                                                                                                            
-      print(x, data['p(z=3)'].values[i])                                                                                                                     
-
-  return data
-
-def get_pz(interp = True):
-  zs, ns    =  np.loadtxt(os.environ['LBGCMB'] + '/dropouts/dat/reddy/pz.dat', unpack=True)
-  
-  ngal      =  ns.sum()
-  
-  dz        =  zs[1] - zs[0]
-
-  ##  Fraction of galaxies in that bin.
-  ps        =  ns / ngal
-  
-  ##  Probability density. 
-  ps       /=  dz
-  
-  if interp:
-    return interp1d(zs, ps, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
-  
-  else:
-    return zs, ps
-  
 
 if __name__ == "__main__":
   import  pylab  as     pl

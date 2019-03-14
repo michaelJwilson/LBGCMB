@@ -31,9 +31,10 @@ def get_pz(zs, ns, C):
 if __name__ == '__main__':
   import  pylab as pl
 
-  from    reddy          import  samplestats as reddy_stats
-  from    goldrush.specs import  samplestats as grush_stats
-  from    Malkan.specs   import  samplestats as malkan_stats
+  from    reddy.specs     import  samplestats as reddy_stats
+  from    goldrush.specs  import  samplestats as grush_stats
+  from    Malkan.specs    import  samplestats as malkan_stats
+  from    reddy.pz        import  get_pz      as reddy_getpz
 
 
   print('\n\nWelcome to get_schechters.\n\n')
@@ -51,9 +52,12 @@ if __name__ == '__main__':
   C              =  grush_completeness.get_completeness(key)
 
   zs, ps         =  get_pz(zs, ns, C)
+  
+  ##  Reddy
+  zs, ps         =  reddy_getpz(interp=False)
 
   pl.plot(zs, ps)
-  pl.xlim(4.0, 6.0)
+  ##  pl.xlim(4.0, 6.0)
   pl.xlabel(r'$z$')
   pl.ylabel(r'$p(z)$')
   pl.show()
