@@ -8,7 +8,6 @@ from    pmh                import  Pmm, get_PkInterps, linz_bz
 from    Ckg                import  Ckg 
 from    Cgg                import  Cgg, Ngg
 from    Gaussian_pz        import  Gaussian_pz
-from    bz                 import  get_dropoutbz
 from    scipy.interpolate  import  interp1d
 from    cib                import  nWCIB
 from    lensing            import  Ckk, var_Ckk
@@ -38,8 +37,12 @@ cmbexp                             = 'CMBS4'
 fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                       bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
 
-##  <\bar n>, p(z), b(z).
+##  ['SDSS1', 'SDSS2', 'DESIBGS', 'BOSSLRGs', 'DESILRGs', 'DESIELGs1', 'DESIELGs2', 'DESIQSOs']
 ns, ps, bs, ss                     =  get_ss17_samples(nolsst=nolsst)
+
+print(ss)
+
+exit(1)
 
 if Test:
   nsurvey =            2

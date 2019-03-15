@@ -8,7 +8,6 @@ import  matplotlib.pyplot  as      plt
 import  astropy.units      as      u 
 import  astropy.constants  as      const
  
-from    bz                 import  get_dropoutbz
 from    prep_camb          import  CAMB
 from    pmh                import  Pmm, get_PkInterps
 from    params             import  get_params
@@ -16,19 +15,17 @@ from    cosmo              import  cosmo
 from    scipy.integrate    import  nquad
 from    growth_rate        import  growth_rate 
 from    utils              import  latexify
-from    goldrush.specs     import  samplestats  as goldrush_stats
-from    Malkan.specs       import  samplestats  as malkan_stats
-from    reddy              import  samplestats  as reddy_stats
-from    schechter.nbar     import  comovdensity
 from    scipy.interpolate  import  interp1d
-from    completeness       import  get_dropoutpz
 from    numpy.linalg       import  inv
 from    euclid             import  euclid_bz, euclid_nz, euclid_area
-from    beast              import  beast_bz, beast_nz
+from    beast              import  beast_bz,  beast_nz
+from    schechter.gen_pz   import  peakz            as  _peakz
+from    schechter.get_shot import  get_shot
+from    schechter.get_pz   import  get_pz
+from    get_bz             import  bz_callmodel
 
 
 cparams = get_params()
-
 _bz     = beast_bz     ##  [linb, euclid_bz, beast_bz]
 
 def linb(z):
@@ -41,18 +38,6 @@ def const_nz(z, ngal=1.e-4, zmin=3.0, zmax=4.0):
 
     else:
       return  0.0
-
-def vipers_nz(z, A=3.103, z0=0.191, alpha=8.603, beta=1.448, ngal=5e3):
-    ##  ngal is the expected number of galaxies per sq. deg. 
-    ##  Eqn. (2) of https://arxiv.org/pdf/1303.2622.pdf
-    result  =  A * ((z / z0) ** alpha) * np.exp(-(z / z0) ** beta)
-
-    ##  Normalisation.
-    dz      =                    0.01
-    zz      =  np.arange(0.0, 2.0, dz)
-    norm    =  dz * np.sum(A * ((zz / z0) ** alpha) * np.exp(-(zz / z0) ** beta))
-
-    return  result / norm 
 
 def vol_integrand(z, fsky=0.5, fkp_weighted=False, nbar=1.e-3, P0=5.e3):
     ##  Purely volume integral as a sanity check.
@@ -221,7 +206,7 @@ def check_dropnz(nz):
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
     
-    compute = False
+    compute = True
 
     if compute:
         print('Loading CAMB module.')
@@ -239,7 +224,7 @@ if __name__ == '__main__':
             zmax    =  2.6
 
         else:
-            survey  =  sys.argv[1]
+            survey  =           sys.argv[1]
             fsky    =  np.float(sys.argv[2])
             
             zmin    =  np.float(sys.argv[3])
@@ -251,35 +236,12 @@ if __name__ == '__main__':
         kmaxs       =  np.arange(0.1, 0.3, 0.1)
         results     =  []
     
-        ##  plot_vipers(ngal=5.e3)
-
         ##  check_vol()
         ##  _vcheck_vol(fsky=fsky, fkp_weighted=False, nbar=1.e-3, P0=5.e3)
 
-        '''
-        ##  Set n(z).
-        band        =               'r'
-        stats       =  goldrush_stats()
-
-        alpha       =  stats[band]['schechter']['alpha']
-        Mstar       =  stats[band]['schechter']['M_star']
-        phi_star    =  stats[band]['schechter']['phi_star']
-
-        zee, pzee   =  get_dropoutpz(drop='g')
-        pz          =  interp1d(zee, pzee, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
-
-        drop_nz     =  lambda z:  pz(z) * (10. ** comovdensity(z, phi_star, Mstar, alpha, type='app',\
-                                                               mlim=24.5, band=band, printit=False))  ##  [(h_100/Mpc)^3]
-        
-        zs          =  np.arange(zmin, zmax, 0.01)                                                                                                         
-        drop_nz     =  np.array([drop_nz(z) for z in zs]) 
-
-        drop_nz     =  interp1d(zs, drop_nz, kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False) 
-        '''
-
         ##  drop_nz =  lambda z: const_nz(z, ngal = 1.e-3, zmin=zmin, zmax=zmax)  ##  [(h^-1 Mpc)^-3].  
         ##  drop_nz =  euclid_nz
-        drop_nz     =  beast_nz
+        ##  drop_nz =  beast_nz
 
         ##  check_dropnz(drop_nz)
         ##  check_nP(Pk_interps, fsky=fsky, nz=drop_nz)
@@ -343,8 +305,6 @@ if __name__ == '__main__':
             ##  results.append(result[0])      
             results.append(result.mean)      
             '''
-
-        exit(1)
 
         results = np.array(results)
         results = np.sqrt(results)

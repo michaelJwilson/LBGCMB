@@ -17,7 +17,11 @@ def bz_fitmodel(z, A, B):
   aa = 1. / (1. + z)
   DD = growth_factor(aa)
 
-  return  A / DD + B / DD ** 2. 
+  ##  Model 1 
+  ##  return  A / DD + B / DD ** 2. 
+
+  ##  Model 2 
+  return  A * aa**2.
 
 @np.vectorize
 def bz_callmodel(z, mlim):

@@ -48,8 +48,8 @@ def get_ss17_samples(nolsst=True):
       pz      =   lambda z:  const_pz(z, zlo=x[0], zhi=x[1])  
       ps     +=  [np.vectorize(pz)]
 
-    ##  LSST samples.
     if not nolsst:
+      ##  Add LSST sample.   
       pz, norm  = ss_pz()
 
       ns       += [norm]
