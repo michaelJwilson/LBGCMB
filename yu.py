@@ -24,6 +24,7 @@ latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, us
 Test                               =                 False
 compute                            =                 False
 nolsst                             =                  True
+spec                               =                  True
 
 cambx                              =                CAMB()
 Pk_interps                         =  get_PkInterps(cambx)
@@ -40,9 +41,13 @@ fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[c
 ##  ['SDSS1', 'SDSS2', 'DESIBGS', 'BOSSLRGs', 'DESILRGs', 'DESIELGs1', 'DESIELGs2', 'DESIQSOs']
 ns, ps, bs, ss                     =  get_ss17_samples(nolsst=nolsst)
 
+if spec:
+  ns                               =  ns[2:]
+  ps                               =  ps[2:]
+  bs                               =  bs[2:]
+  ss                               =  ss[2:]
+ 
 print(ss)
-
-exit(1)
 
 if Test:
   nsurvey =            2
