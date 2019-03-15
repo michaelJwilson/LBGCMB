@@ -72,7 +72,6 @@ def plot_schechters(magbias=False, nointerloper=False):
       alpha      = stats[band]['schechter']['alpha']
       Mstar      = stats[band]['schechter']['M_star']
       phi_star   = stats[band]['schechter']['phi_star']
-
       
       pnbars     = []
       
@@ -86,7 +85,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
         pnbars.append(pnbar)
       
-      pnbars  = np.array(pnbars)
+      pnbars = np.array(pnbars)
 
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
             

@@ -91,8 +91,8 @@ if __name__ == '__main__':
   pl.title(key)
   pl.show()
  
-  root = os.environ['LBGCMB'] + '/dropouts/schechter/dat/pz/'
-  file = root + 'pz_%s.dat' % key
+  root             =  os.environ['LBGCMB'] + '/dropouts/schechter/dat/pz/'
+  file             =  root + 'pz_%s.dat' % key
 
   np.savetxt(file, np.c_[zs, ps])
  

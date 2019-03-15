@@ -78,7 +78,7 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     nbar   = get_ns(Ms, zee=z)
     nbar   = np.log10(nbar)
 
-    ##  Cut to maglim.                                                                                                                                                                                     
+    ##  Cut to maglim.                                                                                                                              
     nbar   = nbar[gs <= mlim][-1]
 
     return  nbar
@@ -122,7 +122,6 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
 
     PhiMUV             = SchechterMfn(MM, phi_star, M_star, alpha)         ## Note:  Schechter fn. integrals are the incomplete gamma fn.
     
-
     Mlim, Llim         = mlimitedM(z, mlim, M_star, kcorr=True)            ## Returns [L_standard], e.g. M_* gives [L_*].
     
     if type   == 'app':
