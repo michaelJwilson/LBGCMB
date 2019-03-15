@@ -22,7 +22,7 @@ from    schmittfull_nz     import  get_ss17_samples
 latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10, usetex=True)
 
 Test                               =                 False
-compute                            =                 False
+compute                            =                  True
 nolsst                             =                  True
 spec                               =                  True
 
@@ -45,9 +45,7 @@ if spec:
   ns                               =  ns[2:]
   ps                               =  ps[2:]
   bs                               =  bs[2:]
-  ss                               =  ss[2:]
- 
-print(ss)
+  ss                               =  ss[2:]   
 
 if Test:
   nsurvey =            2

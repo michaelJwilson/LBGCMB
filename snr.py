@@ -50,7 +50,8 @@ if __name__ == '__main__':
 
 
   print('\n\nWelcome to snr.\n\n')
-  
+
+  spec       =  True   ##  Limit delensing to spectroscopic surveys, DESI + BOSS ...  Neglecting SDSS.  
   band       =   'g'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
@@ -88,6 +89,14 @@ if __name__ == '__main__':
 
   ##  Get low-z delensing efficiency. 
   ns, ps, bs, ss       =  get_ss17_samples(nolsst=True)  ##  <\bar n>, p(z), b(z).
+
+  if spec:
+    ns                 =  ns[2:]
+    ps                 =  ps[2:]
+    bs                 =  bs[2:]
+    ss                 =  ss[2:]  
+
+  print('\n\nAvailable surveys: ' + ''.join('  %s;' % s for s in ss) + '\n\n')
 
   rho                  =  np.loadtxt('rho/' + '_'.join(s for s in ss) + '.txt')
   rho                  =  interp1d(rho[:,0], rho[:,1], kind='linear', copy=True, bounds_error=False, fill_value=0.0, assume_sorted=False)
@@ -135,7 +144,7 @@ if __name__ == '__main__':
     pl.ylabel('Cumulative (S/N) ' + r'$/ \ \sqrt{f_{\rm{sky}}}$', fontsize=12)
 
   pl.xlim(1.e1, 1.e4)
-  pl.ylim(0.0,  550.)
+  pl.ylim(0.0,  150.)
   
   pl.legend(loc=2, ncol=2)
 

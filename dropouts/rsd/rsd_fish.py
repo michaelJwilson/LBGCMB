@@ -19,7 +19,7 @@ from    scipy.interpolate  import  interp1d
 from    numpy.linalg       import  inv
 from    euclid             import  euclid_bz, euclid_nz, euclid_area
 from    beast              import  beast_bz,  beast_nz
-from    schechter.gen_pz   import  peakz            as  _peakz
+from    schechter.gen_pz   import  peakz  as  _peakz
 from    schechter.get_shot import  get_shot
 from    schechter.get_pz   import  get_pz
 from    get_bz             import  bz_callmodel
