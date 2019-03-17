@@ -1,21 +1,26 @@
-import   numpy                 as      np
-import   pandas                as      pd
-import   matplotlib            as      mpl
-import   matplotlib.pyplot     as      plt
-import   astropy.units         as      u
+import   numpy                   as      np
+import   pandas                  as      pd
+import   matplotlib              as      mpl
+import   matplotlib.pyplot       as      plt
+import   astropy.units           as      u
 
-from     utils                 import  pprint
-from     nbar                  import  comovdensity, projdensity
-from     ilim                  import  get_contamination
-from     utils                 import  comoving_distance
-from     cosmo                 import  cosmo
-
-from     goldrush.specs        import  samplestats  as goldrush_stats
-from     Malkan.specs          import  samplestats  as malkan_stats
-from     reddy                 import  samplestats  as reddy_stats
-
-from     goldrush.ilim         import  get_nbarbymag
-from     goldrush.completeness import  interp_completeness
+from     utils                   import  pprint
+from     nbar                    import  comovdensity, projdensity
+from     utils                   import  comoving_distance
+from     cosmo                   import  cosmo
+from     schechter.gen_pz        import  peakz            as  _peakz
+from     schechter.get_shot      import  get_shot
+from     schechter.get_pz        import  get_pz
+from     goldrush                import  completeness     as  grush_completeness
+from     goldrush.contamination  import  get_contamination
+from     goldrush.ilim           import  get_nbarbymag
+from     Malkan                  import  completeness     as  malkan_completeness
+from     get_schechters          import  get_schechters
+from     get_wschechters         import  get_wschechter
+from     reddy.specs             import  samplestats      as  reddy_stats
+from     goldrush.specs          import  samplestats      as  grush_stats
+from     Malkan.specs            import  samplestats      as  malkan_stats
+from     reddy.pz                import  get_pz           as  reddy_getpz
 
 
 def plot_schechters(magbias=False, nointerloper=False):
@@ -24,16 +29,14 @@ def plot_schechters(magbias=False, nointerloper=False):
     import  matplotlib.pyplot  as      plt
     
     from    matplotlib.pyplot  import  text
-    from    specs              import  samplestats
-    from    selection_box      import  detection_bands
     from    utils              import  latexify
 
 
-    ##  latexify(fig_width=None, fig_height=None, columns=2, equal=False, ggplot=False)
+    latexify(columns=2, equal=False, ggplot=True, fontsize=12, ratio=0.5)
         
     ##  Create figure.                                                                                                                        
-    fig, axarray = plt.subplots(1, 1, sharey=False)
-    fig.set_size_inches(6.5, 3.5)
+    ##  fig, axarray = plt.subplots(1, 1, sharey=False)
+    ##  fig.set_size_inches(6.5, 3.5)
 
     dm           = 0.25
     mlims        = np.arange(20.5, 28.0, dm)
@@ -49,12 +52,12 @@ def plot_schechters(magbias=False, nointerloper=False):
 
     pnbars  = np.array(pnbars)
     pl.semilogy(mlims, pnbars, '-', label=r'$2 < z < 3$ QSO', color='c', alpha=0.5)
-
+    
     ##  And save.
     np.savetxt(os.environ['LBGCMB'] + '/dropouts/schechter/dat/qso.dat', np.c_[mlims, pnbars], fmt='%.6lf', header='mlim   g/deg^2')
-    
+
     ##  Now dropouts.
-    samples      = [reddy_stats(), malkan_stats(), goldrush_stats(), goldrush_stats()]
+    samples      = [reddy_stats(), malkan_stats(), grush_stats(), grush_stats()]
     
     bands        = ['BX', 'Malkan', 'g', 'r']
     labels       = ['BX-dropouts', r'$u$-dropouts', r'$g$-dropouts', r'$r$-dropouts']
@@ -66,20 +69,18 @@ def plot_schechters(magbias=False, nointerloper=False):
     for stats, band, label, color in zip(samples, bands, labels, colors):
       print('\n\nSolving for %s.' % label)
         
-      zee        = stats[band]['z']   
       dzee       = 0.7
-
-      alpha      = stats[band]['schechter']['alpha']
-      Mstar      = stats[band]['schechter']['M_star']
-      phi_star   = stats[band]['schechter']['phi_star']
+      zee, alpha, Mstar, phi_star = get_schechters(stats, band)
       
       pnbars     = []
       
       for mlim in mlims:
         if band in ['g', 'r']:    
           ##  Apply completeness correction to Schechter estimate.   
+          CC     = grush_completeness.get_completeness(band)  
+
           pnbar  = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, type='app', printit=True,\
-                               completeness= lambda zz: interp_completeness(zz, drop=band))
+                               completeness= lambda zz: CC(zz))
         else:
          pnbar   = projdensity(zee - dzee / 2., zee + dzee / 2., phi_star, Mstar, alpha, mlim=mlim, type='app', printit=True)   
 
@@ -89,7 +90,7 @@ def plot_schechters(magbias=False, nointerloper=False):
 
       pl.semilogy(mlims, pnbars, '-', label=label, color=color, alpha=0.5)
             
-      ##  And save.                                                                                                                                                                                                               
+      ##  And save.                                                                                                                                 
       np.savetxt(os.environ['LBGCMB'] + '/dropouts/schechter/dat/%sDrop.dat' % band, np.c_[mlims, pnbars], fmt='%.6lf', header='mlim   g/deg^2')
 
       if band == 'BX':                                                                                                                              
@@ -143,7 +144,7 @@ def plot_schechters(magbias=False, nointerloper=False):
             A = pnbars[i] / mlims[i] ** n
           
             pl.semilogy(mlims, A * mlims ** n, '--', color='k', label='', alpha=0.5) 
-    
+       
     pl.xlim(22.4,  27.1)
     pl.ylim(1.e0,  7.e4)
 
@@ -151,6 +152,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     pl.ylabel(r'$N(<m)$ / deg$^2$')
 
     pl.legend(loc=4, ncol=2)
+    
     '''
     ##  Line Schecter functions. 
     ax  = pl.gca()
@@ -190,6 +192,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     
     pl.legend(loc=2)
     '''
+    
     ##  pl.show()
     pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 

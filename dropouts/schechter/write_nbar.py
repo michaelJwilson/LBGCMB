@@ -6,16 +6,16 @@ import  get_wschechters
 from    dVols                 import  dVols
 from    cosmo                 import  cosmo
 from    params                import  get_params
-from    goldrush              import  completeness    as grush_completeness
-from    Malkan                import  completeness    as malkan_completeness
+from    scipy.interpolate     import  interp1d
 from    nbar                  import  dndz
 from    get_schechters        import  get_schechters
-from    get_wschechters       import  get_wschechter
-from    scipy.interpolate     import  interp1d
+from    get_wschechters       import  get_wschechterx
 from    reddy.specs           import  samplestats     as reddy_stats
 from    goldrush.specs        import  samplestats     as grush_stats
 from    Malkan.specs          import  samplestats     as malkan_stats
 from    reddy.pz              import  get_pz          as reddy_getpz
+from    goldrush              import  completeness    as grush_completeness
+from    Malkan                import  completeness    as malkan_completeness
 from    nbar                  import  comovdensity
 
 

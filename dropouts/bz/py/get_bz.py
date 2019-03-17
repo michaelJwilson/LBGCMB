@@ -11,28 +11,24 @@ from    utils              import  latexify
 from    scipy.optimize     import  curve_fit
 from    growth_rate        import  growth_factor
 from    uncertainties      import  ufloat, unumpy
+from    scipy.interpolate  import  interp1d
 
+
+colors  = ['b', 'orange', 'forestgreen', 'firebrick']
+##  colors  = plt.rcParams['axes.prop_cycle'].by_key()['color']  
 
 def bz_fitmodel(z, A, B):
   aa = 1. / (1. + z)
   DD = growth_factor(aa)
 
-  ##  Model 1 
-  ##  return  A / DD + B / DD ** 2. 
-
-  ##  Model 2 
-  return  A * aa**2.
+  return  A / aa + B / aa**2.
 
 @np.vectorize
 def bz_callmodel(z, mlim):
-  params = np.array([[24.0, 1.494, 0.077], [24.5, 0.668, 0.195], [25.0, -0.069, 0.320], [25.5, -0.365, 0.356]])
-
-  assert  mlim in params[:,0]
-
-  indexs = np.abs(params[:,0] - mlim) == np.abs(params[:,0] - mlim).min()
-
-  A      = params[indexs, 1]
-  B      = params[indexs, 2]
+  mm = mlim - 25.
+  
+  A  = -0.978 * mm + 0.1110
+  B  = 0.1158 * mm + 0.1692
 
   return  bz_fitmodel(z, A, B)
 
@@ -83,8 +79,6 @@ class drop_bz():
     print(self.mhi)
 
   def plot(self, marker='o', labelit=True, show=False):
-    colors  = plt.rcParams['axes.prop_cycle'].by_key()['color'] 
-
     for i, m in enumerate(self.ms):
       yerr  = np.array([[self.el[:,i], self.eu[:,i]]])[0,:,:]
       yerr  = np.abs(yerr)
@@ -184,8 +178,6 @@ class drop_bz():
     popt, pcov = curve_fit(bz_fitmodel, xx, yy, p0 = None, sigma = ee, absolute_sigma = False)
 
     if plotit:
-      colors   = plt.rcParams['axes.prop_cycle'].by_key()['color']
-
       xxs      = np.arange(2.5, 6.0, 0.01)
       pl.plot(xxs, bz_fitmodel(xxs, *popt), c=colors[np.where(mindex == True)[0][0]])
 
@@ -215,10 +207,9 @@ if __name__ == '__main__':
 
     ##  x.plot(show=False, marker='s')
     ##  y.plot(show=True,  marker='o')
-
-    zs = np.arange(2.5, 5.5, 0.01)
-    bs = bz_callmodel(z=zs, mlim=24.)
     
+    zs = np.arange(2.5, 5.5, 0.01)
+    bs = bz_callmodel(z=zs, mlim=24.)    
     pl.plot(zs, bs, 'c-')
 
     pl.legend()

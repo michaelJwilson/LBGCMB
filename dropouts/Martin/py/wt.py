@@ -62,7 +62,7 @@ if __name__=="__main__":
     pl.xscale('log')
     pl.yscale('log')
 
-    pl.legend(framealpha=0.2, loc=3, ncol=1)
+    pl.legend(framealpha=0.2, loc=3, ncol=1, frameon=False)
 
     pl.xlabel(r'$\theta$  [arcsec]')
     pl.ylabel(r'$w(\theta)$')
@@ -104,7 +104,7 @@ if __name__=="__main__":
     pl.plot(br[:,0], br[:,2], 'd',  color='darkgreen', label=r'$b_{gm}(z \simeq 4)$', markersize=4)
     pl.plot(br[:,0], br[:,2], '--', color='darkgreen', dashes=[3,1], alpha=0.4)
 
-    pl.legend(framealpha=0.2)
+    pl.legend(framealpha=0.2, frameon=False, ncol=1)
     
     pl.xlabel(r'$r \ \ [h^{-1}{\rm Mpc}]$')
     pl.ylabel(r'$b(r)$')
@@ -113,7 +113,7 @@ if __name__=="__main__":
     pl.yscale('linear')
 
     pl.xlim(1.0, 40.)
-    pl.ylim(3.7, 9.7)
+    pl.ylim(3.7, 8.0)
 
     ## 
     ax = pl.gca()
