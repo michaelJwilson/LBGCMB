@@ -2,31 +2,58 @@ import  numpy              as  np
 import  pylab              as  pl
 import  matplotlib.pyplot  as  plt
 
+from    cosmo              import  cosmo
 from    utils              import  latexify
+from    schechter.gen_pz   import  peakz           as  _peakz
+from    schechter.get_shot import  get_shot
+from    schechter.get_pz   import  get_pz
+from    nbar               import  comovdensity
+from    get_bz             import  bz_callmodel
+from    get_schechters     import  get_schechters
+from    get_wschechters    import  get_wschechter
+from    growth_rate        import  growth_rate
+from    reddy.specs        import  samplestats     as reddy_stats
+from    goldrush.specs     import  samplestats     as grush_stats
+from    Malkan.specs       import  samplestats     as malkan_stats
+from    reddy.pz           import  get_pz          as reddy_getpz
+from    goldrush           import  completeness    as grush_completeness
+from    Malkan             import  completeness    as malkan_completeness
 
 
-latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=12, ratio=None, ggplot=True, usetex=True)
+latexify(columns=2, ratio=0.5, equal=False, fontsize=12, ggplot=True, usetex=True)
 
-dat   = np.loadtxt('dat/rsd.dat')
-dat   = dat[1::2]
+for color, band in zip(['b', 'g', 'r'], ['u', 'g', 'r']):
+    frac    =    True
+    area    =    5000.
 
-k1    = dat[::2]
-k2    = dat[1::2]
+    deltav  =     500.    ##  [km / s].                                                                                                                    
+    kmax    =     0.9
 
-zmean = (k1[:,1] + k1[:,2]) / 2.
+    pz      =  get_pz(band)
+    peakz   =    _peakz(pz)
 
-print(k1)
-print(k2)
+    fsky    =  area / 41253.
+    sigp    =  (1. + peakz) * deltav  / cosmo.efunc(peakz) / 100.  ##  [Mpc / h].  
+    
+    dat     = np.loadtxt('dat/rsd_%s_%.1lf_%.1lf_%.3lf.dat' % (band, kmax, fsky, sigp))
 
-pl.plot(zmean[zmean < 2.0], k1[:,4][zmean < 2.0], c='r', label=r'$k_{\rm{max}}=0.1$ [$h$/Mpc]', marker='^')
-pl.plot(zmean[zmean < 2.0], k2[:,4][zmean < 2.0], c='r', label=r'$k_{\rm{max}}=0.2$ [$h$/Mpc]', marker='s')
+    print('%.3lf \t %.6lf' % (peakz, growth_rate(1. / (1. + peakz))))
 
-pl.plot(zmean[zmean > 2.0], k1[:,4][zmean > 2.0], c='orange', label=r'', marker='^')
-pl.plot(zmean[zmean > 2.0], k2[:,4][zmean > 2.0], c='orange', label=r'', marker='s')
+    if frac:
+      pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5] / growth_rate(1. / (1. + peakz)),\
+                           color + 'o', alpha=0.5, markersize=4)
+    
+    else:
+      pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5], color + 'o', alpha=0.5, markersize=4)
+
+pl.xlim(2.0, 5.0)
+pl.ylim(10., 35.)
 
 pl.xlabel(r'$z$')
-pl.ylabel(r'$\sigma_f$')
-
+pl.ylabel(r'$(\sigma_f / f) \ [\%]$')
 pl.legend(ncol=1, loc=2, frameon=False)
+
 plt.tight_layout()
+
+##  pl.show()
 pl.savefig('plots/sigf.pdf')

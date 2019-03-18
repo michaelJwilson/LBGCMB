@@ -4,6 +4,9 @@ def get_schechters(stats, key):
     and a key to the dropout type,
     return z, alpha, M*, Phi*. 
     '''
+
+    if key == 'u':
+        key = 'Malkan'
     
     midz     =  stats[key]['z']
     alpha    =  stats[key]['schechter']['alpha']

@@ -18,7 +18,7 @@ from    utils              import  latexify
 from    scipy.interpolate  import  interp1d
 from    numpy.linalg       import  inv
 from    euclid             import  euclid_bz, euclid_nz, euclid_area
-from    schechter.gen_pz   import  peakz  as  _peakz
+from    schechter.gen_pz   import  peakz           as  _peakz
 from    schechter.get_shot import  get_shot
 from    schechter.get_pz   import  get_pz
 from    nbar               import  comovdensity
@@ -96,104 +96,88 @@ def _vintegrand(x, args):
 
 if __name__ == '__main__':
     print('\n\nWelcome to the RSD S/N calculator.')
+
+    print('Loading CAMB module.')
+
+    band        =      'u'
+    area        =    5000. 
+
+    fog         =    True
+        
+    deltav      =     500.    ##  [km / s].
+    kmax        =     0.9
+
+    ## 
+    setup       = {'BX': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0,  'stats': reddy_stats(),  'CC': None},\
+                    'u': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0,  'stats': malkan_stats(), 'CC': malkan_completeness.get_completeness()},\
+                    'g': {'maglim': 25.5, 'decband': 'i', 'specfrac': 0.1,  'stats': grush_stats(),  'CC': grush_completeness.get_completeness('g')},\
+                    'r': {'maglim': 25.5, 'decband': 'z', 'specfrac': 0.1,  'stats': grush_stats(),  'CC': grush_completeness.get_completeness('r')}}
+        
+    CC          =  setup[band]['CC']
+    mlim        =  setup[band]['maglim']
+    stats       =  setup[band]['stats']
+    specfrac    =  setup[band]['specfrac']
+
+    ##  midz, alpha, M_star, phi_star = get_wschechter(4.0)  
+    midz, alpha, M_star, phi_star = get_schechters(stats, band) 
     
-    compute = True
+    bz          =  lambda z:  bz_callmodel(z, mlim)
+    nz          =  lambda z:  specfrac * CC(z) * 10. ** comovdensity(z, phi_star, M_star, alpha, type='app', mlim=mlim, printit=False)
 
-    if compute:
-        print('Loading CAMB module.')
+    pz          =  get_pz(band)
+    peakz       =    _peakz(pz)
 
-        band        =      'g'
-        area        =   14000. 
+    zmin        =  peakz - 1.0
+    zmax        =  peakz + 1.0
 
-        fog         =   False
+    fsky        =  area / 41253.
+    sigp        =  (1. + peakz) * deltav  / cosmo.efunc(peakz) / 100.  ##  [Mpc / h].    
+
+    dkmax       =  0.1
+    kmaxs       =  np.arange(0.1, kmax + dkmax, dkmax)
+
+    ## 
+    cambx       =  CAMB()
+    Pk_interps  =  get_PkInterps(cambx)
+
+    params      =  ['b', 'f']       ##  ['b', 's', 'f']                                                                                                 
+
+    results     =  []
+
+    for kmax in kmaxs:
+        ##  y = np.log(k)
+        ymin, ymax  =  np.log(5.e-2), np.log(kmax)
+
+        ##  [[zmin, zmax], [mu min, mu max], [ymin, max]]
+        ##  Note: integral symmetric in mu -> 2 * \int [0., 1.]
+        ranges      = [[zmin, zmax], [0., 1.], [ymin, ymax]]
+
+        integ       = vegas.Integrator(ranges)
         
-        deltav      =     500.    ##  [km / s].
-        kmaxs       =  np.arange(0.1, 0.2, 0.1)
-
-        ## 
-        setup       = {'BX': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0, 'stats': reddy_stats(),  'CC': None},\
-                        'u': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0, 'stats': malkan_stats(), 'CC': malkan_completeness.get_completeness()},\
-                        'g': {'maglim': 25.5, 'decband': 'i', 'specfrac': 0.1, 'stats': grush_stats(),  'CC': grush_completeness.get_completeness(band)},\
-                        'r': {'maglim': 25.5, 'decband': 'z', 'specfrac': 0.1, 'stats': grush_stats(),  'CC': grush_completeness.get_completeness(band)}}
-        
-        CC          =  setup[band]['CC']
-        mlim        =  setup[band]['maglim']
-        stats       =  setup[band]['stats']
-        specfrac    =  setup[band]['specfrac']
-
-        midz, alpha, M_star, phi_star = get_schechters(stats, band)  ##  midz, alpha, M_star, phi_star = get_wschechter(4.0)       
-
-        bz          =  lambda z:  bz_callmodel(z, mlim)
-        nz          =  lambda z:  specfrac * CC(z) * comovdensity(z, phi_star, M_star, alpha, type='app', mlim=mlim, printit=False)
-
-        pz          =  get_pz(band)
-        peakz       =  _peakz(pz)
-
-        zmin        =  peakz - 1.0
-        zmax        =  peakz + 1.0
-
-        fsky        =  area / 41253.
-        sigp        =  (1. + peakz) * deltav  / cosmo.efunc(peakz) / 100.  ##  [Mpc / h].    
-
-        ## 
-        cambx       =  CAMB()
-        Pk_interps  =  get_PkInterps(cambx)
-
-        params      =  ['b', 'f']       ##  ['b', 's', 'f']                                                                                                                      
-
-        results     =  []
-
-        for kmax in kmaxs:
-            ##  y = np.log(k)
-            ymin, ymax  =  np.log(5.e-2), np.log(kmax)
-
-            ##  [[zmin, zmax], [mu min, mu max], [ymin, max]]
-            ##  Note: integral symmetric in mu -> 2 * \int [0., 1.]
-            ranges      = [[zmin, zmax], [0., 1.], [ymin, ymax]]
-
-            integ       = vegas.Integrator(ranges)
-
-            Fisher      =  np.zeros(len(params) * len(params)).reshape(len(params), len(params))
+        Fisher      =  np.zeros(len(params) * len(params)).reshape(len(params), len(params))
                                     
-            for i, b in enumerate(params):
-              for j, f in enumerate(params):
+        for i, b in enumerate(params):
+            for j, f in enumerate(params):
                 args    = (Pk_interps, fsky, nz, bz, b + f, 'nlinear', fog, sigp)
                 result  = integ(lambda x: _vintegrand(x, args), nitn=10, neval=1000)
-                
-                results.append(result)
 
                 print(result.summary())
 
                 Fisher[i, j] = result.mean
             
-            ##  invert ... 
-            iFisher = inv(Fisher)
+        ##  invert ... 
+        iFisher = inv(Fisher)
             
-            print(kmax, band, zmin, zmax, bz(peakz), growth_rate(1. / (1. + peakz)))
-            print(kmax, band, zmin, zmax, 100. * np.sqrt(iFisher[0,0]) / bz(peakz), 100. * np.sqrt(iFisher[-1,-1]) / growth_rate(1. / (1. + peakz)))
+        print(kmax, band, zmin, zmax, bz(peakz), growth_rate(1. / (1. + peakz)))
+        print(kmax, band, zmin, zmax, 100. * np.sqrt(iFisher[0,0]) / bz(peakz), 100. * np.sqrt(iFisher[-1,-1]) / growth_rate(1. / (1. + peakz)))
 
-        results = np.array(results)
-        results =  np.sqrt(results)
+        results.append(np.sqrt(iFisher[-1,-1]))
 
-        print(results)
+    results = np.array(results)
+    results =  np.sqrt(results)
 
-        exit(1)
+    print(results)
 
-        np.savetxt('dat/rsd.dat', np.c_[kmaxs, results], fmt='%.6lf \t %.6le')
-
-    else:
-        pass
-        ##  kmaxs, results  = np.loadtxt('dat/rsd.dat', unpack=True)
-
-    ##  And plot ...
-    latexify(columns=1, equal=True, fontsize=12, ggplot=True, usetex=True)
-
-    pl.plot(kmaxs, np.log10(results))
-
-    pl.xlabel(r'$k_{\rm{max}} \ [(h \ \rm{Mpc}^{-1})]$')
-    pl.ylabel(r'$\rm{log}_{10}(S/N)$')
-
-    pl.show()
-    ##  pl.savefig('plots/rsd.pdf', bbox_inches='tight')
+    np.savetxt('dat/rsd_%s_%.1lf_%.1lf_%.3lf.dat' % (band, kmax, fsky, sigp), np.c_[kmaxs, results], fmt='%.6lf \t %.6le')
         
     print('\n\nDone.\n\n')
