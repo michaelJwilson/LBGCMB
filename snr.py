@@ -55,9 +55,9 @@ if __name__ == '__main__':
   band       =   'g'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
-                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
-                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.5, 'decband': 'i'},\
-                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.5, 'decband': 'z'}}
+                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'R'},\
+                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.8, 'decband': 'i'},\
+                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.8, 'decband': 'z'}}
 
   mlim       =  setup[band]['maglim']
 
@@ -106,7 +106,7 @@ if __name__ == '__main__':
   colors               =  plt.rcParams['axes.prop_cycle'].by_key()['color']
 
   ##  
-  latexify(fig_width=None, fig_height=None, columns=1, equal=True, fontsize=10)
+  latexify(columns=1, equal=True, fontsize=12)
   
   for ii, cmbexp in enumerate(bolometers): 
     ckg                   =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
@@ -140,18 +140,17 @@ if __name__ == '__main__':
   
   pl.xlabel(r'$\bar n / \rm{deg}^{2}$', fontsize=12)
 
-  if band == 'LBG':
+  if band == 'u':
     pl.ylabel('Cumulative (S/N) ' + r'$/ \ \sqrt{f_{\rm{sky}}}$', fontsize=12)
 
   pl.xlim(1.e1, 1.e4)
-  pl.ylim(0.0,  150.)
+  pl.ylim(0.0,  700.)
   
-  pl.legend(loc=2, ncol=2)
+  pl.legend(loc=2, ncol=2, frameon=False)
 
   plt.tight_layout()
-  
-  pl.show()
-  ##  pl.savefig('plots/%ssnr.pdf' % band)
+
+  pl.savefig('plots/%ssnr.pdf' % band)
 
   print('\n\nDone.\n\n')
 
