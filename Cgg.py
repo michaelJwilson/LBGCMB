@@ -14,18 +14,18 @@ from    sliced_pz          import  sliced_pz
 params = get_params()
          
 def Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, survey_pz2=None, bz2=None, zeff=True):
-  dz          = 0.001
-  zs          = np.arange(zmin, zmax + dz, dz)
+  dz            = 0.01
+  zs            = np.arange(zmin, zmax + dz, dz)
 
   ##  Catch normalisation of p(z).  Added 03/01/19.
-  ps          = survey_pz(zs)
-  norm        = np.sum(ps) * dz
-  ps         /= norm
+  ps            = survey_pz(zs)
+  norm          = np.sum(ps) * dz
+  ps           /= norm
 
-  chis        = comoving_distance(zs)
+  chis          = comoving_distance(zs)
 
   if bz2 is None:
-     bz2      = bz
+     bz2        = bz
 
   if survey_pz2 is None:
      survey_pz2 = survey_pz
@@ -42,7 +42,7 @@ def Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, survey_pz2=None, bz2=None, 
     for a slice of galaxies at zz of width dz;  eqn. (5) of 
     https://arxiv.org/pdf/1511.04457.pdf
     '''
-    zz        =  np.sum(dz * ps * zs) / (np.sum(ps) * dz)                      ##  Normalisation should already be unity.  
+    zz        =  dz * np.sum(ps * zs) / (np.sum(ps) * dz)                      ##  Normalisation should already be unity.  
     ks        = (Llls + 0.5) / comoving_distance(zz)                           ##  For the Phh evaluation in the integral, we take a zeff approx. 
                                                                                ##  i.e. \int dz .... Phh(zeff).
 
@@ -58,7 +58,8 @@ def Cgg(Pk_interps, Llls, zmin, zmax, survey_pz, bz, survey_pz2=None, bz2=None, 
 
   ##  Accounts for both spatial to angular mapping as function of z;  i.e. k = (l. + 0.5) / chi(z) and redshift evolution of P_mm(k).
   prefactor   = (cosmo.H(zs).value / const.c.to('km/s').value) * sliced_pz(zs, zmin, zmax, survey_pz)\
-                                                               * sliced_pz(zs, zmin, zmax, survey_pz2) / chis**2.
+                                                               * sliced_pz(zs, zmin, zmax, survey_pz2)\
+                                                               / chis**2.
   
   integrand   =  prefactor[:, None] * result
   integrand  /=  params['h_100']
