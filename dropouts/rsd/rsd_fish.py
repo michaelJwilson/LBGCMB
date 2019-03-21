@@ -35,14 +35,8 @@ from    Malkan             import  completeness    as malkan_completeness
 
 cparams = get_params()
 
-def Kaiser(Pk_interps, beta, z, mu, ks, bz, type='linear', fog=False, sig=5.):
-    if fog:  
-      sig2 = sig * sig  ##  [(h^{-1} Mpc)^2].
-
-      return  (1. + beta * mu * mu) ** 2. * bz(z) * bz(z) * Pmm(Pk_interps, ks, z, type=type) * np.exp(- ks * ks * mu * mu * sig2)
-
-    else:
-      return  (1. + beta * mu * mu) ** 2. * bz(z) * bz(z) * Pmm(Pk_interps, ks, z, type=type)  
+def Kaiser(Pk_interps, beta, z, mu, ks, bz, type='linear', sig=0.0):  
+    return  (1. + beta * mu * mu) ** 2. * bz(z) * bz(z) * Pmm(Pk_interps, ks, z, type=type) * np.exp(-ks * ks * mu * mu * sig * sig)
 
 def fish_weight(b, f, mu, k, coeff):
     if coeff   == 'b':
@@ -55,9 +49,9 @@ def fish_weight(b, f, mu, k, coeff):
         return  -k * k * mu * mu 
 
     else:
-        raise ValueError('Unacceptable coeff: %s' % coeff)
+        raise  ValueError('Unacceptable coeff: %s' % coeff)
 
-def integrand(z, mu, y, Pk_interps, fsky, nz, bz, fish_coeff=None, type='linear', fog=False, sig=20):
+def integrand(z, mu, y, Pk_interps, fsky, nz, bz, fish_coeff=None, type='linear', deltav=0.0):
     k      = np.exp(y)
     
     ##  dV / dz [(h^{-1} Mpc)^3];  Differential comoving volume per redshift per steradian.
@@ -73,8 +67,10 @@ def integrand(z, mu, y, Pk_interps, fsky, nz, bz, fish_coeff=None, type='linear'
     b      = bz(z)
     beta   = f / b
 
+    sigp   =  (1. + z) * deltav  / cosmo.efunc(z) / 100.  ##  [Mpc / h]. 
+
     ##  FKP volume weighting.
-    nP     = nz(z) * Kaiser(Pk_interps, beta, z, mu, k, bz, type=type, fog=fog, sig=sig)
+    nP     = nz(z) * Kaiser(Pk_interps, beta, z, mu, k, bz, type=type, sig=sigp)
     fkp    = nP / (1. + nP)
     
     ##  Effecive (S / N).
@@ -88,10 +84,10 @@ def integrand(z, mu, y, Pk_interps, fsky, nz, bz, fish_coeff=None, type='linear'
 
 def _vintegrand(x, args):
     ##  Vegas wrapper of integrand; input args as a list. 
-    z, mu, y                                                = x[0], x[1], x[2]
-    (Pk_interps, fsky, nz, bz, fish_coeff, type, fog, sig) = args 
+    z, mu, y                                             = x[0], x[1], x[2]
+    (Pk_interps, fsky, nz, bz, fish_coeff, type, deltav) = args 
 
-    return  integrand(z, mu, y, Pk_interps, fsky, nz, bz, fish_coeff, type, fog, sig)
+    return  integrand(z, mu, y, Pk_interps, fsky, nz, bz, fish_coeff, type, deltav)
 
 
 if __name__ == '__main__':
@@ -99,12 +95,10 @@ if __name__ == '__main__':
 
     print('Loading CAMB module.')
 
-    band        =      'u'
-    area        =    5000. 
-
-    fog         =    True
+    band        =      'r'
+    area        =   15000. 
         
-    deltav      =     500.    ##  [km / s].
+    deltav      =     400.    ##  [km / s].
     kmax        =     0.9
 
     ## 
@@ -131,7 +125,6 @@ if __name__ == '__main__':
     zmax        =  peakz + 1.0
 
     fsky        =  area / 41253.
-    sigp        =  (1. + peakz) * deltav  / cosmo.efunc(peakz) / 100.  ##  [Mpc / h].    
 
     dkmax       =  0.1
     kmaxs       =  np.arange(0.1, kmax + dkmax, dkmax)
@@ -141,7 +134,6 @@ if __name__ == '__main__':
     Pk_interps  =  get_PkInterps(cambx)
 
     params      =  ['b', 'f']       ##  ['b', 's', 'f']                                                                                                 
-
     results     =  []
 
     for kmax in kmaxs:
@@ -158,7 +150,7 @@ if __name__ == '__main__':
                                     
         for i, b in enumerate(params):
             for j, f in enumerate(params):
-                args    = (Pk_interps, fsky, nz, bz, b + f, 'nlinear', fog, sigp)
+                args    = (Pk_interps, fsky, nz, bz, b + f, 'nlinear', deltav)
                 result  = integ(lambda x: _vintegrand(x, args), nitn=10, neval=1000)
 
                 print(result.summary())
@@ -171,13 +163,13 @@ if __name__ == '__main__':
         print(kmax, band, zmin, zmax, bz(peakz), growth_rate(1. / (1. + peakz)))
         print(kmax, band, zmin, zmax, 100. * np.sqrt(iFisher[0,0]) / bz(peakz), 100. * np.sqrt(iFisher[-1,-1]) / growth_rate(1. / (1. + peakz)))
 
-        results.append(np.sqrt(iFisher[-1,-1]))
+        results.append(iFisher[-1,-1])
 
     results = np.array(results)
     results =  np.sqrt(results)
 
     print(results)
 
-    np.savetxt('dat/rsd_%s_%.1lf_%.1lf_%.3lf.dat' % (band, kmax, fsky, sigp), np.c_[kmaxs, results], fmt='%.6lf \t %.6le')
+    np.savetxt('dat/rsd_%s_%.1lf_%.1lf_%.3lf.dat' % (band, kmax, fsky, deltav), np.c_[kmaxs, results], fmt='%.6lf \t %.6le')
         
     print('\n\nDone.\n\n')

@@ -1,4 +1,4 @@
-# VISTA_J from Ross TRIMMED
+# VISTA_J from Ross TRIMMED.
       11205.0    0.0263416
       11215.0   0.00819254
       11225.0    0.0286409

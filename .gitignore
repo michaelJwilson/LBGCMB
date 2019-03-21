@@ -1,4 +1,5 @@
 env/
+SOMPY/
 *.pyc
 dropouts/behroozi/dat/*
 desihub/desimodel/.DS_Store

@@ -43,8 +43,9 @@ def Fisher(Pk_interps, Llls, tNs, tNp, ps, _bs, pp, _bp, dz = 0.1, fsky=0.1, zmi
       cgg  =   Cij(Pk_interps, Llls, zee - dz / 2.,  zee + dz / 2.)
       '''
 
+      ##  Return Cgg / b1 / b2.
       ub   =   lambda z:  1.0
-      cgg  =   Cgg(Pk_interps, Llls, zmin, zmax, pp, ub, survey_pz2=ps, bz2=ub, zeff=False)
+      cgg  =   Cgg(Pk_interps, Llls, zmin, zmax, pp, ub, survey_pz2=ps, bz2=ub, zeff=True)
 
       ##  Eqn. (44); sum over k has implicit sum over ell and m. 
       result[zee] = {'Ns': Ns, 'Np': Np, 'bp': bp, 'bs': bs, 'cgg': cgg, 'wp': wp, 'num': (bp * bs * cgg) ** 2., 'denom': cgg * (bp * Np)**2. + wp}
@@ -131,11 +132,10 @@ if __name__ == '__main__':
   import  pylab              as      pl
 
   from    pickle             import  dump, load
-  from    ilim               import  get_nbar_nocontam
-  from    pz_tools           import  percentiles  
-  from    schechter.gen_pz   import  peakz            as  _peakz
   from    schechter.get_shot import  get_shot
   from    schechter.get_pz   import  get_pz
+  from    pz_tools           import  percentiles
+  from    schechter.gen_pz   import  peakz            as  _peakz
   from    get_bz             import  bz_callmodel
 
 
@@ -144,12 +144,12 @@ if __name__ == '__main__':
   evaluate     =   True
   add_desi     =  False
 
-  dz           =   0.1
+  dz           =    0.1
   
-  fsky         =  0.01
-  fover        =  1.00
+  fsky         =  1.e-3
+  fover        =   1.00
 
-  band         =   'r'
+  band         =   'u'
 
   setup        = {'BX':  {'colors': ['goldenrod', 'tan',         'y'], 'spec-maglim': 24.0, 'phot-maglim': 25.5,'decband': 'R', 'file': 'BXDrop.dat'},\
                    'u':  {'colors': ['darkblue',  'deepskyblue', 'b'], 'spec-maglim': 24.0, 'phot-maglim': 24.6,'decband': 'R', 'file': 'MalkanDrop.dat'},\
@@ -162,12 +162,14 @@ if __name__ == '__main__':
   spec_mlim    =  setup[band]['spec-maglim']
   phot_mlim    =  setup[band]['phot-maglim']
 
+  ##  Spectroscopic sample p(z) and b(z).
   ps           =  get_pz(band)
   bs           =  lambda z:  bz_callmodel(z, spec_mlim)
 
   ##  Get the z percentiles for this dropout p(z).                                                                                                          
-  percentiles = percentiles(ps, printit=True)
+  percentiles  = percentiles(ps, printit=True)
 
+  ##  Photometric sample p(z).
   pp           =  get_pz(band)
 
   peakz        =  _peakz(ps)
@@ -199,7 +201,7 @@ if __name__ == '__main__':
   print
 
   ##  S tends to infinite if Ns = Np in the shot noise limit.                                                                                                
-  Nsz          =  np.logspace(2.0, np.log10(5000.), 5, base=10.)
+  Nsz          =  np.logspace(2.0, np.log10(5000.), 15, base=10.)
   intlp_zs     =  []
 
   print('\nEvaluating for nspec:\n' + ''.join('%.2lf\n' % x for x in Nsz))
@@ -229,7 +231,7 @@ if __name__ == '__main__':
     
   ##  And plot ...
   data = np.loadtxt(os.environ['LBGCMB'] + '/mqw/dat/mqw_%sdrops.txt' % band)
-    
+
   Nsz  = np.unique(data[:,0])  ##  N spec. 
   mms  = np.unique(data[:,1])  ##  mag. lim.
   Npz  = np.unique(data[:,2])  ##  N phot.  
@@ -238,40 +240,37 @@ if __name__ == '__main__':
   latexify(fig_height=2.2, columns=2, fontsize=12)
   
   if add_desi:
-      fig, axs = plt.subplots(1, 4, sharey=True)
-      index    = 1
+    fig, axs = plt.subplots(1, 4, sharey=True)
+    index    = 1
   
   else:
-      fig, axs = plt.subplots(1, 3, sharey=True)
-      index    = 0 
-      
-  colors = ['k', 'b', 'r', 'indigo', 'y', 'sandybrown']
+    fig, axs = plt.subplots(1, 3, sharey=True)
+    index    = 0 
+        
+  for kk, percentile in enumerate(percentiles):
+     for ii, mm in enumerate(mms):
+         dat = data[data[:,1] == mm] 
+         Np  = dat[0,2]
 
-  for color, Np in zip(colors, Npz):
-   dat = data[data[:,2] == Np]
-  
-   for kk, percentile in enumerate(percentiles):
-     if  (kk == index) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
-         label =  "%s" % (sci_notation(Np, decimal_digits=1, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]    
+         if   (kk == index)     & (mm in [24.0, 24.5]):
+             label =  "%s" % (sci_notation(Np, decimal_digits=1, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % mm   
 
-     elif (kk == index + 1) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
-         label =  "%s" % (sci_notation(Np, decimal_digits=1, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % dat[0,1]
+         elif (kk == index + 1) & (mm in [25.0, 25.5]):
+             label =  "%s" % (sci_notation(Np, decimal_digits=1, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % mm
 
-     else:
-         label = ''
+         elif (kk == index + 2) & (mm in [26.0, 26.5]):
+             label =  "%s" % (sci_notation(Np, decimal_digits=1, precision=None, exponent=np.int(np.floor(np.log10(Np))))) + ' (%.1lf)' % mm
 
-     axs[kk + index].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2*kk], '-',  label = label, c=color, alpha=0.6, lw=1)
+         else:
+             label = ''
 
-     ##  
-     if   (kk == index) & (' (%.1lf)' % dat[0,1] in [' (24.0)', ' (24.5)']):
-       axs[kk + index].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8)
+         print(kk, mm, label)
+             
+         axs[index + kk].semilogx(dat[:,0] / 1.e3, dat[:,3 + 2 * kk], '-',  label=label, c='k', alpha=0.6, lw=.6)
 
-     elif (kk == index + 1) & (' (%.1lf)' % dat[0,1] not in [' (24.0)', ' (24.5)']):
-       axs[kk + index].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8) 
-
-     else:
-       axs[kk + index].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8)  
-
+  for kk, percentile in enumerate(percentiles):  
+     axs[index + kk].legend(ncol=1, title=r'$z \simeq %.2lf$' % percentile, handlelength=.5, fontsize=7, title_fontsize=8, frameon=False)
+       
   for ax in axs:
     ax.fill_between(np.arange(0., 1.1e6, 1.e6), 0., 1., color=colors[0], alpha=0.2)
       
@@ -285,7 +284,7 @@ if __name__ == '__main__':
     ax.yaxis.set_tick_params(labelsize=8)
 
     ax.set_xlim(0.1, np.log10(5000.))
-    ax.set_ylim(0.0, 8.000)
+    ax.set_ylim(0.0, 5.0)
 
     ax.spines['bottom'].set_color('black')
     ax.spines['top'].set_color('black')
@@ -295,7 +294,7 @@ if __name__ == '__main__':
   axs[0].set_ylabel(r'$(\delta N_p \ / \ N_p) \ [\%]$', fontsize=8)
 
   if add_desi:
-    axs[0].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % intlp_zs[0], handlelength=.5, fontsize=8)
+    axs[0].legend(ncol=1, title=r'$    (z \simeq %.2lf)$' % intlp_zs[0], handlelength=.5, fontsize=8, frameon=False)
 
   plt.tight_layout()
 

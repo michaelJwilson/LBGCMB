@@ -23,11 +23,11 @@ from    Malkan             import  completeness    as malkan_completeness
 latexify(columns=2, ratio=0.5, equal=False, fontsize=12, ggplot=True, usetex=True)
 
 for color, band in zip(['b', 'g', 'r'], ['u', 'g', 'r']):
-    frac    =    True
-    area    =    5000.
+    frac    =          True
+    area    =         15000.
 
-    deltav  =     500.    ##  [km / s].                                                                                                                    
-    kmax    =     0.9
+    deltav  =           400.    ##  [km / s].                                                                                                                    
+    kmax    =           0.9
 
     pz      =  get_pz(band)
     peakz   =    _peakz(pz)
@@ -35,19 +35,19 @@ for color, band in zip(['b', 'g', 'r'], ['u', 'g', 'r']):
     fsky    =  area / 41253.
     sigp    =  (1. + peakz) * deltav  / cosmo.efunc(peakz) / 100.  ##  [Mpc / h].  
     
-    dat     = np.loadtxt('dat/rsd_%s_%.1lf_%.1lf_%.3lf.dat' % (band, kmax, fsky, sigp))
+    dat     = np.loadtxt('dat/rsd_%s_%.1lf_%.1lf_%.3lf.dat' % (band, kmax, fsky, deltav))
 
     print('%.3lf \t %.6lf' % (peakz, growth_rate(1. / (1. + peakz))))
 
     if frac:
       pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5] / growth_rate(1. / (1. + peakz)),\
-                           color + 'o', alpha=0.5, markersize=4)
+                           color + '_', alpha=0.5, markersize=10)
     
     else:
-      pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5], color + 'o', alpha=0.5, markersize=4)
+      pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5], color + '_', alpha=0.5, markersize=10)
 
 pl.xlim(2.0, 5.0)
-pl.ylim(10., 35.)
+pl.ylim(0.,  5.0)
 
 pl.xlabel(r'$z$')
 pl.ylabel(r'$(\sigma_f / f) \ [\%]$')
