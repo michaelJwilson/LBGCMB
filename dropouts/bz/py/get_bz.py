@@ -91,7 +91,7 @@ class drop_bz():
       else:
         label = ''
 
-      pl.errorbar(self.zs + nudge, self.bs[:,i], yerr=yerr, fmt=marker, label=label, markersize=4, c=colors[i])
+      pl.errorbar(self.zs + nudge, self.bs[:,i], yerr=yerr, fmt=marker, label=label, markersize=4, c=colors[i], alpha=0.8)
 
     if show:
       pl.legend(frameon=False, ncol=3, loc=2)
@@ -179,7 +179,7 @@ class drop_bz():
 
     if plotit:
       xxs      = np.arange(2.5, 6.0, 0.01)
-      pl.plot(xxs, bz_fitmodel(xxs, *popt), c=colors[np.where(mindex == True)[0][0]])
+      pl.plot(xxs, bz_fitmodel(xxs, *popt), c=colors[np.where(mindex == True)[0][0]], alpha=0.5)
 
     return  popt, pcov
 
