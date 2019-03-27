@@ -42,6 +42,7 @@ if __name__ == '__main__':
   from    Ckg                 import  Ckg, var_Ckg
   from    bolometers          import  bolometers
   from    zeldovich_Lmax      import  Lcutmax
+  from    no_Lmax             import  noLcutmax
   from    pylab               import  rcParams
   from    schechter.gen_pz    import  peakz            as  _peakz
   from    schechter.get_shot  import  get_shot
@@ -52,7 +53,8 @@ if __name__ == '__main__':
   print('\n\nWelcome to snr.\n\n')
 
   spec       =  True   ##  Limit delensing to spectroscopic surveys, DESI + BOSS ...  Neglecting SDSS.  
-  band       =   'g'
+  noLmax     =  True
+  band       =    'u'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'R'},\
@@ -76,7 +78,12 @@ if __name__ == '__main__':
   zmax       =  peakz + 2.00
 
 
-  Lmax                 =  Lcutmax[np.round(peakz)][0] 
+  if noLmax:
+    Lmax               =  noLcutmax[np.round(peakz)][0]
+
+  else:
+    Lmax               =  Lcutmax[np.round(peakz)][0] 
+    
 
   ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                        
   cambx                =  CAMB()
@@ -150,7 +157,11 @@ if __name__ == '__main__':
 
   plt.tight_layout()
 
-  pl.savefig('plots/%ssnr.pdf' % band)
+  if noLmax:
+    pl.savefig('plots/%ssnr_noLmax.pdf' % band)
+
+  else:
+    pl.savefig('plots/%ssnr.pdf' % band)
 
   print('\n\nDone.\n\n')
 

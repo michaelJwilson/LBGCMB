@@ -1,4 +1,5 @@
 import  os
+import  pickle
 import  matplotlib          as      mpl
 import  matplotlib.pyplot   as      plt
 import  numpy               as      np
@@ -78,10 +79,6 @@ if __name__ == "__main__":
 
   from    prep_Llls          import  prep_Llls
   from    prep_camb          import  CAMB
-  from    completeness       import  get_dropoutpz       as  get_gdropoutpz
-  from    Malkan.specs       import  samplestats         as  usample_stats                                                                                 
-  from    specs              import  samplestats         as  gsample_stats
-  from    ilim               import  get_nbar_nocontam
   from    scipy.interpolate  import  interp1d
   from    bolometers         import  bolometers
   from    lensing            import  Ckk, var_Ckk
@@ -116,7 +113,7 @@ if __name__ == "__main__":
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
   
 
-  band       =   'g'
+  band       = 'g'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
@@ -127,9 +124,20 @@ if __name__ == "__main__":
 
   pz         =  get_pz(band)
   bz         =  lambda z:  bz_callmodel(z, mlim)
+  
+  ##  Interloper GP rewrite. 
+  fname      = os.environ['LBGCMB'] + '/dropouts/interlopers/kernels/dNdz_gp_%s_%s.p' % (band, 'Full') 
+  gp         = pickle.load(open(fname, 'rb'), fix_imports=True)
 
+  _pz        = lambda z:  np.array([gp.predict(np.array(z).reshape(-1,1), return_std=False), 0.0]).max()
+  pz         = np.vectorize(_pz)
+  ##  End interloper GP rewrite. 
+  
   nbar       =  get_shot(band, mlim)
   nbar      /=  (4. * np.pi / 41253.)  ##  Sq. deg. to steradian. 
+
+  ## 
+  nbar_wint  =  1.06 * nbar 
 
   decband    =  setup[band]['decband']
   colors     =  setup[band]['colors']
@@ -139,13 +147,7 @@ if __name__ == "__main__":
   ##  Hard p(z) limits. 
   zmin       =   0.01
   zmax       =  10.00
-
-  exit(1)
   
-  ##  Bias with z.
-  drop_bz            =      get_dropoutbz(m=24.5) ## [24.5, 25.0, 25.5] 
-  bz                 =  lambda z:  drop_bz(peakz)
-
   ##  LSST whitebook p(z).
   ##  pz             =  lambda z:  whitebook_pz(z, ilim = 25.30)
   
@@ -153,16 +155,24 @@ if __name__ == "__main__":
   ##  zee, pzee      =  get_gdropoutpz()
   
   ##  Get Rafelski based estimates on p(z).                                                                                                               
-  midz, ps           =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
-  pz                 =  interp1d(midz, ps, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
+  ##  midz, ps       =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
+  ##  pz             =  interp1d(midz, ps, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
 
   ##  Change in Ckg with p(z), b(z), nbar -> p'(z), b'(z) and nbar'.
   ##  We assume the z < 1 population of likely red galaxies has a bias of 2.04 at a mean z 0.87;
-  bzz                =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
+  ##  bzz            =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
+  bzz                =  bz
 
   ##  pzz            =  lambda z:  whitebook_pz(z, ilim = 25.25)
-  midzz, pss         =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
-  pzz                =  interp1d(midzz, pss, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
+  ##  midzz, pss     =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
+  ##  pzz            =  interp1d(midzz, pss, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
+
+  ##  Interloper GP rewrite.                                                                                                                                                                                         
+  fname              = os.environ['LBGCMB'] + '/dropouts/interlopers/kernels/dNdz_gp_%s_%s.p' % (band, 'Degraded')
+  gp                 = pickle.load(open(fname, 'rb'), fix_imports=True)
+
+  _pzz               = lambda z:  np.array([gp.predict(np.array(z).reshape(-1,1), return_std=False), 0.0]).max()
+  pzz                = np.vectorize(_pzz)
 
   ##  and the parameter Fisher matrix.                                                                                                                    
   fid_b1             =     bz(peakz)
@@ -223,10 +233,10 @@ if __name__ == "__main__":
   nspectra           =  3
   Cov_Lll            =  np.zeros(nspectra * nspectra).reshape(nspectra, nspectra)
 
-  ## and inverse.
+  ##  and inverse.
   iCov_Lll           =  np.zeros_like(Cov_Lll) 
  
-  ## Lll max cut;  Zel'dovich.                                                                                                                             
+  ##  Lll max cut;  Zel'dovich.                                                                                                                             
   Llls               =  Llls[Llls < LllMax]
 
   for LL, dummy in enumerate(Llls):
@@ -290,13 +300,13 @@ if __name__ == "__main__":
   pl.plot(fid_sig8, fid_b1, 'w*', markersize=5, label=r'$(\sigma_8, b_1)$')
   pl.plot(biased_sig8, biased_b1, 'k*', markersize=5, alpha=0.4, label=r'$(\hat \sigma_8, \hat b_1)$')
 
-  pl.legend()
+  pl.legend(frameon=False)
   pl.xlabel(r'$\sigma_8(z=%.1lf)$' % peakz)
   pl.ylabel(r'$b_1(z=%.1lf)$'      % peakz)
 
   plt.tight_layout()
 
-  ##  pl.show()
-  pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band)
+  pl.show()
+  ##  pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band)
   
   print("\n\nDone.\n\n")

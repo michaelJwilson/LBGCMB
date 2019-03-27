@@ -41,10 +41,10 @@ for color, band in zip(['b', 'g', 'r'], ['u', 'g', 'r']):
 
     if frac:
       pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5] / growth_rate(1. / (1. + peakz)),\
-                           color + '_', alpha=0.5, markersize=10)
+                           color + '_', alpha=0.5, markersize=20)
     
     else:
-      pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5], color + '_', alpha=0.5, markersize=10)
+      pl.plot(np.ones_like(dat[:,1][dat[:,0] < 0.5]) * peakz, 100. * dat[:,1][dat[:,0] < 0.5], color + '_', alpha=0.5, markersize=20)
 
 pl.xlim(2.0, 5.0)
 pl.ylim(0.,  5.0)

@@ -10,7 +10,8 @@ from    growth_rate        import  growth_factor
 from    get_bz             import  drop_bz, bz_callmodel
 
 
-latexify(fig_height=2., fig_width=3., columns=2, equal=False, fontsize=10, ratio=0.5, ggplot=True, usetex=True)
+##  latexify(fig_height=2., fig_width=3., columns=2, equal=False, fontsize=10, ratio=0.5, ggplot=True, usetex=True)
+latexify(columns=1, equal=True, fontsize=10, ggplot=True, usetex=True) 
 
 x = drop_bz(type='cars3')
 y = drop_bz(type='harikane4')
