@@ -1,4 +1,5 @@
 import  os
+import  json
 import  pickle
 import  matplotlib          as      mpl
 import  matplotlib.pyplot   as      plt
@@ -113,7 +114,8 @@ if __name__ == "__main__":
   zs, sig8z, esig8z                  =  get_sig8z(interp=True)
   
 
-  band       = 'g'
+  ##  
+  band       = 'u'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
@@ -134,7 +136,7 @@ if __name__ == "__main__":
   ##  End interloper GP rewrite. 
   
   nbar       =  get_shot(band, mlim)
-  nbar      /=  (4. * np.pi / 41253.)  ##  Sq. deg. to steradian. 
+  nbar      /= (4. * np.pi / 41253.)  ##  Sq. deg. to steradian. 
 
   ## 
   nbar_wint  =  1.06 * nbar 
@@ -151,23 +153,12 @@ if __name__ == "__main__":
   ##  LSST whitebook p(z).
   ##  pz             =  lambda z:  whitebook_pz(z, ilim = 25.30)
   
-  ##  GOLDRUSH g-dropouts.
-  ##  zee, pzee      =  get_gdropoutpz()
-  
-  ##  Get Rafelski based estimates on p(z).                                                                                                               
-  ##  midz, ps       =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=True)
-  ##  pz             =  interp1d(midz, ps, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
-
   ##  Change in Ckg with p(z), b(z), nbar -> p'(z), b'(z) and nbar'.
   ##  We assume the z < 1 population of likely red galaxies has a bias of 2.04 at a mean z 0.87;
   ##  bzz            =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
-  bzz                =  bz
+  bzz                =  lambda z:  bz(z)  if  z > 3.0  else (1. + z)
 
-  ##  pzz            =  lambda z:  whitebook_pz(z, ilim = 25.25)
-  ##  midzz, pss     =  Raf15_pz(droptype=band, field='UVUDF', depth='FULL', dz=0.1, no_lowz=False)
-  ##  pzz            =  interp1d(midzz, pss, kind='linear', bounds_error=False, fill_value=0.0, assume_sorted=False)
-
-  ##  Interloper GP rewrite.                                                                                                                                                                                         
+  ##  Interloper GP rewrite.                                                                                                                                     
   fname              = os.environ['LBGCMB'] + '/dropouts/interlopers/kernels/dNdz_gp_%s_%s.p' % (band, 'Degraded')
   gp                 = pickle.load(open(fname, 'rb'), fix_imports=True)
 
@@ -177,11 +168,6 @@ if __name__ == "__main__":
   ##  and the parameter Fisher matrix.                                                                                                                    
   fid_b1             =     bz(peakz)
   fid_sig8           =  sig8z(peakz)
-
-  ##  Dry run.
-  ##  cgg            =  Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True, bz2 = bz, survey_pz2 = pz)
-  ##  ckg            =  Ckg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=True)
-  ##  print(Llls, cgg, ckg)
 
   ##  {'gg': cgg + ngg, 'kg': ckg, 'gk': ckg, 'kk': ckk + nkk}
   Cls, Nls           =  get_allCls(Pk_interps, Llls, nbar, fsky, zmin, zmax, pz, bz, zeff=False, samplevar_lim=False)
@@ -205,7 +191,7 @@ if __name__ == "__main__":
     pl.plot(Llls,       100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$|dC_{kg}/C_{kg}| [\%]$')
     
     pl.xlim(50., 2.5e3)
-    pl.ylim(-1.,   15.)
+    pl.ylim(100., 450.)
 
     pl.xlabel(r'$L$')
     pl.legend(ncol=1, loc=2, frameon=False, handlelength=.6)
@@ -279,34 +265,16 @@ if __name__ == "__main__":
       dtheta[i] += iFisher[i,j] * interim[j]
       
   biased_sig8 = fid_sig8 + dtheta[0]
-  biased_b1   = fid_b1 + dtheta[1]
+  biased_b1   = fid_b1   + dtheta[1]
 
   print('\n\nFiducial sig8(z) and b1(z):  %.6lf +- %.6lf and %.6lf +- %.6lf.' % (fid_sig8, np.sqrt(iFisher[0,0]), fid_b1, np.sqrt(iFisher[1,1])))
   print('Biased   sig8(z) and b1(z):  %.6lf and %.6lf.' % (biased_sig8, biased_b1))
   print('Bias: %.6lf \t %.6lf [sigma]' % (np.abs(fid_sig8 - biased_sig8) / np.sqrt(iFisher[0,0]), np.abs(fid_b1 - biased_b1) / np.sqrt(iFisher[1,1])))
 
-  ##  And plot contour ...                                                                                                                                 
-  pl.clf()
+  ##  Save results as json. 
+  output = {'peakz': peakz, 'fid_sig8': np.float(fid_sig8), 'fid_b1': np.float(fid_b1), 'biased_sig8': biased_sig8, 'biased_b1': biased_b1, 'iFisher': iFisher.tolist()}
 
-  latexify(columns=1, equal=True, fontsize=12)
+  with open('dat/result4interloper_%s.json' % band, 'w') as fp:
+    json.dump(output, fp, sort_keys=True, indent=4)
 
-  fig    = plt.gcf()
-  ax     = plt.gca()
-
-  for mass_level, color, alpha in zip([0.99, 0.95, 0.68], ['b', 'b', 'b'], [0.2, 0.4, 0.6]):
-    plot_ellipse(x_cent = fid_sig8, y_cent = fid_b1, ax = ax, cov = iFisher, mass_level = mass_level,\
-                 fill=True, fill_kwargs={'alpha': alpha, 'c': color}, plot_kwargs={'c': color, 'alpha': 0.0})
-  
-  pl.plot(fid_sig8, fid_b1, 'w*', markersize=5, label=r'$(\sigma_8, b_1)$')
-  pl.plot(biased_sig8, biased_b1, 'k*', markersize=5, alpha=0.4, label=r'$(\hat \sigma_8, \hat b_1)$')
-
-  pl.legend(frameon=False)
-  pl.xlabel(r'$\sigma_8(z=%.1lf)$' % peakz)
-  pl.ylabel(r'$b_1(z=%.1lf)$'      % peakz)
-
-  plt.tight_layout()
-
-  pl.show()
-  ##  pl.savefig('plots/interloper_bias_contours_%s-drops.pdf' % band)
-  
   print("\n\nDone.\n\n")
