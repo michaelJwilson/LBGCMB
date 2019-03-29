@@ -97,41 +97,29 @@ def Ngg(Llls, zmin, zmax, survey_pz, nbar):
 def maglim_ax(Llls, cgg, ax, band = 'g', decband='i'):
   from  pz2nbar  import  nbar_convert
 
+  ms, Ns      = get_shot(type=band, mlim=None)
+  Ns          = nbar_convert(Ns, unit='str')
 
-  root       = os.environ['LBGCMB']
+  iNs_interp  = interp1d(ms, 1. / Ns, kind='linear', bounds_error=True, assume_sorted=False)
 
-  files      = {'BX': 'BXDrop.dat', 'u': 'MalkanDrop.dat', 'g': 'gDrop.dat', 'r': 'rDrop.dat'}
-  file       = files[band]
-
-  data       = np.loadtxt(root + '/dropouts/schechter/dat/' + file)
-  ms         = data[:,0]
-  Ns         = data[:,1]
-
-  Ns         = nbar_convert(Ns, unit='str')
-
-  ms_interp  = interp1d(Ns, ms,      kind='linear', bounds_error=True, fill_value=0.0, assume_sorted=False) 
-  iNs_interp = interp1d(ms, 1. / Ns, kind='linear', bounds_error=True, fill_value=0.0, assume_sorted=False)
-
-  ##  Add second mag_axis.                                                                                                                               
-  ax2        = ax.twinx()
-  ymin, ymax = ax.get_ylim()
+  ##  Add second mag_axis.                                                                                                                        
+  ax2         = ax.twinx()
+  ymin, ymax  = ax.get_ylim()
 
   ax2.loglog(Llls, cgg, alpha=0.0)
-  ax2.set_ylim([ymin, ymax])
+    
+  tms         =  np.arange(23.0, 26.0, 0.25)
 
-  ##  ticks   = [5.e-8, 1.e-7, 5.e-7, 10.e-7, 50.e-7, 100.e-7, 500.e-7, 1000.e-7]
-  ##  strings = ['%.1lf' % ms_interp(1. / x) for x in ticks]
-
-  tms        =  np.arange(23.5, 26.5, 0.5)
-
-  strings    = ['%.1lf' % x   for x in tms]
-  tms        = [iNs_interp(x) for x in tms]
+  strings     = ['%.1lf' % x   for x in tms]
+  tms         = [iNs_interp(x) for x in tms]
 
   ax2.set_yticks(tms)
   ax2.set_yticklabels(strings)
-
+  
   ax2.set_ylabel(r'$%s_{{\rm{AB}}}$' % decband)
   ax2.tick_params(axis='y', which='minor', color='w')
+  
+  ax2.set_ylim([ymin, ymax])
 
   return  ax2
 
@@ -173,7 +161,7 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  band       =   'r'                      
+  band       =  'BX'                      
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'i'},\

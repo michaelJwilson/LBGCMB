@@ -38,7 +38,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     ##  fig, axarray = plt.subplots(1, 1, sharey=False)
     ##  fig.set_size_inches(6.5, 3.5)
 
-    dm           = 0.25
+    dm           = 0.10  ## 0.25
     mlims        = np.arange(20.5, 28.0, dm)
 
     count        = 0

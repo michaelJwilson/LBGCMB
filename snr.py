@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
   spec       =   True   ##  Limit delensing to spectroscopic surveys, DESI + BOSS ...  Neglecting SDSS.  
   noLmax     =  False
-  band       =     'u'
+  band       =     'g'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'R'},\
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     pl.ylabel('Cumulative (S/N) ' + r'$/ \ \sqrt{f_{\rm{sky}}}$', fontsize=12)
 
   pl.xlim(1.e1, 1.e4)
-  pl.ylim(0.0,  500.)
+  pl.ylim(0.0,  550.)
   
   pl.legend(loc=2, ncol=2, frameon=False)
 

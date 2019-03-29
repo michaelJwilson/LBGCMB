@@ -8,16 +8,20 @@ def get_shot(type='g', mlim=25.5):
     file   = files[type]
 
     root   = os.environ['LBGCMB']
-    fpath  = root + '/dropouts/schechter/dat/' + file        ## qso, BXDrop, MalkanDrop, gDrop, rDrop. 
+    fpath  = root + '/dropouts/schechter/dat/' + file        ##  qso, BXDrop, MalkanDrop, gDrop, rDrop. 
     
-    ms, ns = np.loadtxt(fpath, unpack=True)                  ## per sq. deg.  
+    ms, ns = np.loadtxt(fpath, unpack=True)                  ##  per sq. deg.  
 
-    index  = (np.abs(ms - mlim) == np.abs(ms - mlim).min())
+    if mlim == None:
+      return ms, ns
 
-    mm     = ms[index][0]
-    nn     = ns[index][0]
+    else:
+      index  = (np.abs(ms - mlim) == np.abs(ms - mlim).min())
+
+      mm     = ms[index][0]
+      nn     = ns[index][0]
     
-    return nn 
+      return  nn                                               ##  per sq. deg.    
 
 if __name__ == '__main__':
     print('\n\nWelcome to get_shot.\n\n')
