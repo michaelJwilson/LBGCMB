@@ -9,6 +9,7 @@ from    astropy            import  constants as const
 from    scipy.integrate    import  simps
 from    pmh                import  Pmm, get_PkInterps, linz_bz
 from    sliced_pz          import  sliced_pz
+from    pz2nbar            import  pz_slice, nbar_convert
 
 
 params = get_params()
@@ -85,8 +86,6 @@ def Ngg(Llls, zmin, zmax, survey_pz, nbar):
   '''                                                                                                                                            
   Poisson noise on Cgg equal to (1. / angular number density).                                                                   
   '''   
-  from  pz2nbar  import  pz_slice, nbar_convert
-
 
   spz   = pz_slice(zmin, zmax, survey_pz)
 
@@ -174,12 +173,12 @@ if __name__ == "__main__":
   fsky, thetab, DeltaT, iterative    =  bolometers[cmbexp]['fsky'],   bolometers[cmbexp]['thetab'],\
                                         bolometers[cmbexp]['DeltaT'], bolometers[cmbexp]['iterative']
   
-  band       =  'r'                      
+  band       =   'r'                      
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
-                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
-                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.5, 'decband': 'i'},\
-                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.5, 'decband': 'z'}}
+                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'i'},\
+                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.8, 'decband': 'i'},\
+                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.8, 'decband': 'z'}}
   
   mlim       =  setup[band]['maglim']
 
@@ -206,7 +205,9 @@ if __name__ == "__main__":
   cgg          =      Cgg(Pk_interps, Llls, zmin, zmax, pz, bz, zeff=False, bz2 = bz, survey_pz2 = pz)
   ngg          =      Ngg(Llls, zmin, zmax, pz, nbar)
   vgg          =  var_Cgg(Llls, zmin, zmax, pz, bz, nbar, fsky, samplevar_lim=False, cgg = cgg)
-  
+ 
+  print(nbar, ngg[0], zmin, zmax, pz_slice(zmin, zmax, pz))
+ 
   pl.loglog(Llls, cgg, colors[0], label=r'$C_{gg}$')
   pl.axhline(y = ngg[0], xmin = 0., xmax = 1.e4, c=colors[0], alpha=0.4, label=r'$N_{gg}$') 
 

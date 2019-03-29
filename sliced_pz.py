@@ -28,7 +28,7 @@ def  sliced_pz(zz, zmin, zmax, survey_pz):
 
 
 if __name__ == '__main__':
-  from Gaussian_pz import Gaussian_pz
+  from  Gaussian_pz  import  Gaussian_pz
 
 
   print('\n\nWelcome.\n\n')

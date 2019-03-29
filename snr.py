@@ -52,9 +52,9 @@ if __name__ == '__main__':
 
   print('\n\nWelcome to snr.\n\n')
 
-  spec       =  True   ##  Limit delensing to spectroscopic surveys, DESI + BOSS ...  Neglecting SDSS.  
-  noLmax     =  True
-  band       =    'u'
+  spec       =   True   ##  Limit delensing to spectroscopic surveys, DESI + BOSS ...  Neglecting SDSS.  
+  noLmax     =  False
+  band       =     'u'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'R'},\
@@ -151,16 +151,18 @@ if __name__ == '__main__':
     pl.ylabel('Cumulative (S/N) ' + r'$/ \ \sqrt{f_{\rm{sky}}}$', fontsize=12)
 
   pl.xlim(1.e1, 1.e4)
-  pl.ylim(0.0,  700.)
+  pl.ylim(0.0,  500.)
   
   pl.legend(loc=2, ncol=2, frameon=False)
 
   plt.tight_layout()
 
   if noLmax:
+    ##  pl.show()
     pl.savefig('plots/%ssnr_noLmax.pdf' % band)
 
   else:
+    ##  pl.show()
     pl.savefig('plots/%ssnr.pdf' % band)
 
   print('\n\nDone.\n\n')

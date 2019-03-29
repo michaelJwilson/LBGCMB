@@ -89,7 +89,6 @@ def samplestats(mag=23., printit=False, h70=False):
   stats['BX']['schechter']['M_star']       =  -20.60
   stats['BX']['schechter']['alpha']        =   -1.60
 
-
   if not h70:
     ##  Convert phi_star to (h_100 / Mpc)^3 per mag.
     stats['LBG']['schechter']['phi_star'] *= (10. / 7.) ** 3.

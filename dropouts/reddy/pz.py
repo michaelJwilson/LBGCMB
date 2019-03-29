@@ -5,13 +5,13 @@ from   scipy.interpolate import interp1d
 
 
 def get_nz():
-  zs, ns    =  np.loadtxt(os.environ['LBGCMB'] + '/dropouts/reddy/dat/nz.dat', unpack=True)
+  ##  Arbitrary normalisation. 
+  zs, ns = np.loadtxt(os.environ['LBGCMB'] + '/dropouts/reddy/dat/nz.dat', unpack=True)
 
   return  zs, ns
 
 def get_pz(interp = True):
-  zs, ns    =   get_nz()
-
+  zs, ns    =  get_nz()
   ngal      =  ns.sum()
 
   dz        =  zs[1] - zs[0]
@@ -30,4 +30,16 @@ def get_pz(interp = True):
 
 
 if __name__ == '__main__':
-    zs, ps  = get_pz(interp = False) 
+  import pylab as pl
+
+  zs, ps = get_pz(interp = False)
+
+  dz     = zs[1] - zs[0]
+  norm   = np.sum(ps) * dz
+  
+  pl.plot(zs, ps, label='BX, %.2lf' % norm)
+  pl.legend()
+  pl.show()
+
+  print('\n\nDone.\n\n')
+

@@ -25,12 +25,13 @@ from    nbar               import  comovdensity
 from    get_bz             import  bz_callmodel
 from    get_schechters     import  get_schechters
 from    get_wschechters    import  get_wschechter
-from    reddy.specs        import  samplestats     as reddy_stats
-from    goldrush.specs     import  samplestats     as grush_stats
-from    Malkan.specs       import  samplestats     as malkan_stats
-from    reddy.pz           import  get_pz          as reddy_getpz
-from    goldrush           import  completeness    as grush_completeness
-from    Malkan             import  completeness    as malkan_completeness
+from    reddy.specs        import  samplestats       as  reddy_stats
+from    goldrush.specs     import  samplestats       as  grush_stats
+from    Malkan.specs       import  samplestats       as  malkan_stats
+from    reddy.pz           import  get_pz            as  reddy_getpz
+from    reddy.completeness import  get_completeness  as  reddy_getcompleteness
+from    Malkan             import  completeness      as  malkan_completeness
+from    goldrush           import  completeness      as  grush_completeness
 
 
 cparams = get_params()
@@ -95,17 +96,17 @@ if __name__ == '__main__':
 
     print('Loading CAMB module.')
 
-    band        =      'r'
+    band        =     'BX'
     area        =   15000. 
         
     deltav      =     400.    ##  [km / s].
-    kmax        =     0.9
+    kmax        =     0.9     ##  Maximum wavenumber tested. 
 
-    ## 
-    setup       = {'BX': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0,  'stats': reddy_stats(),  'CC': None},\
-                    'u': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0,  'stats': malkan_stats(), 'CC': malkan_completeness.get_completeness()},\
-                    'g': {'maglim': 25.5, 'decband': 'i', 'specfrac': 0.1,  'stats': grush_stats(),  'CC': grush_completeness.get_completeness('g')},\
-                    'r': {'maglim': 25.5, 'decband': 'z', 'specfrac': 0.1,  'stats': grush_stats(),  'CC': grush_completeness.get_completeness('r')}}
+    ##
+    setup       = {'BX': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0,  'stats': reddy_stats(),  'CC':  reddy_getcompleteness()},\
+                    'u': {'maglim': 24.0, 'decband': 'R', 'specfrac': 1.0,  'stats': malkan_stats(), 'CC':  malkan_completeness.get_completeness()},\
+                    'g': {'maglim': 25.5, 'decband': 'i', 'specfrac': 0.1,  'stats': grush_stats(),  'CC':  grush_completeness.get_completeness('g')},\
+                    'r': {'maglim': 25.5, 'decband': 'z', 'specfrac': 0.1,  'stats': grush_stats(),  'CC':  grush_completeness.get_completeness('r')}}
         
     CC          =  setup[band]['CC']
     mlim        =  setup[band]['maglim']
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     specfrac    =  setup[band]['specfrac']
 
     ##  midz, alpha, M_star, phi_star = get_wschechter(4.0)  
-    midz, alpha, M_star, phi_star = get_schechters(stats, band) 
+    midz, alpha, M_star, phi_star     = get_schechters(stats, band) 
     
     bz          =  lambda z:  bz_callmodel(z, mlim)
     nz          =  lambda z:  specfrac * CC(z) * 10. ** comovdensity(z, phi_star, M_star, alpha, type='app', mlim=mlim, printit=False)
@@ -142,9 +143,9 @@ if __name__ == '__main__':
 
         ##  [[zmin, zmax], [mu min, mu max], [ymin, max]]
         ##  Note: integral symmetric in mu -> 2 * \int [0., 1.]
-        ranges      = [[zmin, zmax], [0., 1.], [ymin, ymax]]
+        ranges      =  [[zmin, zmax], [0., 1.], [ymin, ymax]]
 
-        integ       = vegas.Integrator(ranges)
+        integ       =  vegas.Integrator(ranges)
         
         Fisher      =  np.zeros(len(params) * len(params)).reshape(len(params), len(params))
                                     

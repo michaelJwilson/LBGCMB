@@ -27,7 +27,6 @@ def get_pz(zs, ns, C, interp=False):
 
   norm    = np.sum(ps) * dz                                                                                                           
   ps     /= norm                                                                                                                 
-  ps     /= dz
 
   if interp:
     return  interp1d(zs, ps, kind='linear', copy=True, bounds_error=None, fill_value=nan, assume_sorted=False)
@@ -55,14 +54,14 @@ if __name__ == '__main__':
 
   print('\n\nWelcome to get_schechters.\n\n')
 
-  mlim           =  25.5
-  key            =  'u'
+  mlim           =    25.5
+  key            =      'r'
 
   if key == 'BX':
-    zs, ps       =  reddy_getpz(interp=False)
+    zs, ps       =    reddy_getpz(interp=False)
     
   elif key == 'u':
-    stats        =  malkan_stats(printit = True)
+    stats        =    malkan_stats(printit = True)
 
     midz, alpha, M_star, phi_star = get_schechters(stats, 'Malkan')
 
@@ -74,7 +73,7 @@ if __name__ == '__main__':
     zs, ps         =  get_pz(zs, ns, C)
 
   else:
-    stats        =  grush_stats(printit = True)
+    stats          =  grush_stats(printit = True)
 
     midz, alpha, M_star, phi_star = get_schechters(stats, key)  ##  midz, alpha, M_star, phi_star = get_wschechter(4.0)
     

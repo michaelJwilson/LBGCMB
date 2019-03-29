@@ -17,14 +17,14 @@ def get_schechters(stats, key):
 
 
 if __name__ == '__main__':
-    from    reddy         import  samplestats as rsamplestats
+    from    reddy.specs   import  samplestats as rsamplestats
     from    specs         import  samplestats as gsample_stats
     from    Malkan.specs  import  samplestats as usample_stats
     
 
     print('\n\nWelcome to get_schechters.\n\n')
 
-    key   = 'LBG'
+    key   = 'BX'
     stats =  rsamplestats(printit = True)
 
     midz, alpha, M_star, phi_star = get_schechters(stats, key)
