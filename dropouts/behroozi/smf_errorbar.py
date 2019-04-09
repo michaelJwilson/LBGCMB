@@ -11,16 +11,14 @@ latexify(columns=1, equal=True, fontsize=12, ratio=None, ggplot=True, usetex=Tru
 ##  Marchesini:  z=2.5                                                                                                                                                        
 dat = np.loadtxt('dat/data-compilation/smf_ms/marchesini_z2.5.smf')
 
-asymmetric_error = [lower_error, upper_error]
-
 ##  Columns:  Log10(stellar mass) (Msun), Log10(ND) (1 / Mpc^3 / dex), Err+ (dex), Err- (dex).                                                                                     
-pl.plot(10. ** dat[:,0], 10. ** dat[:,1], label = '2.5', markersize=2)
+pl.errorbar(dat[:,0], dat[:,1], yerr=[dat[:,2], dat[:,3]], label = '2.5', markersize=2)
 
 ##  Marchesini:  z=3.5                                                                                                                                                        
 dat = np.loadtxt('dat/data-compilation/smf_ms/marchesini_z3.5.smf')
 
 ##  Columns:  Log10(stellar mass) (Msun), Log10(ND) (1/Mpc^3/dex), Err+ (dex), Err- (dex)                                                                                     
-pl.plot(10. ** dat[:,0], 10. ** dat[:,1], label = '3.5', markersize=2)
+pl.errorbar(dat[:,0], dat[:,1], yerr=[dat[:,2], dat[:,3]], label = '3.5', markersize=2)
 
 ##  Table 3 and Fig. (10) of https://arxiv.org/pdf/1507.05636.pdf 
 ##  Schechter fn. form of the Luminosity type.
@@ -41,13 +39,23 @@ for x in fits[:-1]:
 Ms = np.array([7.25, 7.75, 8.25, 8.75, 9.25, 9.75, 10.25, 10.75, 11.25])
 
 ## [Mpc^-3 / dex]
-zs = [4., 5., 6.]
-Ps = np.array([[-1.57, -1.77, -2.00, -2.22, -2.52, -2.91, -3.37,  -4.00,  -4.54],\
-               [-1.47, -1.72, -2.01, -2.33, -2.68, -3.12, -3.47,  -4.12,  -4.88],\
-               [-1.47, -1.81, -2.26, -2.65, -3.14, -3.69, -4.27, np.NaN, np.NaN]])
+zs  = [4., 5., 6.]
+Ps  = np.array([[-1.57, -1.77, -2.00, -2.22, -2.52, -2.91, -3.37,  -4.00,  -4.54],\
+                [-1.47, -1.72, -2.01, -2.33, -2.68, -3.12, -3.47,  -4.12,  -4.88],\
+                [-1.47, -1.81, -2.26, -2.65, -3.14, -3.69, -4.27, np.NaN, np.NaN]])
+
+uEs = np.array([[0.21, 0.15, 0.13, 0.09, 0.09, 0.12, 0.09, 0.20, 0.34],\
+                [0.24, 0.20, 0.16, 0.15, 0.07, 0.09, 0.16, 0.25, 0.40],\
+                [0.35, 0.23, 0.21, 0.15, 0.12, 0.12, 0.38, np.NaN, np.NaN]])
+
+dEs = np.array([[0.16, 0.14, 0.10, 0.09, 0.09, 0.05, 0.12, 0.25,   0.55],\
+                [0.21, 0.20, 0.16, 0.10, 0.14, 0.11, 0.14, 0.38,   0.61],\
+                [0.32, 0.28, 0.16, 0.15, 0.11, 0.13, 0.86, np.NaN, np.NaN]])
 
 for kk, x in enumerate(Ps[:-1]):
-  pl.loglog(10. ** Ms, 10. ** x, label=str(zs[kk]), markersize=2)
+  yerrs = [dEs[kk], uEs[kk]]
+
+  pl.errorbar(Ms, x, yerr=yerrs, label=str(zs[kk]), markersize=2)
 
 '''
 ##  Table 1 of https://arxiv.org/pdf/1303.4409.pdf
@@ -67,17 +75,18 @@ StellarMass = np.logspace(Muzzin[1,4], 12, 50)
 pl.loglog(StellarMass, MuzzinSchechter(StellarMass, Muzzin[1,2], Muzzin[1,1], Muzzin[1,3]), 'c-', label='Muzzin')
 '''
 
-pl.ylim(1.e-5, 1.4e-1)
+##  pl.ylim(1.e-5, 1.4e-1)
 
-pl.xlabel(r'$M_{*} \ [M_\odot]$')
-pl.ylabel(r'$\Phi \ [(\rm{Mpc})^{-3} \rm{dex}^{-1}]$')
+pl.xlabel(r'$\log_{10}(M_{*} \ / \ M_\odot)$')
+pl.ylabel(r'$\log_{10}(\Phi \ / \ \rm{dex} \ / \ \rm{Mpc}^{-3})$')
  
 ##  handlelength=1, columnspacing=.2,
 pl.legend(loc=1, ncol=2, frameon=False)
 
 plt.tight_layout()
 
-pl.savefig('plots/StellarMass_Schechter.pdf')
+##  pl.show()
+pl.savefig('plots/StellarMass_Schechter_errs.pdf')
 
 pl.clf()
 

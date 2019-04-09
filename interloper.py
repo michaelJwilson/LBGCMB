@@ -14,9 +14,8 @@ from    zeldovich_Lmax      import  Lcutmax
 from    Cgg                 import  Cgg, var_Cgg, Ngg
 from    numpy.linalg        import  inv
 from    fisher_contour      import  plot_ellipse
-from    Raf15               import  Raf15_pz
 from    planck18_bao        import  get_sig8z
-from    whitebook_pz        import  whitebook_pz
+from    interlopers.pz      import  get_pz             as gp_pz
 
 
 params = get_params()
@@ -115,31 +114,30 @@ if __name__ == "__main__":
   
 
   ##  
-  band       = 'u'
+  band       =   'u'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
-                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 25.5, 'decband': 'R'},\
-                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.5, 'decband': 'i'},\
-                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.5, 'decband': 'z'}}
+                 'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'R'},\
+                 'g': {'colors': ['darkgreen', 'limegreen',   'g'], 'maglim': 25.8, 'decband': 'i'},\
+                 'r': {'colors': ['darkred',   'indianred',   'r'], 'maglim': 25.8, 'decband': 'z'}}
 
   mlim       =  setup[band]['maglim']
 
-  pz         =  get_pz(band)
-  bz         =  lambda z:  bz_callmodel(z, mlim)
-  
-  ##  Interloper GP rewrite. 
-  fname      = os.environ['LBGCMB'] + '/dropouts/interlopers/kernels/dNdz_gp_%s_%s.p' % (band, 'Full') 
-  gp         = pickle.load(open(fname, 'rb'), fix_imports=True)
+  ##  pz     =  get_pz(band)
 
-  _pz        = lambda z:  np.array([gp.predict(np.array(z).reshape(-1,1), return_std=False), 0.0]).max()
-  pz         = np.vectorize(_pz)
-  ##  End interloper GP rewrite. 
+  ##  Interloper GP rewrite. 
+  _, _, _, _, ngp = gp_pz(band, 'Full', 5.5)
+  pz              = np.vectorize(ngp)
   
+  ## 
+  bz         =  lambda z:  bz_callmodel(z, mlim)
+
   nbar       =  get_shot(band, mlim)
   nbar      /= (4. * np.pi / 41253.)  ##  Sq. deg. to steradian. 
 
   ## 
-  nbar_wint  =  1.06 * nbar 
+  int_frac   =  0.06
+  nbar_wint  =  (1.0 + int_frac) * nbar 
 
   decband    =  setup[band]['decband']
   colors     =  setup[band]['colors']
@@ -158,12 +156,9 @@ if __name__ == "__main__":
   ##  bzz            =  lambda z:  bz(z)  if  z > 1.0  else  2.04 
   bzz                =  lambda z:  bz(z)  if  z > 3.0  else (1. + z)
 
-  ##  Interloper GP rewrite.                                                                                                                                     
-  fname              = os.environ['LBGCMB'] + '/dropouts/interlopers/kernels/dNdz_gp_%s_%s.p' % (band, 'Degraded')
-  gp                 = pickle.load(open(fname, 'rb'), fix_imports=True)
-
-  _pzz               = lambda z:  np.array([gp.predict(np.array(z).reshape(-1,1), return_std=False), 0.0]).max()
-  pzz                = np.vectorize(_pzz)
+  ##  Interloper GP rewrite.                                                                                                                                                    
+  _, _, _, _, _ngp   = gp_pz(band, 'Degraded', 5.5)
+  pzz                = np.vectorize(_ngp)
 
   ##  and the parameter Fisher matrix.                                                                                                                    
   fid_b1             =     bz(peakz)
@@ -185,13 +180,13 @@ if __name__ == "__main__":
 
     pl.axvline(LllMax, label='ZA limit.', c='k', alpha=0.5)
 
-    pl.plot(Llls,       100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$|dC_{gg}/C_{gg}| [\%]$')
+    pl.plot(Llls,  100. * np.abs(Cls['gg'] - xCls['gg']) / Cls['gg'],  label=r'$|dC_{gg}/C_{gg}| [\%]$')
 
     ##  kg is linear, gg is quad. in dNdz.
-    pl.plot(Llls,       100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$|dC_{kg}/C_{kg}| [\%]$')
+    pl.plot(Llls,  100. * np.abs(Cls['kg'] - xCls['kg']) / Cls['kg'],  label=r'$|dC_{kg}/C_{kg}| [\%]$')
     
     pl.xlim(50., 2.5e3)
-    pl.ylim(100., 450.)
+    ##  pl.ylim(100., 450.)
 
     pl.xlabel(r'$L$')
     pl.legend(ncol=1, loc=2, frameon=False, handlelength=.6)
@@ -245,10 +240,10 @@ if __name__ == "__main__":
     for i, pp in enumerate(['s8', 'b1']):
       for j, ss in enumerate(['s8', 'b1']):
         ##  Per-L Fisher matrix.  Eqn. (17) of https://arxiv.org/pdf/1710.09465.pdf
-        ##  Effectively working with samples in bins.  Fisher is a sum over modes.  Account for N>1 L modes per bin.
+        ##  Effectively working with samples in bins.  Fisher is a sum over modes.  Account for N > 1 L modes per bin.
         Fisher[i, j] += nmodes[LL] * np.dot(dp_DL(pp, fid_sig8, fid_b1, DL), np.dot(iCov_Lll, dp_DL(ss, fid_sig8, fid_b1, DL)))
 
-    ##  Eqn. (5.1) of https://arxiv.org/pdf/1706.03173.pdf;  No change to kk due to interloper population; Noise bias? 
+    ##  Eqn. (5.1) of https://arxiv.org/pdf/1706.03173.pdf;  No change to kk due to interloper population. 
     DDL     = np.array([0.0, dckg, dcgg])
     iCovDDL =   np.dot(iCov_Lll, DDL)
     
@@ -263,7 +258,8 @@ if __name__ == "__main__":
   for i, param in enumerate(['s8', 'b1']):
     for j, pparam in enumerate(['s8', 'b1']):
       dtheta[i] += iFisher[i,j] * interim[j]
-      
+
+  ##  
   biased_sig8 = fid_sig8 + dtheta[0]
   biased_b1   = fid_b1   + dtheta[1]
 
@@ -272,9 +268,10 @@ if __name__ == "__main__":
   print('Bias: %.6lf \t %.6lf [sigma]' % (np.abs(fid_sig8 - biased_sig8) / np.sqrt(iFisher[0,0]), np.abs(fid_b1 - biased_b1) / np.sqrt(iFisher[1,1])))
 
   ##  Save results as json. 
-  output = {'peakz': peakz, 'fid_sig8': np.float(fid_sig8), 'fid_b1': np.float(fid_b1), 'biased_sig8': biased_sig8, 'biased_b1': biased_b1, 'iFisher': iFisher.tolist()}
+  output = {'peakz': peakz, 'fid_sig8': np.float(fid_sig8), 'fid_b1': np.float(fid_b1), 'biased_sig8': biased_sig8, 'biased_b1': biased_b1, 'iFisher': iFisher.tolist(),\
+            'intfrac': int_frac}
 
-  with open('dat/result4interloper_%s.json' % band, 'w') as fp:
+  with open('dat/result4interloper_%s_intfrac_%.2lf.json' % (band, int_frac), 'w') as fp:
     json.dump(output, fp, sort_keys=True, indent=4)
 
   print("\n\nDone.\n\n")

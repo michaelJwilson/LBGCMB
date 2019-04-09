@@ -52,9 +52,9 @@ if __name__ == '__main__':
 
   print('\n\nWelcome to snr.\n\n')
 
-  spec       =   True   ##  Limit delensing to spectroscopic surveys, DESI + BOSS ...  Neglecting SDSS.  
-  noLmax     =  False
-  band       =     'g'
+  spec       =    True   ##  Limit delensing to spectroscopic surveys, DESI + BOSS ...  Neglecting SDSS.  
+  noLmax     =   False
+  band       =      'u'
 
   setup      = {'BX': {'colors': ['goldenrod', 'tan',         'y'], 'maglim': 25.5, 'decband': 'R'},\
                  'u': {'colors': ['darkblue',  'deepskyblue', 'b'], 'maglim': 24.6, 'decband': 'R'},\
@@ -84,7 +84,6 @@ if __name__ == '__main__':
   else:
     Lmax               =  Lcutmax[np.round(peakz)][0] 
     
-
   ##  Prepare pycamb module; linear, non-linear matter P(k) and Cls.                                                                        
   cambx                =  CAMB()
   NLlls, Llls, nmodes  =  prep_Llls(NLlls = 60, Lmin = 50., Lmax = 5000., log10=True)

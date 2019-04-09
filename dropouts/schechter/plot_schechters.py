@@ -151,7 +151,7 @@ def plot_schechters(magbias=False, nointerloper=False):
     pl.xlabel(r'$m$')
     pl.ylabel(r'$N(<m)$ / deg$^2$')
 
-    pl.legend(loc=4, ncol=2)
+    pl.legend(loc=4, ncol=2, frameon=False)
     
     '''
     ##  Line Schecter functions. 
@@ -193,8 +193,8 @@ def plot_schechters(magbias=False, nointerloper=False):
     pl.legend(loc=2)
     '''
     
-    ##  pl.show()
-    pl.savefig('plots/schechters.pdf', bbox_inches='tight')
+    pl.show()
+    ##  pl.savefig('plots/schechters.pdf', bbox_inches='tight')
 
 
 if __name__ == "__main__":
