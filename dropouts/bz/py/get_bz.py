@@ -10,7 +10,6 @@ from    scipy.interpolate  import  UnivariateSpline, interp1d
 from    utils              import  latexify
 from    scipy.optimize     import  curve_fit
 from    growth_rate        import  growth_factor
-from    uncertainties      import  ufloat, unumpy
 from    scipy.interpolate  import  interp1d
 
 
