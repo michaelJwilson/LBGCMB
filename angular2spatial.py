@@ -21,12 +21,13 @@ def angular2spatial(ell, redshift):
     return k2**0.5
 
 def plot_angular2spatial():
-  """
+  import  matplotlib.pyplot  as  plt
+  import  numpy              as  np
+  import  pylab              as  pl
+
+  '''
   Construct a plot showing the k = (L + 0.5) / chi(z) relation. 
-  """
-  import  matplotlib.pyplot  as plt
-  import  numpy              as np
-  import  pylab              as pl
+  '''
   
   ##  Plot Zel'dovich Lmax locus.                                                                                                              
   zs     = Lcutmax.keys()
@@ -42,7 +43,7 @@ def plot_angular2spatial():
   grid_ells, grid_zs  = np.meshgrid(ells, zs)
 
   grid_ks             = angular2spatial(grid_ells, grid_zs)
-  CS                  = plt.contourf(grid_ells, grid_zs, grid_ks, levels=levels, cmap='tab20c')
+  CS                  = plt.contourf(grid_ells, grid_zs, grid_ks, levels=levels, cmap='tab20c', alpha=0.7)
 
   cbar                = plt.colorbar(CS)
 
@@ -60,6 +61,8 @@ def plot_angular2spatial():
   pl.ylabel(r"$z$")
 
   plt.tight_layout()
+
+  ##  pl.show()
   pl.savefig("plots/angular2spatial.pdf")
 
 

@@ -38,20 +38,21 @@ def get_fsig8(interp=False):
 if __name__ == '__main__':
     print('\n\nWelcome to Planck18 + BAO.\n\n')
 
-    latexify(fig_width=None, fig_height=None, columns=1, equal=True)
+    latexify(fig_width=None, fig_height=None, columns=1, equal=True, usetex=True, fontsize=10)
 
     zs,  sig8,  esig8 = get_sig8z()
     zs, fsig8, efsig8 = get_fsig8()
 
-    pl.errorbar(zs,          sig8,   esig8, fmt='^', label=r'$\sigma_8(z)$', capsize=3, markersize=2, linestyle='-', alpha=0.6)
-    pl.errorbar(zs + 0.075, fsig8, efsig8, fmt='s', label=r'$f(z) \ \sigma_8(z)$', capsize=3, markersize=2, linestyle='-', alpha=0.6)
+    pl.errorbar(zs,          sig8,   esig8, fmt='^', label=r'$\sigma_8(z)$',        capsize=5, markersize=3, linestyle='', alpha=0.6)
+    pl.errorbar(zs + 0.085, fsig8,  efsig8, fmt='s', label=r'$f(z) \ \sigma_8(z)$', capsize=5, markersize=3, linestyle='', alpha=0.6)
 
     pl.xlim(1.8, 5.2)
     pl.ylim(.15, .35)
 
     pl.xlabel(r'$z$')
-    pl.legend(loc=1)
+    pl.legend(loc=1, frameon=False)
 
+    ##  pl.show()
     pl.savefig('plots/planck18_bao.pdf', bbox_inches='tight')
 
     print('\n\nDone.\n\n')

@@ -17,7 +17,7 @@ ilist    = [10, 11, 12, 13, 14]
 
 drops    = {3.0: [12.33, 4.0, 0.40], 4.0: [12.83, 6.15, 0.45]}
 
-zee      = 4.0
+zee      = 3.0
 chi_star = comoving_distance(zee)
 
 a        = 1. / (1. + zee) 
@@ -76,6 +76,7 @@ ax.spines['left'].set_color('black')
 ax.spines['right'].set_color('black')
 
 ax2 = ax.twiny()
+ax2.grid(False)
 
 ##  Set new lims. 
 ax2.set_xlim(ax.get_xlim())
