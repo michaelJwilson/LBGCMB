@@ -1,22 +1,10 @@
-import  pylab                    as      pl
-import  matplotlib               as      mpl
-import  matplotlib.pyplot        as      plt
-
 from    prep_Llls                import  prep_Llls
 from    prep_camb                import  CAMB
-from    scipy.interpolate        import  interp1d
 from    bolometers               import  bolometers
-from    lensing                  import  Ckk, var_Ckk
-from    Nkk                      import  Nkk
-from    Ckg                      import  Ckg, var_Ckg
-from    utils                    import  latexify
-from    zeldovich_Lmax           import  Lcutmax
-from    matplotlib.patches       import  Rectangle
-from    schechter.gen_pz         import  peakz            as  _peakz
 from    schechter.get_shot       import  get_shot
 from    schechter.get_pz         import  get_pz
 from    get_bz                   import  bz_callmodel
-from    pmh                      import  Pmm, get_PkInterps, linz_bz
+from    pmh                      import  get_PkInterps
 
 
 print("\n\nWelcome to prep. Cgg.\n\n")
