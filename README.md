@@ -1,4 +1,4 @@
-![Image of LBGCMB](https://github.com/michaelJwilson/LBGCMB/blob/master/plots/LBGCMB.png = 250x100)
+![Image of LBGCMB](https://github.com/michaelJwilson/LBGCMB/blob/master/plots/LBGCMB.png | width=100)
 
 ##  LBGCMB
 Package for large-scale structure cosmology with Lyman-break galaxies and CMB lensing. 
