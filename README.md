@@ -10,3 +10,6 @@ Usage:
 
     conda env create -f condaenv_minimal.yml 
 3.  source activate minimal 
+
+
+For any problems, contact mjwilson@lbl.gov
