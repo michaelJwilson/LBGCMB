@@ -36,7 +36,7 @@ nkk                                =  Nkk(lensCl_interps, nolensCl_interps, Llls
 ckk                                =  ckk[::5]
 nkk                                =  nkk[::5]
 
-latexify(columns=1, equal=True, fontsize=10)
+latexify(columns=1, equal=True, fontsize=10, usetex=True, ggplot=True)
 
 pl.loglog(Llls[::5], Llls[::5] * ckk,      label=r'$L \cdot C_{\kappa \kappa}$')
 pl.loglog(Llls[::5], Llls[::5] * nkk, 'k', label=r'$L \cdot N_{\kappa \kappa}$', alpha=0.5, dashes=[5,3], lw=0.6)

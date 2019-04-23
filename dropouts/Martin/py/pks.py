@@ -17,7 +17,7 @@ ilist    = [10, 11, 12, 13, 14]
 
 drops    = {3.0: [12.33, 4.0, 0.40], 4.0: [12.83, 6.15, 0.45]}
 
-zee      = 3.0
+zee      = 4.0                    ##  [3.0, 4.0]
 chi_star = comoving_distance(zee)
 
 a        = 1. / (1. + zee) 
@@ -57,7 +57,7 @@ pl.plot(dm[:,0],  dm[:,1],  label=labels[4], dashes=[3,1])
 linear  = np.loadtxt('../dat/thy/pklin_%.4lf.txt' % a)
 pl.plot(linear[:,0], linear[:,1], label=labels[5])
 
-pl.legend(loc=1, ncol=1)
+pl.legend(loc=1, ncol=1, frameon=False)
 
 pl.xlabel(r'$k\quad [h\,{\rm Mpc}^{-1}]$')
 pl.ylabel(r'$P(k)\quad [h^{-3}\,{\rm Mpc}^3]$')
@@ -98,7 +98,8 @@ ax2.spines['left'].set_color('black')
 ax2.spines['right'].set_color('black')
 
 ##  Finally, add redshift label.
-text = plt.text(0.045, 20, r'$z$ = ' + '%.1lf' % zee)
-text.set_bbox(dict(facecolor='white', alpha=0.5, edgecolor='white'))
+##  text = plt.text(0.045, 20, r'$z$ = ' + '%.1lf' % zee)
+##  text.set_bbox(dict(facecolor='white', alpha=0.5, edgecolor='white'))
 
+##  pl.show()
 pl.savefig('../plots/pk_z%s.pdf' % ('%.2lf' % zee).replace('.', 'p'), bbox_inches='tight')

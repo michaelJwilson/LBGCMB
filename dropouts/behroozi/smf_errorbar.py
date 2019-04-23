@@ -75,7 +75,7 @@ StellarMass = np.logspace(Muzzin[1,4], 12, 50)
 pl.loglog(StellarMass, MuzzinSchechter(StellarMass, Muzzin[1,2], Muzzin[1,1], Muzzin[1,3]), 'c-', label='Muzzin')
 '''
 
-##  pl.ylim(1.e-5, 1.4e-1)
+pl.ylim(-6.01, -0.99)
 
 pl.xlabel(r'$\log_{10}(M_{*} \ / \ M_\odot)$')
 pl.ylabel(r'$\log_{10}(\Phi \ / \ \rm{dex} \ / \ \rm{Mpc}^{-3})$')
@@ -87,38 +87,3 @@ plt.tight_layout()
 
 ##  pl.show()
 pl.savefig('plots/StellarMass_Schechter_errs.pdf')
-
-pl.clf()
-
-'''
-##  Cumulative \bar n.
-dx = 0.1
-
-xs = np.arange(5, 15., dx)
-Ms = 10. ** xs
-
-log10Mmins = np.arange(9., 11., 0.1)
-
-for x in fits:
-  Phis     = SchechterLfn(Ms, x[3], x[1], x[2])  ## [Mpc^-3]                                                                                               
-  result   = []
-
-  for log10Mmin in log10Mmins:
-    Mmin   = 10.** log10Mmin
-    nbar   = np.sum(Phis[Ms >= Mmin] * Ms[Ms >= Mmin] * np.log(10.) * dx)
-
-    result.append(nbar)
-
-  result = np.array(result)
-
-  ##  Conversion from dM_* to dex, i.e. dM_* = dlog10 M_* x M_* x ln(10).                                                                                
-  pl.loglog(10. ** log10Mmins, result, label=x[0])
-
-pl.xlabel(r'$M_* \ [M_\odot]$')
-pl.ylabel(r'$\bar n \ [(\rm{Mpc})^{-3}]$')
-
-pl.legend(frameon=False, ncol=2)
-
-plt.tight_layout()
-pl.savefig('plots/StellarMass_nbar.pdf')
-'''
