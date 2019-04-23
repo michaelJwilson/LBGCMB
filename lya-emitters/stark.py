@@ -16,7 +16,7 @@ cosmo = FlatLambdaCDM(H0=100. * h, Om0=0.26, Tcmb0=2.725)
 zs    = np.array([3, 4., 5.])
 ms    = np.arange(20., 30., 0.01)
 
-latexify(columns=1, equal=True, fontsize=12, ratio=None, ggplot=True, usetex=True)
+latexify(columns=1, equal=True, fontsize=10, ratio=None, ggplot=True, usetex=True)
 
 for z in zs:
     DL  = cosmo.luminosity_distance(z).value * 1.e6  ## parsec.
