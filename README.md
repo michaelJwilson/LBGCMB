@@ -12,4 +12,4 @@ Usage:
 3.  source activate minimal 
 
 
-For any problems, contact mjwilson@lbl.gov
+Contact mjwilson@lbl.gov with any problems.
