@@ -16,8 +16,6 @@ dependencies:
   - libcblas=3.8.0=5_openblas
   - libcxx=8.0.0=2
   - libcxxabi=8.0.0=2
-  - libffi=3.2.1=h6de7cb9_1006
-  - libgfortran=3.0.1=0
   - liblapack=3.8.0=5_openblas
   - libpng=1.6.37=h2573ce8_0
   - matplotlib=3.0.3=py37_1
@@ -52,5 +50,5 @@ dependencies:
   - wheel=0.33.1=py37_0
   - xz=5.2.4=h1de35cc_1001
   - zlib=1.2.11=h1de35cc_1004
-prefix: /Users/M.J.Wilson/miniconda3/envs/minimal
+prefix: /home/mjwilson/LBGCMB/envs/minimal
 

@@ -218,12 +218,9 @@ if __name__ == "__main__":
 
 
   print('\n\nWelcome to a Schechter fn. calculator for the projected density of LBG dropouts.\n\n')
-  
-  stats          =  rsamplestats(printit = False)   ##  Luminosity fn. of * all star forming galaxies *. 
-                                                    ##  Note:  [\phi*] = [h_70/Mpc]^3 per mag, for M*_AB(1700 \AA).
                                                                                                  
-  dz             =    0.9  
-  mlim           =  25.00                          
+  dz               =    0.9  
+  mlim             =  25.00                          
 
   for name, key, stats in zip(['BX', 'u', 'g'], ['BX', 'Malkan', 'g'], [rsamplestats(), usample_stats(), gsample_stats()]):    
     print('\n\n------------------------  {}  ------------------------'.format(key))
@@ -232,19 +229,20 @@ if __name__ == "__main__":
     alpha          =  stats[key]['schechter']['alpha']
     M_star         =  stats[key]['schechter']['M_star']
     phi_star       =  stats[key]['schechter']['phi_star']
-  
-    loz            =  0.1  ##  midz - dz/2.
-    hiz            =  4.0  ##  midz + dz/2.
 
-    for mlim in np.arange(20.0, 26.0, 0.1):
-      ##  Mlim, Llim =  mlimitedM(loz, mlim, M_star)
-      nbar           =  comovdensity(midz, phi_star, M_star, alpha, type='app', mlim=mlim, printit=True)
-  
-  ##  pnbar        =  projdensity(loz, hiz, phi_star, M_star, alpha, mlim, printit = True)
+    mlims          =  np.arange(22.5, 26.0, 0.05)
+    nbars          =  []
     
-  ##  zs, dVs, ns  = dndz(loz, hiz, phi_star, M_star, alpha, mlim, type='app', printit = True, completeness=None, app_linelim=False)
+    for mlim in mlims:
+      nbar         =  comovdensity(midz, phi_star, M_star, alpha, type='app', mlim=mlim, printit=True)
+      nbars.append(nbar)
 
-  ##  pl.plot(zs, ns * dVs)
-  ##  pl.show()
+    nbars          =  np.array(nbars)
+
+    pl.plot(mlims, nbars, label=key)
+
+  pl.legend(frameon=False)
+
+  pl.savefig('plots/simba_nbar.pdf')
   
   print('\n\nDone.\n\n')

@@ -1,6 +1,6 @@
 ##  Source to define 'necessary' environment variables. 
 ##  export  LBGCMB=/global/homes/m/mjwilson/LBGCMB
-export  LBGCMB=/Users/M.J.Wilson/work/LBGCMB/
+export  LBGCMB=/home/mjwilson/LBGCMB/
 
 export  PYTHONPATH=$LBGCMB:$LBGCMB/dropouts/:$LBGCMB/dropouts/goldrush/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/desi/py:$PYTHONPATH
@@ -8,6 +8,7 @@ export  PYTHONPATH=$LBGCMB/cmb/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/Hildebrandt09/py:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/massfn/py/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/dropouts/schechter/:$PYTHONPATH
+export  PYTHONPATH=$LBGCMB/dropouts/reddy/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/dropouts/goldrush/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/dropouts/cori/Rafelski15/py/:$PYTHONPATH
 export  PYTHONPATH=$LBGCMB/desihub/redrock/py/redrock:$PYTHONPATH
@@ -29,4 +30,4 @@ export  REDROCK=$LBGCMB/desihub/redrock/py/redrock/
 export  DESIMODEL=$LBGCMB/desihub/desimodel/
 export  RR_TEMPLATE_DIR=$LBGCMB/redrock/templates/ext_wave/
 
-source  env/bin/activate
+##  source  env/bin/activate
