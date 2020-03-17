@@ -1,0 +1,24 @@
+# LRG redshift distribution from
+# https://desi.lbl.gov/DocDB/cgi-bin/private/RetrieveFile?docid=3349;filename=TS_2017.pdf;version=4
+# Total number per sq deg per dz=0.1 redshift bin
+# N_lrg is for g/r/z/W1 "optical sliding cut" LRGs; N_BOSS = LOWZ+CMASS
+# zmin zmax N_lrg N_BOSS
+0.0 0.1 0.0 0.0
+0.1 0.2 0.0 3.0
+0.2 0.3 0.0 8.0
+0.3 0.4 20.6 11.3
+0.4 0.5 67.0 17.1
+0.5 0.6 66.9 35.5
+0.6 0.7 101.9 15.1
+0.7 0.8 96.7 2.7
+0.8 0.9 76.4 0.2
+0.9 1.0 35.2 0.0
+1.0 1.1 8.8 0.0
+1.1 1.2 0.7 0.0
+1.2 1.3 0.1 0.0
+1.3 1.4 0.0 0.0
+1.4 1.5 0.0 0.0
+1.5 1.6 0.0 0.0
+1.6 1.7 0.0 0.0
+1.7 1.8 0.0 0.0
+1.8 1.9 0.0 0.0
