@@ -241,8 +241,10 @@ if __name__ == "__main__":
 
     pl.plot(mlims, nbars, label=key)
 
+    np.savetxt('simba/dat/nbar_{}.txt'.format(key), np.c_[mlims, nbars], fmt='%.6lf')
+    
   pl.legend(frameon=False)
 
-  pl.savefig('plots/simba_nbar.pdf')
+  pl.savefig('simba/plots/simba_nbar.pdf')
   
   print('\n\nDone.\n\n')
