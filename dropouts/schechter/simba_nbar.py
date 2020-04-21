@@ -1,3 +1,5 @@
+import  matplotlib; matplotlib.use('PDF')
+
 import  numpy                    as      np
 import  astropy.units            as      u
 
@@ -117,14 +119,14 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
 
 
     ##  Rest-frame absolute magnitude, z=0 and D_L = 10pc.
-    MM                 = np.linspace(M_star - 15., M_star + 15., 1000)     ## Integrate from sources 10**10. times brighter than M* to 10**10. times dimmer.
+    MM                 = np.linspace(M_star - 15., M_star + 15., 1.e4)     ## Integrate from sources 10**10. times brighter than M* to 10**10. times dimmer.
                                                                            ## Even spacing in Magnitude -> intergral dM.     
 
     PhiMUV             = SchechterMfn(MM, phi_star, M_star, alpha)         ## Note:  Schechter fn. integrals are the incomplete gamma fn.
     
     Mlim, Llim         = mlimitedM(z, mlim, M_star, kcorr=True)            ## Returns [L_standard], e.g. M_* gives [L_*].
     
-    if type   == 'app':
+    if type == 'app':
       PhiMUV          *= visibilecut(MM, Mlim, type='mag')
 
     '''
@@ -143,8 +145,8 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     '''
 
     ##  Calculate expected number density (integral dM). 
-    nbar     = np.trapz(PhiMUV, MM)                    ## log_10(nbar [(h_100/Mpc)^3]) 
-    nbar     = np.log10(nbar)
+    nbar     = np.trapz(PhiMUV, MM)                  
+    nbar     = np.log10(nbar)                                             ## log_10(nbar [(h_100/Mpc)^3])   
     
     if printit:
       print("mlim:  %3.3f \t Mlim:  %3.3f \t Llim:  %3.3f \t log10|<n>|:  %3.3f" % (mlim, Mlim, Llim, nbar))
@@ -211,6 +213,7 @@ def projdensity(zmin, zmax, phi_star, M_star, alpha, mlim, type='app', printit =
 
 if __name__ == "__main__":
   import  pylab         as      pl
+  import  pandas        as      pd
 
   from    reddy.specs   import  samplestats as rsamplestats
   from    specs         import  samplestats as gsample_stats
@@ -219,10 +222,63 @@ if __name__ == "__main__":
 
   print('\n\nWelcome to a Schechter fn. calculator for the projected density of LBG dropouts.\n\n')
                                                                                                  
-  dz               =    0.9  
+  dz               =  0.9  
   mlim             =  25.00                          
+  boxsize          =  100.
 
-  for name, key, stats in zip(['BX', 'u', 'g'], ['BX', 'Malkan', 'g'], [rsamplestats(), usample_stats(), gsample_stats()]):    
+  root             =  '/home/mjwilson/LBGSIMBA/pylosers/m100n1024/s50/run/'
+
+  # old result, pre Gaussian EBV of 0.3; I.e. original Simba. 
+  # root           =  'simba/dat/'
+  
+  nodust           =  pd.read_csv(root + 'no_dust_Ns_{}.csv'.format(boxsize))
+  dust             =  pd.read_csv(root + 'dust_Ns_{}.csv'.format(boxsize))
+
+  print('----  No dust  ----')
+  print(nodust)
+  print('----  Dust  ----')
+  print(dust)
+  
+  
+  # Color selected. 
+  # runs:  ['gold', 'c', 'b', 'g'], ['BX', 'BM', 'u', 'g']
+  # runs:  ['b'], ['u']
+  
+  for i, (c, key) in enumerate(zip(['b'], ['u'])):
+    dust[key]      = np.log10(dust[key].div(100.**3.))
+    nodust[key]    = np.log10(nodust[key].div(100.**3.))
+    
+    pl.plot(dust['mlim'], dust[key], label=r'${}$'.format(key), c=c, marker='^', lw=0.0, markersize=2)
+
+    if i == 0:
+      label = 'no dust ${}$'.format(key)
+
+    else:
+      label = ''
+      
+    pl.plot(nodust['mlim'], nodust[key], label=label,  c=c, marker='^', lw=0.0, markersize=2, alpha=0.4)
+
+  # runs:  ['gold', 'b', 'g'], ['two', 'three', 'four']                                                                                                                                                                      
+  # runs:  ['b'], ['three']  
+    
+  # Apparent magnitude limits.
+  for i, (c, key) in enumerate(zip(['b', ], ['three'])):
+    dust[key]      = np.log10(dust[key].div(100.**3.))
+    nodust[key]    = np.log10(nodust[key].div(100.**3.))
+
+    pl.plot(dust['mlim'], dust[key], label='', c=c, marker='*', lw=0.0, markersize=5)
+
+    if i == 0:
+      label = 'no dust ${}$'.format(key)
+
+    else:
+      label = ''
+
+    pl.plot(nodust['mlim'], nodust[key], label='',  c=c, marker='*', lw=0.0, markersize=5, alpha=0.4)
+
+  # runs:  ['gold', 'b', 'g'], ['BX', 'u', 'g'], ['BX', 'Malkan', 'g'], [rsamplestats(), usample_stats(), gsample_stats()]
+
+  for c, name, key, stats in zip(['b'], ['u'], ['Malkan'], [usample_stats()]):    
     print('\n\n------------------------  {}  ------------------------'.format(key))
 
     midz           =  stats[key]['z']
@@ -230,8 +286,10 @@ if __name__ == "__main__":
     M_star         =  stats[key]['schechter']['M_star']
     phi_star       =  stats[key]['schechter']['phi_star']
 
-    mlims          =  np.arange(22.5, 26.0, 0.05)
+    mlims          =  np.arange(22.5, 26.0, 0.01)
     nbars          =  []
+
+    print(key, M_star, phi_star, alpha)
     
     for mlim in mlims:
       nbar         =  comovdensity(midz, phi_star, M_star, alpha, type='app', mlim=mlim, printit=True)
@@ -239,12 +297,22 @@ if __name__ == "__main__":
 
     nbars          =  np.array(nbars)
 
-    pl.plot(mlims, nbars, label=key)
+    pl.plot(mlims, nbars, label=r'${}$'.format(key), c=c, alpha=0.3)
 
     np.savetxt('simba/dat/nbar_{}.txt'.format(key), np.c_[mlims, nbars], fmt='%.6lf')
-    
-  pl.legend(frameon=False)
+  
+  pl.axvline(25.5, c='gold', ymin=0., ymax=1.)
+  pl.axvline(24.6, c='b',    ymin=0., ymax=1.)
+  pl.axvline(25.8, c='g',    ymin=0., ymax=1.)
 
-  pl.savefig('simba/plots/simba_nbar.pdf')
+  pl.xlim(22.4, 26.1)
+  pl.ylim(-6.5, -2.0)
+
+  pl.legend(frameon=False, ncol=2, loc=2)
+
+  pl.xlabel(r'$m_{\rm{lim}}$')
+  pl.ylabel(r'$\log_{10}(\bar n)$')
+  
+  pl.savefig('simba/plots/simba_nbar_gauss_ebv_threetenths.pdf')
   
   print('\n\nDone.\n\n')

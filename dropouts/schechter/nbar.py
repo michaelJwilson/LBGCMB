@@ -143,7 +143,7 @@ def comovdensity(z, phi_star, M_star, alpha, type='app', mlim=25.0, band='g', pr
     '''
 
     ##  Calculate expected number density (integral dM). 
-    nbar     = np.trapz(PhiMUV, MM)                    ## log_10(nbar [(h_100/Mpc)^3]) 
+    nbar     = np.trapz(PhiMUV, MM)                                         ## log_10(nbar [(h_100/Mpc)^3]) 
     nbar     = np.log10(nbar)
     
     if printit:

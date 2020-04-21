@@ -85,6 +85,7 @@ def samplestats(mag=23., printit=False, h70=False):
   stats['BX']['schechter']['alpha']        =   -1.84
   '''
 
+  ##  Fixed alpha in Table 7.
   stats['BX']['schechter']['phi_star']     = 3.31e-3     ## [\phi*] = [h_70/Mpc]^3 per mag for M*_AB(1700 \AA).                                    
   stats['BX']['schechter']['M_star']       =  -20.60
   stats['BX']['schechter']['alpha']        =   -1.60
@@ -94,6 +95,11 @@ def samplestats(mag=23., printit=False, h70=False):
     stats['LBG']['schechter']['phi_star'] *= (10. / 7.) ** 3.
     stats['BX']['schechter']['phi_star']  *= (10. / 7.) ** 3.
 
+
+    '''
+    ##  DEPRECATED ON APRIL  1 2020.  LOOKS LIKE A BUG. 
+    ##  INSTEAD OF PRODUCTING M*UV = -20.60, gives -20.636  
+
     ##  Reddy (2008) Schechter fn. is in unit of h70.  MAB (1700A) - 5log10(h70) = MAB (1700A) - 5log10(h100) - 0.77                                 
     ##  Schechter fn. of M depends only on LL = M-M*, implies M* + 0.77
     stats['LBG']['schechter']['M_star']   += 0.77
@@ -101,6 +107,7 @@ def samplestats(mag=23., printit=False, h70=False):
 
     stats['LBG']['schechter']['M_star']   += 5. * np.log10(params['h_100'])
     stats['BX']['schechter']['M_star']    += 5. * np.log10(params['h_100'])
+    '''
 
   for survey in ['BX', 'LBG']:
     if printit:
